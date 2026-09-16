@@ -173,7 +173,12 @@ export default function HomePage() {
           />
         )}
 
-        {activeTab === "settings" && <SettingsView />}
+        {activeTab === "settings" && (
+          <SettingsView
+            categories={categories}
+            onRefreshCategories={loadAllData}
+          />
+        )}
       </main>
 
       {/* Bottom Navigation */}

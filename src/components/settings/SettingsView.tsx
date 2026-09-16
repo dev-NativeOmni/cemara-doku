@@ -2,11 +2,36 @@
 
 import React, { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { Copy, Check, LogOut, Trees, Users, Shield, Sparkles, Heart } from "lucide-react";
+import { Category } from "@/types";
+import { createCategory, deleteCategory } from "@/services/categoryService";
+import { DynamicIcon } from "../ui/DynamicIcon";
+import { CategoryModal } from "../categories/CategoryModal";
+import {
+  Copy,
+  Check,
+  LogOut,
+  Trees,
+  Users,
+  Shield,
+  Heart,
+  Plus,
+  Trash2,
+  Tag,
+} from "lucide-react";
 
-export function SettingsView() {
+interface SettingsViewProps {
+  categories: Category[];
+  onRefreshCategories: () => Promise<void>;
+}
+
+export function SettingsView({ categories, onRefreshCategories }: SettingsViewProps) {
   const { user, userProfile, household, signOut } = useAuth();
   const [copied, setCopied] = useState(false);
+
+  // Category manager state
+  const [categoryType, setCategoryType] = useState<"expense" | "income">("expense");
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const handleCopyInviteCode = () => {
     if (!household?.inviteCode) return;
@@ -14,6 +39,27 @@ export function SettingsView() {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  const handleCreateCategory = async (newCat: Omit<Category, "id">): Promise<string> => {
+    if (!household) throw new Error("Rumah tangga tidak ditemukan");
+    const id = await createCategory(household.id, newCat);
+    await onRefreshCategories();
+    return id;
+  };
+
+  const handleDeleteCategory = async (cat: Category) => {
+    if (!confirm(`Hapus kategori "${cat.name}"?`)) return;
+    if (!household) return;
+    setDeletingId(cat.id);
+    try {
+      await deleteCategory(household.id, cat.id);
+      await onRefreshCategories();
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+  const filteredCategories = categories.filter((c) => c.type === categoryType);
 
   return (
     <div className="space-y-5 pb-24 max-w-2xl mx-auto px-4 pt-2">
@@ -82,6 +128,93 @@ export function SettingsView() {
         </div>
       </div>
 
+      {/* Category Management Card */}
+      <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-4">
+        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
+              <Tag className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-slate-800">Kelola Kategori</h4>
+              <p className="text-xs text-slate-400">Pemasukan & Pengeluaran Kustom</p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setIsCategoryModalOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold shadow-sm transition"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>Tambah</span>
+          </button>
+        </div>
+
+        {/* Category Type Switcher */}
+        <div className="grid grid-cols-2 gap-2 bg-slate-100 p-1 rounded-xl">
+          <button
+            type="button"
+            onClick={() => setCategoryType("expense")}
+            className={`py-2 text-xs font-bold rounded-lg transition ${
+              categoryType === "expense"
+                ? "bg-white text-rose-600 shadow-sm"
+                : "text-slate-500 hover:text-slate-800"
+            }`}
+          >
+            Pengeluaran ({categories.filter((c) => c.type === "expense").length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setCategoryType("income")}
+            className={`py-2 text-xs font-bold rounded-lg transition ${
+              categoryType === "income"
+                ? "bg-white text-emerald-700 shadow-sm"
+                : "text-slate-500 hover:text-slate-800"
+            }`}
+          >
+            Pemasukan ({categories.filter((c) => c.type === "income").length})
+          </button>
+        </div>
+
+        {/* Categories Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-72 overflow-y-auto pr-1">
+          {filteredCategories.map((c) => (
+            <div
+              key={c.id}
+              className="flex items-center justify-between p-2.5 bg-slate-50/80 rounded-xl border border-slate-100"
+            >
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div
+                  className="w-8 h-8 rounded-lg flex items-center justify-center text-white shrink-0 shadow-sm"
+                  style={{ backgroundColor: c.color || "#10B981" }}
+                >
+                  <DynamicIcon name={c.icon} className="w-4 h-4" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-bold text-slate-800 truncate">{c.name}</p>
+                  <span className="text-[10px] text-slate-400">
+                    {c.isDefault ? "Bawaan" : "Kustom"}
+                  </span>
+                </div>
+              </div>
+
+              {!c.isDefault && (
+                <button
+                  type="button"
+                  onClick={() => handleDeleteCategory(c)}
+                  disabled={deletingId === c.id}
+                  className="p-1.5 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition"
+                  title="Hapus Kategori"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Technical & Spark Plan Status Card */}
       <div className="bg-white rounded-3xl p-5 border border-slate-100 shadow-sm space-y-3">
         <h4 className="text-xs font-bold text-slate-700 flex items-center gap-2">
@@ -108,7 +241,14 @@ export function SettingsView() {
         <LogOut className="w-4 h-4" />
         <span>Keluar dari Akun</span>
       </button>
+
+      {/* Category Creation Modal */}
+      <CategoryModal
+        isOpen={isCategoryModalOpen}
+        onClose={() => setIsCategoryModalOpen(false)}
+        defaultType={categoryType}
+        onSave={handleCreateCategory}
+      />
     </div>
   );
 }
-
