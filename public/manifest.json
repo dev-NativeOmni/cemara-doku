@@ -1,0 +1,17 @@
+{
+  "name": "Cemara - Keuangan Rumah Tangga",
+  "short_name": "Cemara",
+  "description": "Pencatatan keuangan rumah tangga bersama",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#15803D",
+  "theme_color": "#15803D",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}
+
