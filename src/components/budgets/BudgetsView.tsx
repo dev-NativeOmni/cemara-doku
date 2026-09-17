@@ -63,16 +63,16 @@ export function BudgetsView({
   };
 
   return (
-    <div className="space-y-5 pb-24 max-w-2xl mx-auto px-4 pt-2">
+    <div className="space-y-5 pb-28 max-w-5xl mx-auto px-4 pt-2">
       {/* Overall Budget Overview Card */}
-      <div className="bg-white rounded-3xl p-5 border border-slate-100 shadow-sm space-y-4">
+      <div className="bg-white rounded-3xl p-5 md:p-6 border border-slate-100 shadow-sm space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
               <PieChart className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-slate-800">Total Anggaran Bulanan</h3>
+              <h3 className="text-sm md:text-base font-bold text-slate-800">Total Anggaran Bulanan</h3>
               <p className="text-xs text-slate-400">
                 {getMonthName(currentMonth - 1)} {currentYear}
               </p>
@@ -91,7 +91,7 @@ export function BudgetsView({
           </span>
         </div>
 
-        <div className="flex items-baseline justify-between text-xs pt-1">
+        <div className="flex items-baseline justify-between text-xs md:text-sm pt-1">
           <div>
             <span className="text-slate-400">Realisasi: </span>
             <span className="font-bold text-slate-800">{formatRupiah(totalSpent)}</span>
@@ -121,7 +121,7 @@ export function BudgetsView({
       <div className="space-y-3">
         <h3 className="font-bold text-slate-800 text-sm">Pagu Anggaran per Kategori</h3>
 
-        <div className="space-y-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
           {expenseCategories.map((cat) => {
             const budget = budgets.find((b) => b.categoryId === cat.id);
             const limit = budget?.limitAmount || 0;

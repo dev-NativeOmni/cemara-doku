@@ -106,7 +106,7 @@ export function TransactionsView({
   };
 
   return (
-    <div className="space-y-4 pb-24 max-w-2xl mx-auto px-4 pt-2">
+    <div className="space-y-4 pb-28 max-w-5xl mx-auto px-4 pt-2">
       {/* Search & Actions Bar */}
       <div className="flex items-center gap-2">
         <div className="relative flex-1">

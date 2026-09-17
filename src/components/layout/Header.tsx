@@ -40,49 +40,71 @@ export function Header({
   };
 
   return (
-    <header className="bg-gradient-to-b from-emerald-800 to-emerald-700 text-white pt-6 pb-6 px-4 md:px-6 rounded-b-[2rem] shadow-lg shadow-emerald-950/15 relative overflow-hidden">
+    <header className="bg-gradient-to-b from-emerald-800 to-emerald-700 text-white pt-6 pb-6 px-4 md:px-8 rounded-b-[2rem] shadow-lg shadow-emerald-950/15 relative overflow-hidden">
       {/* Background ambient accents */}
-      <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-600/30 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-10 left-10 w-32 h-32 bg-emerald-500/20 rounded-full blur-2xl pointer-events-none" />
+      <div className="absolute top-0 right-0 w-72 h-72 bg-emerald-600/30 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-10 left-10 w-48 h-48 bg-emerald-500/20 rounded-full blur-2xl pointer-events-none" />
 
-      <div className="max-w-2xl mx-auto relative z-10 space-y-4">
+      <div className="max-w-5xl mx-auto relative z-10 space-y-4">
         {/* Top Profile & Household Row */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white/15 backdrop-blur-md border border-white/20 flex items-center justify-center text-emerald-100 shadow-inner">
-              <Trees className="w-6 h-6" />
+            <div className="w-10 h-10 md:w-11 md:h-11 rounded-xl bg-white/15 backdrop-blur-md border border-white/20 flex items-center justify-center text-emerald-100 shadow-inner shrink-0">
+              <Trees className="w-6 h-6 md:w-7 md:h-7" />
             </div>
             <div>
-              <p className="text-xs text-emerald-200 font-medium">Buku Kas</p>
-              <h2 className="text-sm font-bold text-white leading-tight">
+              <p className="text-[11px] md:text-xs text-emerald-200 font-medium">Buku Kas</p>
+              <h2 className="text-sm md:text-base font-bold text-white leading-tight">
                 {household?.name || "Keluarga Cemara"}
               </h2>
             </div>
           </div>
 
+          {/* Month Picker in center for desktop, standard for mobile */}
+          <div className="hidden md:flex items-center justify-between bg-black/20 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/15">
+            <button
+              onClick={handlePrevMonth}
+              className="p-1 hover:bg-white/15 rounded-full text-emerald-200 hover:text-white transition"
+              aria-label="Bulan Sebelumnya"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <span className="text-xs md:text-sm font-semibold px-3 tracking-wide">
+              {getMonthName(currentMonth - 1)} {currentYear}
+            </span>
+            <button
+              onClick={handleNextMonth}
+              className="p-1 hover:bg-white/15 rounded-full text-emerald-200 hover:text-white transition"
+              aria-label="Bulan Selanjutnya"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Profile Badge */}
           <button
             onClick={onOpenSettings}
             className="flex items-center gap-2 px-3 py-1.5 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full border border-white/15 text-xs text-emerald-100 transition shadow-sm"
           >
-            {userProfile?.avatar ? (
-              <span className="text-base leading-none">{userProfile.avatar}</span>
-            ) : userProfile?.photoURL ? (
+            {userProfile?.photoURL ? (
               <img
                 src={userProfile.photoURL}
                 alt="Profile"
-                className="w-4 h-4 rounded-full object-cover"
+                className="w-5 h-5 rounded-full object-cover border border-white/40"
               />
+            ) : userProfile?.avatar ? (
+              <span className="text-sm leading-none">{userProfile.avatar}</span>
             ) : (
               <Users className="w-3.5 h-3.5" />
             )}
-            <span className="font-medium truncate max-w-[110px]">
+            <span className="font-medium truncate max-w-[120px]">
               {userProfile?.displayName || "Saya"}
             </span>
           </button>
         </div>
 
-        {/* Month Picker Row */}
-        <div className="flex items-center justify-between bg-black/15 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 w-fit mx-auto">
+        {/* Month Picker Row (Mobile only) */}
+        <div className="flex md:hidden items-center justify-between bg-black/15 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 w-fit mx-auto">
           <button
             onClick={handlePrevMonth}
             className="p-1 hover:bg-white/15 rounded-full text-emerald-200 hover:text-white transition"
@@ -103,8 +125,8 @@ export function Header({
         </div>
 
         {/* Total Net Balance Card */}
-        <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-4 text-center shadow-inner">
-          <div className="flex items-center justify-center gap-2 text-emerald-200 text-xs font-medium mb-1">
+        <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-4 md:p-5 text-center shadow-inner max-w-xl mx-auto">
+          <div className="flex items-center justify-center gap-2 text-emerald-200 text-xs md:text-sm font-medium mb-1">
             <span>Total Saldo Seluruh Dompet</span>
             <button
               onClick={() => setShowBalance(!showBalance)}
@@ -114,7 +136,7 @@ export function Header({
               {showBalance ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
             </button>
           </div>
-          <div className="text-2xl md:text-3xl font-extrabold tracking-tight">
+          <div className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight">
             {showBalance ? formatRupiah(totalBalance) : "••••••••••"}
           </div>
         </div>
@@ -122,4 +144,3 @@ export function Header({
     </header>
   );
 }
-

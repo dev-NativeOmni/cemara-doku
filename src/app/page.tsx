@@ -131,7 +131,7 @@ export default function HomePage() {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 w-full max-w-2xl mx-auto -mt-2">
+      <main className="flex-1 w-full max-w-5xl mx-auto -mt-2">
         {activeTab === "home" && (
           <DashboardView
             wallets={wallets}
