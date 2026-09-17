@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { Category } from "@/types";
+import { Category, UserProfile } from "@/types";
 import { createCategory, deleteCategory } from "@/services/categoryService";
+import { getHouseholdMembers } from "@/services/authService";
 import { DynamicIcon } from "../ui/DynamicIcon";
 import { CategoryModal } from "../categories/CategoryModal";
 import {
@@ -17,6 +18,9 @@ import {
   Plus,
   Trash2,
   Tag,
+  UserCheck,
+  Camera,
+  Save,
 } from "lucide-react";
 
 interface SettingsViewProps {
@@ -24,20 +28,86 @@ interface SettingsViewProps {
   onRefreshCategories: () => Promise<void>;
 }
 
+const AVATAR_PRESETS = [
+  "👨‍💼", "👩‍💼", "👨‍🦱", "👩‍🦰", 
+  "👨‍🦳", "👩‍🦳", "🧔", "🧕", 
+  "👶", "🧑‍💻", "🌿", "🌸", 
+  "👑", "🐻", "🐱", "🦊"
+];
+
 export function SettingsView({ categories, onRefreshCategories }: SettingsViewProps) {
-  const { user, userProfile, household, signOut } = useAuth();
+  const { user, userProfile, household, updateProfile, signOut } = useAuth();
   const [copied, setCopied] = useState(false);
+
+  // Members state
+  const [members, setMembers] = useState<UserProfile[]>([]);
+  const [loadingMembers, setLoadingMembers] = useState(false);
+
+  // Profile Edit State
+  const [displayName, setDisplayName] = useState(userProfile?.displayName || "");
+  const [selectedAvatar, setSelectedAvatar] = useState(userProfile?.avatar || AVATAR_PRESETS[0]);
+  const [photoURL, setPhotoURL] = useState(userProfile?.photoURL || "");
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [profileSuccess, setProfileSuccess] = useState(false);
 
   // Category manager state
   const [categoryType, setCategoryType] = useState<"expense" | "income">("expense");
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
+  // Load all household members
+  const fetchMembers = useCallback(async () => {
+    if (!household?.memberUids || household.memberUids.length === 0) return;
+    setLoadingMembers(true);
+    try {
+      const fetched = await getHouseholdMembers(household.memberUids);
+      setMembers(fetched);
+    } catch (err) {
+      console.error("Error fetching members:", err);
+    } finally {
+      setLoadingMembers(false);
+    }
+  }, [household?.memberUids]);
+
+  useEffect(() => {
+    fetchMembers();
+  }, [fetchMembers]);
+
+  useEffect(() => {
+    if (userProfile) {
+      setDisplayName(userProfile.displayName || "");
+      setSelectedAvatar(userProfile.avatar || AVATAR_PRESETS[0]);
+      setPhotoURL(userProfile.photoURL || "");
+    }
+  }, [userProfile]);
+
   const handleCopyInviteCode = () => {
     if (!household?.inviteCode) return;
     navigator.clipboard.writeText(household.inviteCode);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleSaveProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!displayName.trim()) return;
+
+    setSavingProfile(true);
+    setProfileSuccess(false);
+    try {
+      await updateProfile({
+        displayName: displayName.trim(),
+        avatar: selectedAvatar,
+        photoURL: photoURL.trim() || undefined,
+      });
+      setProfileSuccess(true);
+      await fetchMembers();
+      setTimeout(() => setProfileSuccess(false), 3000);
+    } catch (err) {
+      console.error("Failed to update profile:", err);
+    } finally {
+      setSavingProfile(false);
+    }
   };
 
   const handleCreateCategory = async (newCat: Omit<Category, "id">): Promise<string> => {
@@ -63,7 +133,101 @@ export function SettingsView({ categories, onRefreshCategories }: SettingsViewPr
 
   return (
     <div className="space-y-5 pb-24 max-w-2xl mx-auto px-4 pt-2">
-      {/* Household Info Card */}
+      {/* 1. Profile & Avatar Edit Card */}
+      <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-4">
+        <div className="flex items-center gap-2.5 border-b border-slate-100 pb-3">
+          <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
+            <Camera className="w-5 h-5" />
+          </div>
+          <div>
+            <h4 className="text-sm font-bold text-slate-800">Profil & Avatar Saya</h4>
+            <p className="text-xs text-slate-400">Atur nama panggilan dan foto profil Anda</p>
+          </div>
+        </div>
+
+        <form onSubmit={handleSaveProfile} className="space-y-4">
+          <div className="flex flex-col sm:flex-row items-center gap-4">
+            {/* Current Avatar Preview */}
+            <div className="relative">
+              <div className="w-18 h-18 rounded-2xl bg-emerald-100 border-2 border-emerald-300 flex items-center justify-center text-4xl shadow-inner overflow-hidden shrink-0">
+                {photoURL ? (
+                  <img
+                    src={photoURL}
+                    alt="Avatar"
+                    className="w-full h-full object-cover"
+                    onError={() => setPhotoURL("")}
+                  />
+                ) : (
+                  <span>{selectedAvatar}</span>
+                )}
+              </div>
+            </div>
+
+            {/* Display Name Input */}
+            <div className="flex-1 w-full space-y-1">
+              <label className="block text-xs font-semibold text-slate-600">
+                Nama Panggilan
+              </label>
+              <input
+                type="text"
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                placeholder="Misal: Ayah / Bunda"
+                required
+                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              />
+              <p className="text-[11px] text-slate-400">{user?.email}</p>
+            </div>
+          </div>
+
+          {/* Avatar Preset Grid */}
+          <div className="space-y-1.5 pt-1">
+            <label className="block text-xs font-semibold text-slate-600">
+              Pilih Karakter Avatar
+            </label>
+            <div className="grid grid-cols-8 gap-2 p-2 bg-slate-50 rounded-2xl border border-slate-100">
+              {AVATAR_PRESETS.map((av) => (
+                <button
+                  type="button"
+                  key={av}
+                  onClick={() => {
+                    setSelectedAvatar(av);
+                    setPhotoURL("");
+                  }}
+                  className={`w-9 h-9 rounded-xl flex items-center justify-center text-xl transition transform hover:scale-110 ${
+                    selectedAvatar === av && !photoURL
+                      ? "bg-white shadow-md ring-2 ring-emerald-500"
+                      : "hover:bg-white/80"
+                  }`}
+                >
+                  {av}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between pt-1">
+            {profileSuccess ? (
+              <span className="text-xs text-emerald-600 font-bold flex items-center gap-1">
+                <Check className="w-4 h-4" /> Profil berhasil diperbarui!
+              </span>
+            ) : (
+              <span />
+            )}
+
+            <button
+              type="submit"
+              disabled={savingProfile || !displayName.trim()}
+              className="flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-md shadow-emerald-600/20 disabled:opacity-50 transition"
+            >
+              <Save className="w-3.5 h-3.5" />
+              <span>{savingProfile ? "Menyimpan..." : "Simpan Profil"}</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      {/* 2. Household & Registered Members Card */}
       <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-4">
         <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
           <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center shadow-inner">
@@ -105,30 +269,59 @@ export function SettingsView({ categories, onRefreshCategories }: SettingsViewPr
           </div>
         </div>
 
-        {/* Member list info */}
-        <div className="space-y-2 pt-2">
-          <h4 className="text-xs font-bold text-slate-700 flex items-center gap-2">
-            <Users className="w-4 h-4 text-slate-400" />
-            <span>Anggota Terdaftar</span>
-          </h4>
-          <div className="bg-slate-50 rounded-xl p-3 flex items-center justify-between border border-slate-100">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold">
-                {userProfile?.displayName?.charAt(0) || "U"}
+        {/* Members List (All members in household) */}
+        <div className="space-y-2.5 pt-2">
+          <div className="flex items-center justify-between">
+            <h4 className="text-xs font-bold text-slate-700 flex items-center gap-2">
+              <Users className="w-4 h-4 text-slate-400" />
+              <span>Anggota Terdaftar ({members.length || household?.memberUids.length || 1})</span>
+            </h4>
+            {loadingMembers && <span className="text-[10px] text-slate-400">Memuat anggota...</span>}
+          </div>
+
+          <div className="space-y-2">
+            {(members.length > 0 ? members : userProfile ? [userProfile] : []).map((m) => (
+              <div
+                key={m.uid}
+                className="bg-slate-50 rounded-2xl p-3.5 flex items-center justify-between border border-slate-100"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-100 border border-emerald-200 flex items-center justify-center text-xl shadow-inner shrink-0 overflow-hidden">
+                    {m.photoURL ? (
+                      <img src={m.photoURL} alt={m.displayName} className="w-full h-full object-cover" />
+                    ) : (
+                      <span>{m.avatar || "👤"}</span>
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold text-slate-800 truncate flex items-center gap-1.5">
+                      <span>{m.displayName || "Pengguna"}</span>
+                      {m.uid === user?.uid && (
+                        <span className="text-[10px] font-medium text-emerald-600 bg-emerald-50 px-1.5 py-0.2 rounded">
+                          (Saya)
+                        </span>
+                      )}
+                    </p>
+                    <p className="text-[11px] text-slate-400 truncate">{m.email}</p>
+                  </div>
+                </div>
+
+                <span
+                  className={`text-[10px] px-2.5 py-1 rounded-full font-bold shrink-0 ${
+                    m.role === "owner"
+                      ? "bg-emerald-100 text-emerald-800"
+                      : "bg-indigo-100 text-indigo-800"
+                  }`}
+                >
+                  {m.role === "owner" ? "Kepala Keluarga" : "Anggota"}
+                </span>
               </div>
-              <div>
-                <p className="text-xs font-bold text-slate-800">{userProfile?.displayName}</p>
-                <p className="text-[11px] text-slate-400">{user?.email}</p>
-              </div>
-            </div>
-            <span className="text-[10px] px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 font-semibold uppercase">
-              {userProfile?.role === "owner" ? "Kepala Keluarga" : "Anggota"}
-            </span>
+            ))}
           </div>
         </div>
       </div>
 
-      {/* Category Management Card */}
+      {/* 3. Category Management Card */}
       <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-4">
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <div className="flex items-center gap-2.5">
@@ -215,7 +408,7 @@ export function SettingsView({ categories, onRefreshCategories }: SettingsViewPr
         </div>
       </div>
 
-      {/* Technical & Spark Plan Status Card */}
+      {/* 4. Technical & Spark Plan Status Card */}
       <div className="bg-white rounded-3xl p-5 border border-slate-100 shadow-sm space-y-3">
         <h4 className="text-xs font-bold text-slate-700 flex items-center gap-2">
           <Shield className="w-4 h-4 text-emerald-600" />
@@ -233,7 +426,7 @@ export function SettingsView({ categories, onRefreshCategories }: SettingsViewPr
         </div>
       </div>
 
-      {/* Sign Out Button */}
+      {/* 5. Sign Out Button */}
       <button
         onClick={signOut}
         className="w-full py-3.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-2xl font-bold text-xs border border-rose-200/80 flex items-center justify-center gap-2 transition"

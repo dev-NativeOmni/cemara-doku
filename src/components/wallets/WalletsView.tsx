@@ -62,6 +62,7 @@ export function WalletsView({ wallets, onCreateWallet, onUpdateWallet }: Wallets
           type,
           color,
           icon,
+          currentBalance: balanceNum,
         });
       } else {
         await onCreateWallet({
@@ -189,21 +190,19 @@ export function WalletsView({ wallets, onCreateWallet, onUpdateWallet }: Wallets
                   </select>
                 </div>
 
-                {!editingWallet && (
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-600 mb-1">
-                      Saldo Awal (Rp)
-                    </label>
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      value={initialBalance ? Number(initialBalance.replace(/\D/g, "")).toLocaleString("id-ID") : ""}
-                      onChange={(e) => setInitialBalance(e.target.value.replace(/\D/g, ""))}
-                      placeholder="0"
-                      className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                    />
-                  </div>
-                )}
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">
+                    {editingWallet ? "Penyesuaian Saldo (Rp)" : "Saldo Awal (Rp)"}
+                  </label>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    value={initialBalance ? Number(initialBalance.replace(/\D/g, "")).toLocaleString("id-ID") : ""}
+                    onChange={(e) => setInitialBalance(e.target.value.replace(/\D/g, ""))}
+                    placeholder="0"
+                    className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                </div>
               </div>
 
               {/* Color Selector */}

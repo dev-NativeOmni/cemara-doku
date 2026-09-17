@@ -8,6 +8,8 @@ export interface UserProfile {
   uid: string;
   email: string;
   displayName: string;
+  photoURL?: string;
+  avatar?: string;
   householdId: string;
   role: "owner" | "member";
   createdAt?: Timestamp | Date;

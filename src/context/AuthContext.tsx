@@ -12,6 +12,7 @@ import {
   logout as authLogout,
   createHouseholdForUser,
   joinHouseholdViaCode,
+  updateUserProfile,
 } from "@/services/authService";
 import { Household, UserProfile } from "@/types";
 
@@ -26,6 +27,7 @@ interface AuthContextType {
   createHousehold: (name: string) => Promise<void>;
   joinHousehold: (code: string) => Promise<void>;
   refreshHousehold: () => Promise<void>;
+  updateProfile: (data: Partial<UserProfile>) => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -141,6 +143,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const updateProfile = async (data: Partial<UserProfile>) => {
+    if (!user) return;
+    await updateUserProfile(user.uid, data);
+    const updated = await getUserProfile(user.uid);
+    setUserProfile(updated);
+  };
+
   const signOut = async () => {
     setLoading(true);
     try {
@@ -166,6 +175,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         createHousehold,
         joinHousehold,
         refreshHousehold,
+        updateProfile,
         signOut,
       }}
     >

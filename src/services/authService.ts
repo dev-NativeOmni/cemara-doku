@@ -157,3 +157,27 @@ export async function joinHouseholdViaCode(
   return { householdId: hhId, userProfile };
 }
 
+export async function updateUserProfile(
+  uid: string,
+  data: Partial<UserProfile>
+): Promise<void> {
+  const userRef = doc(db, `users/${uid}`);
+  await updateDoc(userRef, data);
+}
+
+export async function getHouseholdMembers(memberUids: string[]): Promise<UserProfile[]> {
+  if (!memberUids || memberUids.length === 0) return [];
+  const profiles: UserProfile[] = [];
+  
+  for (const uid of memberUids) {
+    const userRef = doc(db, `users/${uid}`);
+    const snap = await getDoc(userRef);
+    if (snap.exists()) {
+      profiles.push(snap.data() as UserProfile);
+    }
+  }
+  
+  return profiles;
+}
+
+
