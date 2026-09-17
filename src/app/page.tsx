@@ -14,7 +14,7 @@ import { QuickTransactionModal } from "@/components/transactions/QuickTransactio
 import { getWallets, createWallet, updateWallet } from "@/services/walletService";
 import { getCategories } from "@/services/categoryService";
 import { getMonthTransactions, deleteTransaction } from "@/services/transactionService";
-import { getBudgets, setBudget } from "@/services/budgetService";
+import { getBudgets, setBudget, deleteBudget, copyPreviousMonthBudgets } from "@/services/budgetService";
 import { Budget, Category, NavigationTab, Transaction, Wallet } from "@/types";
 import { Trees, Loader2 } from "lucide-react";
 
@@ -63,16 +63,16 @@ export default function HomePage() {
     }
   }, [household, loadAllData]);
 
-  if (authLoading) {
+  if (authLoading || dataLoading && !household) {
     return (
-      <div className="min-h-screen bg-emerald-950 flex flex-col items-center justify-center text-white space-y-4">
-        <div className="w-16 h-16 bg-emerald-800 rounded-2xl flex items-center justify-center shadow-lg border border-emerald-700 animate-pulse">
-          <Trees className="w-8 h-8 text-emerald-300" />
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
+        <div className="w-12 h-12 rounded-2xl bg-emerald-700 flex items-center justify-center text-white mb-3 shadow-lg shadow-emerald-700/20 animate-pulse">
+          <Trees className="w-6 h-6" />
         </div>
-        <div className="flex items-center gap-2 text-emerald-200 text-sm font-medium">
-          <Loader2 className="w-4 h-4 animate-spin" />
-          <span>Memuat Cemara...</span>
-        </div>
+        <p className="text-sm font-semibold text-slate-600 flex items-center gap-2">
+          <Loader2 className="w-4 h-4 animate-spin text-emerald-600" />
+          Memuat Cemara...
+        </p>
       </div>
     );
   }
@@ -105,6 +105,21 @@ export default function HomePage() {
     if (!household) return;
     await setBudget(household.id, categoryId, currentMonth, currentYear, limitAmount);
     await loadAllData();
+  };
+
+  const handleDeleteBudget = async (categoryId: string) => {
+    if (!household) return;
+    await deleteBudget(household.id, categoryId, currentMonth, currentYear);
+    await loadAllData();
+  };
+
+  const handleCopyPreviousMonthBudgets = async (): Promise<number> => {
+    if (!household) return 0;
+    const count = await copyPreviousMonthBudgets(household.id, currentMonth, currentYear);
+    if (count > 0) {
+      await loadAllData();
+    }
+    return count;
   };
 
   const handleCreateWallet = async (data: Omit<Wallet, "id" | "updatedAt">) => {
@@ -162,6 +177,8 @@ export default function HomePage() {
             currentMonth={currentMonth}
             currentYear={currentYear}
             onSaveBudget={handleSaveBudget}
+            onDeleteBudget={handleDeleteBudget}
+            onCopyPreviousMonth={handleCopyPreviousMonthBudgets}
           />
         )}
 
