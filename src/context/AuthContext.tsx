@@ -41,8 +41,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const loadUserData = async (currentUser: FirebaseUser) => {
     try {
-      const profile = await getUserProfile(currentUser.uid);
-      setUserProfile(profile);
+      let profile = await getUserProfile(currentUser.uid);
+      if (profile) {
+        // If profile has no photoURL but Google account has photoURL, set default photoURL
+        if (!profile.photoURL && currentUser.photoURL) {
+          try {
+            await updateUserProfile(currentUser.uid, { photoURL: currentUser.photoURL });
+            profile = { ...profile, photoURL: currentUser.photoURL };
+          } catch (e) {
+            console.warn("Could not sync photoURL:", e);
+          }
+        }
+        setUserProfile(profile);
+      } else {
+        setUserProfile(null);
+      }
 
       if (profile?.householdId) {
         const hh = await getHousehold(profile.householdId);
@@ -108,7 +121,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         user.uid,
         name,
         user.displayName || user.email?.split("@")[0] || "User",
-        user.email || ""
+        user.email || "",
+        user.photoURL || ""
       );
       setUserProfile(newProfile);
       const hh = await getHousehold(householdId);
@@ -126,7 +140,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         user.uid,
         code,
         user.displayName || user.email?.split("@")[0] || "User",
-        user.email || ""
+        user.email || "",
+        user.photoURL || ""
       );
       setUserProfile(newProfile);
       const hh = await getHousehold(householdId);

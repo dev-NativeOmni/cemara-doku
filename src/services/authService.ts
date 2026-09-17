@@ -68,7 +68,8 @@ export async function createHouseholdForUser(
   uid: string,
   householdName: string,
   displayName: string,
-  email: string
+  email: string,
+  photoURL?: string
 ): Promise<{ householdId: string; userProfile: UserProfile }> {
   const householdsRef = collection(db, "households");
   const hhDoc = doc(householdsRef);
@@ -93,6 +94,7 @@ export async function createHouseholdForUser(
     uid,
     email: email || "",
     displayName: displayName || "Kepala Keluarga",
+    photoURL: photoURL || "",
     householdId: hhDoc.id,
     role: "owner",
     createdAt: new Date(),
@@ -118,7 +120,8 @@ export async function joinHouseholdViaCode(
   uid: string,
   inviteCode: string,
   displayName: string,
-  email: string
+  email: string,
+  photoURL?: string
 ): Promise<{ householdId: string; userProfile: UserProfile }> {
   const cleanCode = inviteCode.trim().toUpperCase();
   const q = query(
@@ -144,6 +147,7 @@ export async function joinHouseholdViaCode(
     uid,
     email: email || "",
     displayName: displayName || "Anggota Keluarga",
+    photoURL: photoURL || "",
     householdId: hhId,
     role: "member",
     createdAt: new Date(),

@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { Category, UserProfile } from "@/types";
 import { createCategory, deleteCategory } from "@/services/categoryService";
 import { getHouseholdMembers } from "@/services/authService";
+import { compressImageFile } from "@/lib/imageUtils";
 import { DynamicIcon } from "../ui/DynamicIcon";
 import { CategoryModal } from "../categories/CategoryModal";
 import {
@@ -18,9 +19,11 @@ import {
   Plus,
   Trash2,
   Tag,
-  UserCheck,
   Camera,
   Save,
+  Upload,
+  RotateCcw,
+  Sparkles,
 } from "lucide-react";
 
 interface SettingsViewProps {
@@ -38,6 +41,7 @@ const AVATAR_PRESETS = [
 export function SettingsView({ categories, onRefreshCategories }: SettingsViewProps) {
   const { user, userProfile, household, updateProfile, signOut } = useAuth();
   const [copied, setCopied] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Members state
   const [members, setMembers] = useState<UserProfile[]>([]);
@@ -46,7 +50,8 @@ export function SettingsView({ categories, onRefreshCategories }: SettingsViewPr
   // Profile Edit State
   const [displayName, setDisplayName] = useState(userProfile?.displayName || "");
   const [selectedAvatar, setSelectedAvatar] = useState(userProfile?.avatar || AVATAR_PRESETS[0]);
-  const [photoURL, setPhotoURL] = useState(userProfile?.photoURL || "");
+  const [photoURL, setPhotoURL] = useState(userProfile?.photoURL || user?.photoURL || "");
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileSuccess, setProfileSuccess] = useState(false);
 
@@ -77,15 +82,41 @@ export function SettingsView({ categories, onRefreshCategories }: SettingsViewPr
     if (userProfile) {
       setDisplayName(userProfile.displayName || "");
       setSelectedAvatar(userProfile.avatar || AVATAR_PRESETS[0]);
-      setPhotoURL(userProfile.photoURL || "");
+      setPhotoURL(userProfile.photoURL || user?.photoURL || "");
     }
-  }, [userProfile]);
+  }, [userProfile, user?.photoURL]);
 
   const handleCopyInviteCode = () => {
     if (!household?.inviteCode) return;
     navigator.clipboard.writeText(household.inviteCode);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    try {
+      const compressedDataUrl = await compressImageFile(file, 256, 256, 0.85);
+      setPhotoURL(compressedDataUrl);
+    } catch (err) {
+      console.error("Gagal mengunggah foto:", err);
+      alert("Gagal mengunggah foto profil");
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const handleResetToGooglePhoto = () => {
+    if (user?.photoURL) {
+      setPhotoURL(user.photoURL);
+    }
+  };
+
+  const handleRemovePhoto = () => {
+    setPhotoURL("");
   };
 
   const handleSaveProfile = async (e: React.FormEvent) => {
@@ -98,7 +129,7 @@ export function SettingsView({ categories, onRefreshCategories }: SettingsViewPr
       await updateProfile({
         displayName: displayName.trim(),
         avatar: selectedAvatar,
-        photoURL: photoURL.trim() || undefined,
+        photoURL: photoURL.trim() || "",
       });
       setProfileSuccess(true);
       await fetchMembers();
@@ -140,79 +171,140 @@ export function SettingsView({ categories, onRefreshCategories }: SettingsViewPr
             <Camera className="w-5 h-5" />
           </div>
           <div>
-            <h4 className="text-sm font-bold text-slate-800">Profil & Avatar Saya</h4>
-            <p className="text-xs text-slate-400">Atur nama panggilan dan foto profil Anda</p>
+            <h4 className="text-sm font-bold text-slate-800">Foto Profil & Akun</h4>
+            <p className="text-xs text-slate-400">Unggah foto profil kustom atau gunakan foto akun Google Anda</p>
           </div>
         </div>
 
         <form onSubmit={handleSaveProfile} className="space-y-4">
           <div className="flex flex-col sm:flex-row items-center gap-4">
-            {/* Current Avatar Preview */}
-            <div className="relative">
-              <div className="w-18 h-18 rounded-2xl bg-emerald-100 border-2 border-emerald-300 flex items-center justify-center text-4xl shadow-inner overflow-hidden shrink-0">
+            {/* Clickable Profile Photo with upload overlay */}
+            <div className="relative group shrink-0">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="hidden"
+              />
+              
+              <div
+                onClick={() => fileInputRef.current?.click()}
+                className="w-20 h-20 rounded-2xl bg-emerald-100 border-2 border-emerald-300 flex items-center justify-center text-4xl shadow-inner overflow-hidden cursor-pointer relative"
+                title="Klik untuk unggah foto baru"
+              >
                 {photoURL ? (
                   <img
                     src={photoURL}
-                    alt="Avatar"
+                    alt="Foto Profil"
                     className="w-full h-full object-cover"
                     onError={() => setPhotoURL("")}
                   />
                 ) : (
                   <span>{selectedAvatar}</span>
                 )}
+
+                {/* Hover Camera Overlay */}
+                <div className="absolute inset-0 bg-black/40 text-white flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition rounded-2xl">
+                  <Camera className="w-6 h-6" />
+                  <span className="text-[9px] font-bold mt-0.5">Ubah Foto</span>
+                </div>
               </div>
+
+              {uploadingImage && (
+                <div className="absolute inset-0 bg-white/80 rounded-2xl flex items-center justify-center text-xs text-emerald-700 font-bold">
+                  Memproses...
+                </div>
+              )}
             </div>
 
-            {/* Display Name Input */}
-            <div className="flex-1 w-full space-y-1">
-              <label className="block text-xs font-semibold text-slate-600">
-                Nama Panggilan
-              </label>
-              <input
-                type="text"
-                value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
-                placeholder="Misal: Ayah / Bunda"
-                required
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              />
-              <p className="text-[11px] text-slate-400">{user?.email}</p>
-            </div>
-          </div>
+            {/* Display Name & Action Buttons */}
+            <div className="flex-1 w-full space-y-2">
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">
+                  Nama Panggilan
+                </label>
+                <input
+                  type="text"
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  placeholder="Misal: Ayah / Bunda / Iswah"
+                  required
+                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
 
-          {/* Avatar Preset Grid */}
-          <div className="space-y-1.5 pt-1">
-            <label className="block text-xs font-semibold text-slate-600">
-              Pilih Karakter Avatar
-            </label>
-            <div className="grid grid-cols-8 gap-2 p-2 bg-slate-50 rounded-2xl border border-slate-100">
-              {AVATAR_PRESETS.map((av) => (
+              {/* Photo Action Buttons */}
+              <div className="flex flex-wrap items-center gap-2 pt-0.5">
                 <button
                   type="button"
-                  key={av}
-                  onClick={() => {
-                    setSelectedAvatar(av);
-                    setPhotoURL("");
-                  }}
-                  className={`w-9 h-9 rounded-xl flex items-center justify-center text-xl transition transform hover:scale-110 ${
-                    selectedAvatar === av && !photoURL
-                      ? "bg-white shadow-md ring-2 ring-emerald-500"
-                      : "hover:bg-white/80"
-                  }`}
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-lg text-xs font-semibold transition"
                 >
-                  {av}
+                  <Upload className="w-3.5 h-3.5" />
+                  <span>Unggah Foto</span>
                 </button>
-              ))}
+
+                {user?.photoURL && photoURL !== user.photoURL && (
+                  <button
+                    type="button"
+                    onClick={handleResetToGooglePhoto}
+                    className="flex items-center gap-1 px-2.5 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200 rounded-lg text-xs font-medium transition"
+                    title="Gunakan foto dari akun Google"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" />
+                    <span>Foto Google</span>
+                  </button>
+                )}
+
+                {photoURL && (
+                  <button
+                    type="button"
+                    onClick={handleRemovePhoto}
+                    className="px-2.5 py-1.5 text-rose-600 hover:bg-rose-50 rounded-lg text-xs font-medium transition"
+                  >
+                    Hapus Foto
+                  </button>
+                )}
+              </div>
             </div>
           </div>
 
-          <div className="flex items-center justify-between pt-1">
+          {/* Optional Avatar Preset Grid (if no photo uploaded) */}
+          {!photoURL && (
+            <div className="space-y-1.5 pt-1">
+              <label className="block text-xs font-semibold text-slate-600">
+                Atau Pilih Karakter Avatar
+              </label>
+              <div className="grid grid-cols-8 gap-2 p-2 bg-slate-50 rounded-2xl border border-slate-100">
+                {AVATAR_PRESETS.map((av) => (
+                  <button
+                    type="button"
+                    key={av}
+                    onClick={() => {
+                      setSelectedAvatar(av);
+                      setPhotoURL("");
+                    }}
+                    className={`w-9 h-9 rounded-xl flex items-center justify-center text-xl transition transform hover:scale-110 ${
+                      selectedAvatar === av && !photoURL
+                        ? "bg-white shadow-md ring-2 ring-emerald-500"
+                        : "hover:bg-white/80"
+                    }`}
+                  >
+                    {av}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="flex items-center justify-between pt-2 border-t border-slate-100">
             {profileSuccess ? (
               <span className="text-xs text-emerald-600 font-bold flex items-center gap-1">
-                <Check className="w-4 h-4" /> Profil berhasil diperbarui!
+                <Check className="w-4 h-4" /> Profil & Foto berhasil disimpan!
               </span>
             ) : (
-              <span />
+              <span className="text-[11px] text-slate-400">{user?.email}</span>
             )}
 
             <button
@@ -221,7 +313,7 @@ export function SettingsView({ categories, onRefreshCategories }: SettingsViewPr
               className="flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-md shadow-emerald-600/20 disabled:opacity-50 transition"
             >
               <Save className="w-3.5 h-3.5" />
-              <span>{savingProfile ? "Menyimpan..." : "Simpan Profil"}</span>
+              <span>{savingProfile ? "Menyimpan..." : "Simpan Perubahan"}</span>
             </button>
           </div>
         </form>
