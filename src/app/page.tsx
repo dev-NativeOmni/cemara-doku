@@ -16,7 +16,7 @@ import { getCategories } from "@/services/categoryService";
 import { getMonthTransactions, deleteTransaction } from "@/services/transactionService";
 import { getBudgets, setBudget, deleteBudget, copyPreviousMonthBudgets } from "@/services/budgetService";
 import { Budget, Category, NavigationTab, Transaction, Wallet } from "@/types";
-import { Trees, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 export default function HomePage() {
   const { user, household, loading: authLoading } = useAuth();
@@ -66,8 +66,8 @@ export default function HomePage() {
   if (authLoading || dataLoading && !household) {
     return (
       <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
-        <div className="w-12 h-12 rounded-2xl bg-emerald-700 flex items-center justify-center text-white mb-3 shadow-lg shadow-emerald-700/20 animate-pulse">
-          <Trees className="w-6 h-6" />
+        <div className="w-16 h-16 rounded-3xl bg-white border border-slate-100 p-2.5 flex items-center justify-center mb-3 shadow-xl shadow-slate-200/50 animate-bounce">
+          <img src="/logo.png" alt="Cemara" className="w-full h-full object-contain drop-shadow" />
         </div>
         <p className="text-sm font-semibold text-slate-600 flex items-center gap-2">
           <Loader2 className="w-4 h-4 animate-spin text-emerald-600" />

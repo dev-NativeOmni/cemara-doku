@@ -12,7 +12,6 @@ import {
   Copy,
   Check,
   LogOut,
-  Trees,
   Users,
   Shield,
   Heart,
@@ -355,8 +354,8 @@ export function SettingsView({ categories, onRefreshCategories }: SettingsViewPr
           {/* 2. Household & Registered Members Card */}
           <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-4">
             <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center shadow-inner">
-                <Trees className="w-7 h-7" />
+              <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-100 p-1.5 flex items-center justify-center shadow-sm">
+                <img src="/logo.png" alt="Cemara" className="w-full h-full object-contain drop-shadow" />
               </div>
               <div>
                 <h3 className="text-base font-bold text-slate-800">{household?.name || "Keluarga Cemara"}</h3>

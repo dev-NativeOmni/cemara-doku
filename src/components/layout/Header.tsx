@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { formatRupiah, getMonthName } from "@/lib/formatters";
-import { ChevronLeft, ChevronRight, Eye, EyeOff, Trees, Users } from "lucide-react";
+import { ChevronLeft, ChevronRight, Eye, EyeOff, Users } from "lucide-react";
 
 interface HeaderProps {
   currentMonth: number; // 1-12
@@ -49,8 +49,8 @@ export function Header({
         {/* Top Profile & Household Row */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 md:w-11 md:h-11 rounded-xl bg-white/15 backdrop-blur-md border border-white/20 flex items-center justify-center text-emerald-100 shadow-inner shrink-0">
-              <Trees className="w-6 h-6 md:w-7 md:h-7" />
+            <div className="w-10 h-10 md:w-11 md:h-11 rounded-2xl bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center p-1 shadow-inner shrink-0">
+              <img src="/logo.png" alt="Cemara" className="w-full h-full object-contain drop-shadow-sm" />
             </div>
             <div>
               <p className="text-[11px] md:text-xs text-emerald-200 font-medium">Buku Kas</p>

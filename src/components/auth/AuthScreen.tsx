@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { Trees, Mail, Lock, User, ArrowRight, PlusCircle, Users, AlertCircle } from "lucide-react";
+import { Mail, Lock, User, ArrowRight, PlusCircle, Users, AlertCircle } from "lucide-react";
 
 export function AuthScreen() {
   const { user, userProfile, loginGoogle, loginEmail, registerEmail, createHousehold, joinHousehold } = useAuth();
@@ -90,8 +90,8 @@ export function AuthScreen() {
       <div className="min-h-screen bg-slate-50 flex flex-col justify-center items-center p-4">
         <div className="w-full max-w-md bg-white rounded-3xl shadow-xl border border-slate-100 p-6 md:p-8">
           <div className="flex flex-col items-center text-center mb-8">
-            <div className="w-16 h-16 bg-emerald-100 text-emerald-700 rounded-2xl flex items-center justify-center mb-3 shadow-inner">
-              <Trees className="w-9 h-9" />
+            <div className="w-20 h-20 bg-emerald-50 rounded-3xl flex items-center justify-center p-2 mb-3 shadow-inner border border-emerald-100">
+              <img src="/logo.png" alt="Cemara Logo" className="w-full h-full object-contain drop-shadow" />
             </div>
             <h1 className="text-2xl font-bold text-slate-800">Selamat Datang di Cemara!</h1>
             <p className="text-sm text-slate-500 mt-1">
@@ -219,8 +219,8 @@ export function AuthScreen() {
         {/* Brand Header */}
         <div className="bg-emerald-700 px-6 pt-8 pb-7 text-center relative overflow-hidden text-white">
           <div className="absolute -top-12 -right-12 w-36 h-36 bg-emerald-600 rounded-full blur-2xl opacity-60 pointer-events-none" />
-          <div className="inline-flex items-center justify-center w-14 h-14 bg-white/15 backdrop-blur-md rounded-2xl mb-3 shadow-inner border border-white/20">
-            <Trees className="w-8 h-8 text-emerald-200" />
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl p-2 mb-3 shadow-inner border border-white/30">
+            <img src="/logo.png" alt="Cemara Logo" className="w-full h-full object-contain drop-shadow" />
           </div>
           <h1 className="text-2xl font-bold tracking-tight">Cemara</h1>
           <p className="text-emerald-100 text-xs mt-1">Pencatatan Keuangan Rumah Tangga yang Rapi & Harmonis</p>
