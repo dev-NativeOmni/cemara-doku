@@ -12,7 +12,7 @@ interface BottomNavProps {
 
 export function BottomNav({ activeTab, onSelectTab, onOpenQuickModal }: BottomNavProps) {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-lg border-t border-slate-200/80 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] safe-bottom">
+    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-lg border-t border-slate-200/80 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] safe-bottom">
       <div className="max-w-md mx-auto px-4 h-16 flex items-center justify-between relative">
         {/* Beranda */}
         <button

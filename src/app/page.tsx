@@ -11,6 +11,7 @@ import { BudgetsView } from "@/components/budgets/BudgetsView";
 import { WalletsView } from "@/components/wallets/WalletsView";
 import { SettingsView } from "@/components/settings/SettingsView";
 import { QuickTransactionModal } from "@/components/transactions/QuickTransactionModal";
+import { DesktopSidebar } from "@/components/layout/DesktopSidebar";
 import { getWallets, createWallet, updateWallet } from "@/services/walletService";
 import { getCategories } from "@/services/categoryService";
 import { getMonthTransactions, deleteTransaction } from "@/services/transactionService";
@@ -135,70 +136,83 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col text-slate-900 selection:bg-emerald-200">
-      {/* Header */}
-      <Header
-        currentMonth={currentMonth}
-        currentYear={currentYear}
-        totalBalance={totalBalance}
-        onMonthChange={handleMonthChange}
-        onOpenSettings={() => setActiveTab("settings")}
+    <div className="min-h-screen bg-slate-50 flex text-slate-900 selection:bg-emerald-200">
+      {/* Desktop Left Sidebar (Only visible on lg: screens) */}
+      <DesktopSidebar
+        activeTab={activeTab}
+        onSelectTab={setActiveTab}
+        onOpenQuickModal={() => setQuickModalOpen(true)}
+        transactionCount={transactions.length}
       />
 
-      {/* Main Content Area */}
-      <main className="flex-1 w-full max-w-5xl mx-auto -mt-2">
-        {activeTab === "home" && (
-          <DashboardView
-            wallets={wallets}
-            categories={categories}
-            transactions={transactions}
-            onOpenQuickModal={() => setQuickModalOpen(true)}
-            onNavigateToTransactions={() => setActiveTab("transactions")}
-            onNavigateToWallets={() => setActiveTab("wallets")}
-            onDeleteTransaction={handleDeleteTransaction}
-          />
-        )}
+      {/* Main App Container */}
+      <div className="flex-1 flex flex-col min-w-0 lg:pl-64">
+        {/* Header (Adapts between mobile banner & desktop top bar) */}
+        <Header
+          currentMonth={currentMonth}
+          currentYear={currentYear}
+          totalBalance={totalBalance}
+          onMonthChange={handleMonthChange}
+          onOpenSettings={() => setActiveTab("settings")}
+          activeTab={activeTab}
+          onOpenQuickModal={() => setQuickModalOpen(true)}
+        />
 
-        {activeTab === "transactions" && (
-          <TransactionsView
-            transactions={transactions}
-            wallets={wallets}
-            categories={categories}
-            onDeleteTransaction={handleDeleteTransaction}
-            onOpenQuickModal={() => setQuickModalOpen(true)}
-          />
-        )}
+        {/* Main Content Area */}
+        <main className="flex-1 w-full max-w-5xl lg:max-w-7xl mx-auto -mt-2 lg:mt-0 lg:p-8">
+          {activeTab === "home" && (
+            <DashboardView
+              wallets={wallets}
+              categories={categories}
+              transactions={transactions}
+              onOpenQuickModal={() => setQuickModalOpen(true)}
+              onNavigateToTransactions={() => setActiveTab("transactions")}
+              onNavigateToWallets={() => setActiveTab("wallets")}
+              onDeleteTransaction={handleDeleteTransaction}
+            />
+          )}
 
-        {activeTab === "budgets" && (
-          <BudgetsView
-            categories={categories}
-            budgets={budgets}
-            transactions={transactions}
-            currentMonth={currentMonth}
-            currentYear={currentYear}
-            onSaveBudget={handleSaveBudget}
-            onDeleteBudget={handleDeleteBudget}
-            onCopyPreviousMonth={handleCopyPreviousMonthBudgets}
-          />
-        )}
+          {activeTab === "transactions" && (
+            <TransactionsView
+              transactions={transactions}
+              wallets={wallets}
+              categories={categories}
+              onDeleteTransaction={handleDeleteTransaction}
+              onOpenQuickModal={() => setQuickModalOpen(true)}
+            />
+          )}
 
-        {activeTab === "wallets" && (
-          <WalletsView
-            wallets={wallets}
-            onCreateWallet={handleCreateWallet}
-            onUpdateWallet={handleUpdateWallet}
-          />
-        )}
+          {activeTab === "budgets" && (
+            <BudgetsView
+              categories={categories}
+              budgets={budgets}
+              transactions={transactions}
+              currentMonth={currentMonth}
+              currentYear={currentYear}
+              onSaveBudget={handleSaveBudget}
+              onDeleteBudget={handleDeleteBudget}
+              onCopyPreviousMonth={handleCopyPreviousMonthBudgets}
+            />
+          )}
 
-        {activeTab === "settings" && (
-          <SettingsView
-            categories={categories}
-            onRefreshCategories={loadAllData}
-          />
-        )}
-      </main>
+          {activeTab === "wallets" && (
+            <WalletsView
+              wallets={wallets}
+              onCreateWallet={handleCreateWallet}
+              onUpdateWallet={handleUpdateWallet}
+            />
+          )}
 
-      {/* Bottom Navigation */}
+          {activeTab === "settings" && (
+            <SettingsView
+              categories={categories}
+              onRefreshCategories={loadAllData}
+            />
+          )}
+        </main>
+      </div>
+
+      {/* Bottom Navigation (Mobile Only: lg:hidden) */}
       <BottomNav
         activeTab={activeTab}
         onSelectTab={setActiveTab}

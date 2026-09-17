@@ -3,7 +3,8 @@
 import React, { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { formatRupiah, getMonthName } from "@/lib/formatters";
-import { ChevronLeft, ChevronRight, Eye, EyeOff, Users } from "lucide-react";
+import { NavigationTab } from "@/types";
+import { ChevronLeft, ChevronRight, Eye, EyeOff, Users, Calendar, Plus, Wallet } from "lucide-react";
 
 interface HeaderProps {
   currentMonth: number; // 1-12
@@ -11,7 +12,17 @@ interface HeaderProps {
   totalBalance: number;
   onMonthChange: (month: number, year: number) => void;
   onOpenSettings: () => void;
+  activeTab?: NavigationTab;
+  onOpenQuickModal?: () => void;
 }
+
+const TAB_TITLES: Record<NavigationTab, { title: string; subtitle: string }> = {
+  home: { title: "Beranda", subtitle: "Ringkasan & arus kas keuangan keluarga" },
+  transactions: { title: "Transaksi", subtitle: "Daftar pencatatan pemasukan, pengeluaran & transfer" },
+  budgets: { title: "Anggaran", subtitle: "Target & pagu pengeluaran per kategori" },
+  wallets: { title: "Dompet & Akun", subtitle: "Kelola rekening bank, e-wallet, dan saldo tunai" },
+  settings: { title: "Pengaturan", subtitle: "Kelola profil, anggota keluarga, dan kategori" },
+};
 
 export function Header({
   currentMonth,
@@ -19,6 +30,8 @@ export function Header({
   totalBalance,
   onMonthChange,
   onOpenSettings,
+  activeTab = "home",
+  onOpenQuickModal,
 }: HeaderProps) {
   const { userProfile, household } = useAuth();
   const [showBalance, setShowBalance] = useState(true);
@@ -39,29 +52,132 @@ export function Header({
     }
   };
 
-  return (
-    <header className="bg-gradient-to-b from-emerald-800 to-emerald-700 text-white pt-6 pb-6 px-4 md:px-8 rounded-b-[2rem] shadow-lg shadow-emerald-950/15 relative overflow-hidden">
-      {/* Background ambient accents */}
-      <div className="absolute top-0 right-0 w-72 h-72 bg-emerald-600/30 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-10 left-10 w-48 h-48 bg-emerald-500/20 rounded-full blur-2xl pointer-events-none" />
+  const currentTabMeta = TAB_TITLES[activeTab] || TAB_TITLES.home;
 
-      <div className="max-w-5xl mx-auto relative z-10 space-y-4">
-        {/* Top Profile & Household Row */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 md:w-11 md:h-11 rounded-2xl bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center p-1 shadow-inner shrink-0">
-              <img src="/logo.png" alt="Cemara" className="w-full h-full object-contain drop-shadow-sm" />
+  return (
+    <>
+      {/* ========================================================================= */}
+      {/* 1. DESKTOP TOP BAR (Only visible on lg: screens and above)               */}
+      {/* ========================================================================= */}
+      <header className="hidden lg:flex sticky top-0 z-20 bg-white/90 backdrop-blur-md border-b border-slate-200/80 px-8 py-3.5 items-center justify-between">
+        {/* Left: Page Title & Breadcrumb */}
+        <div>
+          <h2 className="text-lg font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+            {currentTabMeta.title}
+          </h2>
+          <p className="text-xs text-slate-400 font-medium">
+            {currentTabMeta.subtitle}
+          </p>
+        </div>
+
+        {/* Center: Month Navigator */}
+        <div className="flex items-center bg-slate-100/90 border border-slate-200/80 rounded-2xl p-1 shadow-sm">
+          <button
+            onClick={handlePrevMonth}
+            className="p-1.5 hover:bg-white rounded-xl text-slate-500 hover:text-slate-900 transition shadow-none hover:shadow-sm"
+            aria-label="Bulan Sebelumnya"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          <div className="flex items-center gap-1.5 px-3 text-xs font-bold text-slate-800 select-none">
+            <Calendar className="w-3.5 h-3.5 text-emerald-600" />
+            <span>{getMonthName(currentMonth - 1)} {currentYear}</span>
+          </div>
+          <button
+            onClick={handleNextMonth}
+            className="p-1.5 hover:bg-white rounded-xl text-slate-500 hover:text-slate-900 transition shadow-none hover:shadow-sm"
+            aria-label="Bulan Selanjutnya"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* Right: Net Balance Pill & CTA */}
+        <div className="flex items-center gap-3">
+          {/* Total Balance Pill */}
+          <div className="bg-slate-50 border border-slate-200/90 rounded-2xl px-3.5 py-2 flex items-center gap-2.5 shadow-sm">
+            <div className="w-8 h-8 rounded-xl bg-emerald-100/80 text-emerald-800 flex items-center justify-center shrink-0">
+              <Wallet className="w-4 h-4" />
             </div>
             <div>
-              <p className="text-[11px] md:text-xs text-emerald-200 font-medium">Buku Kas</p>
-              <h2 className="text-sm md:text-base font-bold text-white leading-tight">
-                {household?.name || "Keluarga Cemara"}
-              </h2>
+              <div className="flex items-center gap-1.5">
+                <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+                  Total Saldo
+                </span>
+                <button
+                  onClick={() => setShowBalance(!showBalance)}
+                  className="text-slate-400 hover:text-slate-600 transition"
+                  aria-label="Toggle Saldo"
+                >
+                  {showBalance ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+                </button>
+              </div>
+              <p className="text-sm font-extrabold text-slate-900 tracking-tight leading-none">
+                {showBalance ? formatRupiah(totalBalance) : "••••••••••"}
+              </p>
             </div>
           </div>
 
-          {/* Month Picker in center for desktop, standard for mobile */}
-          <div className="hidden md:flex items-center justify-between bg-black/20 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/15">
+          {/* Quick Transaction Button (if provided) */}
+          {onOpenQuickModal && (
+            <button
+              onClick={onOpenQuickModal}
+              className="py-2.5 px-3.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold text-xs rounded-2xl shadow-md shadow-emerald-600/20 flex items-center gap-1.5 transition"
+            >
+              <Plus className="w-4 h-4 stroke-[2.5]" />
+              <span>Catat</span>
+            </button>
+          )}
+        </div>
+      </header>
+
+      {/* ========================================================================= */}
+      {/* 2. MOBILE / TABLET HEADER (Kept 100% intact on screens < lg)             */}
+      {/* ========================================================================= */}
+      <header className="block lg:hidden bg-gradient-to-b from-emerald-800 to-emerald-700 text-white pt-6 pb-6 px-4 md:px-8 rounded-b-[2rem] shadow-lg shadow-emerald-950/15 relative overflow-hidden">
+        {/* Background ambient accents */}
+        <div className="absolute top-0 right-0 w-72 h-72 bg-emerald-600/30 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-10 left-10 w-48 h-48 bg-emerald-500/20 rounded-full blur-2xl pointer-events-none" />
+
+        <div className="max-w-5xl mx-auto relative z-10 space-y-4">
+          {/* Top Profile & Household Row */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 md:w-11 md:h-11 rounded-2xl bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center p-1 shadow-inner shrink-0">
+                <img src="/logo.png" alt="Cemara" className="w-full h-full object-contain drop-shadow-sm" />
+              </div>
+              <div>
+                <p className="text-[11px] md:text-xs text-emerald-200 font-medium">Buku Kas</p>
+                <h2 className="text-sm md:text-base font-bold text-white leading-tight">
+                  {household?.name || "Keluarga Cemara"}
+                </h2>
+              </div>
+            </div>
+
+            {/* Profile Badge */}
+            <button
+              onClick={onOpenSettings}
+              className="flex items-center gap-2 px-3 py-1.5 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full border border-white/15 text-xs text-emerald-100 transition shadow-sm"
+            >
+              {userProfile?.photoURL ? (
+                <img
+                  src={userProfile.photoURL}
+                  alt="Profile"
+                  className="w-5 h-5 rounded-full object-cover border border-white/40"
+                />
+              ) : userProfile?.avatar ? (
+                <span className="text-sm leading-none">{userProfile.avatar}</span>
+              ) : (
+                <Users className="w-3.5 h-3.5" />
+              )}
+              <span className="font-medium truncate max-w-[120px]">
+                {userProfile?.displayName || "Saya"}
+              </span>
+            </button>
+          </div>
+
+          {/* Month Picker Row (Mobile) */}
+          <div className="flex items-center justify-between bg-black/15 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 w-fit mx-auto">
             <button
               onClick={handlePrevMonth}
               className="p-1 hover:bg-white/15 rounded-full text-emerald-200 hover:text-white transition"
@@ -69,7 +185,7 @@ export function Header({
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
-            <span className="text-xs md:text-sm font-semibold px-3 tracking-wide">
+            <span className="text-xs font-semibold px-3 tracking-wide">
               {getMonthName(currentMonth - 1)} {currentYear}
             </span>
             <button
@@ -81,66 +197,24 @@ export function Header({
             </button>
           </div>
 
-          {/* Profile Badge */}
-          <button
-            onClick={onOpenSettings}
-            className="flex items-center gap-2 px-3 py-1.5 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full border border-white/15 text-xs text-emerald-100 transition shadow-sm"
-          >
-            {userProfile?.photoURL ? (
-              <img
-                src={userProfile.photoURL}
-                alt="Profile"
-                className="w-5 h-5 rounded-full object-cover border border-white/40"
-              />
-            ) : userProfile?.avatar ? (
-              <span className="text-sm leading-none">{userProfile.avatar}</span>
-            ) : (
-              <Users className="w-3.5 h-3.5" />
-            )}
-            <span className="font-medium truncate max-w-[120px]">
-              {userProfile?.displayName || "Saya"}
-            </span>
-          </button>
-        </div>
-
-        {/* Month Picker Row (Mobile only) */}
-        <div className="flex md:hidden items-center justify-between bg-black/15 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 w-fit mx-auto">
-          <button
-            onClick={handlePrevMonth}
-            className="p-1 hover:bg-white/15 rounded-full text-emerald-200 hover:text-white transition"
-            aria-label="Bulan Sebelumnya"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-          <span className="text-xs font-semibold px-3 tracking-wide">
-            {getMonthName(currentMonth - 1)} {currentYear}
-          </span>
-          <button
-            onClick={handleNextMonth}
-            className="p-1 hover:bg-white/15 rounded-full text-emerald-200 hover:text-white transition"
-            aria-label="Bulan Selanjutnya"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
-
-        {/* Total Net Balance Card */}
-        <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-4 md:p-5 text-center shadow-inner max-w-xl mx-auto">
-          <div className="flex items-center justify-center gap-2 text-emerald-200 text-xs md:text-sm font-medium mb-1">
-            <span>Total Saldo Seluruh Dompet</span>
-            <button
-              onClick={() => setShowBalance(!showBalance)}
-              className="hover:text-white transition"
-              aria-label="Toggle Saldo"
-            >
-              {showBalance ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-            </button>
-          </div>
-          <div className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight">
-            {showBalance ? formatRupiah(totalBalance) : "••••••••••"}
+          {/* Total Net Balance Card */}
+          <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-4 md:p-5 text-center shadow-inner max-w-xl mx-auto">
+            <div className="flex items-center justify-center gap-2 text-emerald-200 text-xs md:text-sm font-medium mb-1">
+              <span>Total Saldo Seluruh Dompet</span>
+              <button
+                onClick={() => setShowBalance(!showBalance)}
+                className="hover:text-white transition"
+                aria-label="Toggle Saldo"
+              >
+                {showBalance ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+              </button>
+            </div>
+            <div className="text-2xl md:text-3xl font-extrabold tracking-tight">
+              {showBalance ? formatRupiah(totalBalance) : "••••••••••"}
+            </div>
           </div>
         </div>
-      </div>
-    </header>
+      </header>
+    </>
   );
 }
