@@ -14,7 +14,7 @@ interface SavingsGoalModalProps {
 }
 
 const ICONS = ["Target", "Car", "Plane", "Home", "GraduationCap", "Heart", "Gift", "Shield", "Laptop", "PiggyBank", "Umbrella", "Sparkles"];
-const COLORS = ["#1E4D2B", "#0F5132", "#6EE7B7", "#10B981", "#3B82F6", "#8B5CF6", "#F59E0B", "#EF4444"];
+const COLORS = ["#10B981", "#059669", "#047857", "#0D9488", "#3B82F6", "#8B5CF6", "#F59E0B", "#EF4444"];
 
 export function SavingsGoalModal({
   isOpen,
@@ -202,7 +202,7 @@ export function SavingsGoalModal({
                   onClick={() => setIcon(ic)}
                   className={`p-2.5 rounded-xl border flex items-center justify-center transition ${
                     icon === ic
-                      ? "border-[#1E4D2B] dark:border-emerald-400 bg-[#1E4D2B]/10 dark:bg-emerald-400/10 text-[#1E4D2B] dark:text-emerald-400 shadow-sm"
+                      ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 shadow-sm"
                       : "border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
                   }`}
                 >
@@ -247,9 +247,9 @@ export function SavingsGoalModal({
             <button
               type="submit"
               disabled={loading || !title.trim() || targetAmount <= 0}
-              className="flex-1 py-3 bg-gradient-to-r from-[#1E4D2B] via-[#166534] to-[#0F5132] hover:from-[#144222] hover:to-[#1E4D2B] active:scale-[0.98] text-white font-bold text-xs rounded-2xl shadow-lg shadow-emerald-950/25 border border-emerald-400/25 flex items-center justify-center gap-1.5 transition disabled:opacity-50"
+              className="flex-1 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 active:scale-[0.98] text-white font-bold text-xs rounded-2xl shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-1.5 transition disabled:opacity-50"
             >
-              <Check className="w-4 h-4 text-emerald-300" />
+              <Check className="w-4 h-4" />
               {loading ? "Menyimpan..." : goal ? "Simpan Perubahan" : "Buat Celengan"}
             </button>
           </div>

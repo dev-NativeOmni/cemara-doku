@@ -50,14 +50,14 @@ export function MonthSelector({
       <div className="flex items-center bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-1 shadow-sm">
         <button
           onClick={handlePrevMonth}
-          className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl text-slate-500 dark:text-slate-400 hover:text-[#1E4D2B] dark:hover:text-emerald-400 transition"
+          className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition"
           aria-label="Bulan Sebelumnya"
           title="Bulan Sebelumnya"
         >
           <ChevronLeft className="w-4 h-4" />
         </button>
 
-        <div className="flex items-center gap-1.5 px-3 py-0.5 text-xs font-bold text-[#1E4D2B] dark:text-emerald-300 select-none">
+        <div className="flex items-center gap-1.5 px-3 py-0.5 text-xs font-bold text-slate-800 dark:text-slate-200 select-none">
           <Calendar className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
           <span>
             {getMonthName(currentMonth - 1)} {currentYear}
@@ -66,7 +66,7 @@ export function MonthSelector({
 
         <button
           onClick={handleNextMonth}
-          className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl text-slate-500 dark:text-slate-400 hover:text-[#1E4D2B] dark:hover:text-emerald-400 transition"
+          className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition"
           aria-label="Bulan Selanjutnya"
           title="Bulan Selanjutnya"
         >
@@ -78,7 +78,7 @@ export function MonthSelector({
       {showReset && !isCurrentMonth && (
         <button
           onClick={handleResetToCurrent}
-          className="flex items-center gap-1 text-[11px] font-bold text-[#1E4D2B] dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/60 px-2.5 py-1.5 rounded-xl hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition shadow-sm animate-in fade-in"
+          className="flex items-center gap-1 text-[11px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/60 px-2.5 py-1.5 rounded-xl hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition shadow-sm animate-in fade-in"
           title="Kembali ke bulan sekarang"
         >
           <RotateCcw className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />

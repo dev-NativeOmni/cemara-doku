@@ -4,8 +4,8 @@
   "description": "Pencatatan keuangan rumah tangga bersama, ringan, cepat, dan terorganisir.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#F8F9FA",
-  "theme_color": "#1E4D2B",
+  "background_color": "#F8FAFC",
+  "theme_color": "#15803D",
   "icons": [
     {
       "src": "/favicon.ico",

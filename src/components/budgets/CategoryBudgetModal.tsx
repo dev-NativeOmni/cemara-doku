@@ -182,7 +182,7 @@ export function CategoryBudgetModal({
                   onClick={() => handleQuickSelect(val)}
                   className={`text-xs px-2.5 py-1.5 rounded-xl font-semibold border transition ${
                     numericAmount === val
-                      ? "bg-[#1E4D2B] dark:bg-emerald-500 text-white dark:text-slate-900 border-[#1E4D2B] dark:border-emerald-500 shadow-sm"
+                      ? "bg-emerald-600 text-white border-emerald-600 shadow-sm"
                       : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-emerald-400"
                   }`}
                 >
@@ -221,7 +221,7 @@ export function CategoryBudgetModal({
             <div
               className={`rounded-2xl p-3.5 border transition-all ${
                 remaining >= 0
-                  ? "bg-[#1E4D2B]/10 dark:bg-emerald-500/15 border-[#1E4D2B]/20 dark:border-emerald-500/25 text-[#1E4D2B] dark:text-emerald-300"
+                  ? "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200"
                   : "bg-rose-50/70 dark:bg-rose-950/40 border-rose-200/80 dark:border-rose-800 text-rose-900 dark:text-rose-300"
               }`}
             >
@@ -244,7 +244,7 @@ export function CategoryBudgetModal({
                       ? "bg-rose-600 dark:bg-rose-500"
                       : percentage >= 80
                       ? "bg-amber-500 dark:bg-amber-400"
-                      : "bg-[#1E4D2B] dark:bg-emerald-500"
+                      : "bg-emerald-600"
                   }`}
                   style={{ width: `${Math.min(percentage, 100)}%` }}
                 />
@@ -288,9 +288,9 @@ export function CategoryBudgetModal({
             <button
               type="submit"
               disabled={loading || numericAmount < 0}
-              className="flex-1 py-3 bg-gradient-to-r from-[#1E4D2B] via-[#166534] to-[#0F5132] hover:from-[#144222] hover:to-[#1E4D2B] active:scale-[0.98] text-white font-bold text-xs rounded-2xl shadow-lg shadow-emerald-950/25 border border-emerald-400/25 flex items-center justify-center gap-1.5 transition disabled:opacity-50"
+              className="flex-1 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 active:scale-[0.98] text-white font-bold text-xs rounded-2xl shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-1.5 transition disabled:opacity-50"
             >
-              <Check className="w-4 h-4 text-emerald-300" />
+              <Check className="w-4 h-4 text-white" />
               {loading ? "Menyimpan..." : "Simpan Anggaran"}
             </button>
           </div>

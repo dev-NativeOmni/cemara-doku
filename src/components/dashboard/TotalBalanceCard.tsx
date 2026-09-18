@@ -20,17 +20,17 @@ export function TotalBalanceCard({
   const [showBalance, setShowBalance] = useState(true);
 
   return (
-    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1E4D2B] via-[#166534] to-[#0F5132] text-white p-5 sm:p-6 shadow-xl shadow-emerald-950/20 border border-emerald-400/25 transition-all">
+    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-800 text-white p-5 sm:p-6 shadow-xl shadow-emerald-950/20 border border-emerald-500/30 transition-all">
       {/* Ambient background glow */}
-      <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-400/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-10 left-10 w-40 h-40 bg-teal-500/15 rounded-full blur-2xl pointer-events-none" />
+      <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-400/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-10 left-10 w-40 h-40 bg-teal-400/20 rounded-full blur-2xl pointer-events-none" />
 
       <div className="relative z-10 flex flex-col justify-between space-y-4">
         {/* Top Header Row */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-emerald-200">
-            <div className="w-8 h-8 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-emerald-400/25 shadow-inner">
-              <Wallet className="w-4 h-4 text-emerald-300" />
+          <div className="flex items-center gap-2 text-emerald-100">
+            <div className="w-8 h-8 rounded-xl bg-white/15 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-inner">
+              <Wallet className="w-4 h-4 text-emerald-100" />
             </div>
             <span className="text-xs sm:text-sm font-semibold tracking-wide">
               Total Saldo Seluruh Dompet

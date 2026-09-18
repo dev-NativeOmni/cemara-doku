@@ -140,7 +140,7 @@ export function DepositSavingsModal({
                   type="checkbox"
                   checked={deductWallet}
                   onChange={(e) => setDeductWallet(e.target.checked)}
-                  className="rounded text-[#1E4D2B] focus:ring-emerald-500"
+                  className="rounded text-emerald-600 focus:ring-emerald-500"
                 />
                 <span>Potong Saldo Dompet</span>
               </label>
@@ -174,9 +174,9 @@ export function DepositSavingsModal({
             <button
               type="submit"
               disabled={loading || numericAmount <= 0}
-              className="flex-1 py-3 bg-gradient-to-r from-[#1E4D2B] via-[#166534] to-[#0F5132] hover:from-[#144222] hover:to-[#1E4D2B] active:scale-[0.98] text-white font-bold text-xs rounded-2xl shadow-lg shadow-emerald-950/25 border border-emerald-400/25 flex items-center justify-center gap-1.5 transition disabled:opacity-50"
+              className="flex-1 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 active:scale-[0.98] text-white font-bold text-xs rounded-2xl shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-1.5 transition disabled:opacity-50"
             >
-              <Check className="w-4 h-4 text-emerald-300" />
+              <Check className="w-4 h-4" />
               {loading ? "Menyimpan..." : "Setor Tabungan"}
             </button>
           </div>

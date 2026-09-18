@@ -5,20 +5,11 @@
 :root {
   --background: #f8fafc;
   --foreground: #0f172a;
-  --primary-forest: #1e4d2b;
-  --primary-emerald: #0f5132;
-  --accent-mint: #6ee7b7;
-  --accent-sage: #a3e635;
-  --neutral-slate: #475569;
 }
 
 .dark {
-  --background: #061a10;
-  --foreground: #f8fafc;
-  --primary-forest: #0f5132;
-  --accent-mint: #6ee7b7;
-  --accent-sage: #a3e635;
-  --neutral-slate: #94a3b8;
+  --background: #090d16;
+  --foreground: #f1f5f9;
 }
 
 body {

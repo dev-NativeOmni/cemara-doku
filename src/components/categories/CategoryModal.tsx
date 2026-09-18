@@ -43,10 +43,9 @@ const AVAILABLE_ICONS = [
 ];
 
 const AVAILABLE_COLORS = [
-  "#1E4D2B", // Forest Green
-  "#0F5132", // Deep Emerald
   "#10B981", // Emerald
-  "#14B8A6", // Teal
+  "#059669", // Deep Emerald
+  "#0D9488", // Teal
   "#0EA5E9", // Sky
   "#2563EB", // Blue
   "#8B5CF6", // Purple
@@ -138,7 +137,7 @@ export function CategoryModal({
               onClick={() => setType("income")}
               className={`py-2 text-xs font-bold rounded-xl transition ${
                 type === "income"
-                  ? "bg-[#1E4D2B] dark:bg-emerald-400 text-white dark:text-slate-900 shadow-sm"
+                  ? "bg-emerald-600 text-white shadow-sm"
                   : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
               }`}
             >
@@ -171,7 +170,7 @@ export function CategoryModal({
                   onClick={() => setIcon(ic)}
                   className={`p-2 rounded-xl flex items-center justify-center transition ${
                     icon === ic
-                      ? "bg-[#1E4D2B] dark:bg-emerald-400 text-white dark:text-slate-900 shadow-sm"
+                      ? "bg-emerald-600 text-white shadow-sm"
                       : "text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800"
                   }`}
                 >
@@ -230,9 +229,9 @@ export function CategoryModal({
             <button
               type="submit"
               disabled={submitting || !name.trim()}
-              className="flex-1 py-3 bg-gradient-to-r from-[#1E4D2B] via-[#166534] to-[#0F5132] hover:from-[#144222] hover:to-[#1E4D2B] active:scale-[0.98] text-white font-bold text-xs rounded-2xl shadow-lg shadow-[#1E4D2B]/25 border border-emerald-400/25 flex items-center justify-center gap-1.5 transition disabled:opacity-50"
+              className="flex-1 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 active:scale-[0.98] text-white font-bold text-xs rounded-2xl shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-1.5 transition disabled:opacity-50"
             >
-              <Check className="w-4 h-4 text-emerald-300" />
+              <Check className="w-4 h-4" />
               <span>{submitting ? "Menyimpan..." : "Buat Kategori"}</span>
             </button>
           </div>

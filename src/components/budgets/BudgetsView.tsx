@@ -130,7 +130,7 @@ export function BudgetsView({
       <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-6 border border-slate-100 dark:border-slate-800 shadow-sm space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-xl bg-[#1E4D2B]/10 dark:bg-emerald-500/10 text-[#1E4D2B] dark:text-emerald-400 flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
               <PieChart className="w-5 h-5" />
             </div>
             <div>
@@ -164,7 +164,7 @@ export function BudgetsView({
                   ? "bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800"
                   : overallPercentage >= 80
                   ? "bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800"
-                  : "bg-[#1E4D2B]/10 dark:bg-emerald-500/15 text-[#1E4D2B] dark:text-emerald-300 border border-[#1E4D2B]/20 dark:border-emerald-500/25"
+                  : "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800"
               }`}
             >
               {totalBudgeted > 0 ? `${overallPercentage.toFixed(0)}% Terpakai` : "Belum Ada Pagu"}
@@ -194,7 +194,7 @@ export function BudgetsView({
             </span>
             <span
               className={`text-xs md:text-sm font-bold tracking-tight ${
-                overallRemaining >= 0 ? "text-[#1E4D2B] dark:text-emerald-300" : "text-rose-600 dark:text-rose-400"
+                overallRemaining >= 0 ? "text-emerald-700 dark:text-emerald-300" : "text-rose-600 dark:text-rose-400"
               }`}
             >
               {formatRupiah(Math.abs(overallRemaining))}
@@ -212,7 +212,7 @@ export function BudgetsView({
                     ? "bg-rose-500"
                     : overallPercentage >= 80
                     ? "bg-amber-500"
-                    : "bg-[#1E4D2B] dark:bg-emerald-500"
+                    : "bg-emerald-600"
                 }`}
                 style={{ width: `${Math.min(overallPercentage, 100)}%` }}
               />
@@ -234,7 +234,7 @@ export function BudgetsView({
               onClick={() => setFilterTab("all")}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap ${
                 filterTab === "all"
-                  ? "bg-[#1E4D2B] dark:bg-emerald-500 text-white dark:text-slate-900 shadow-sm"
+                  ? "bg-emerald-600 text-white shadow-sm"
                   : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800"
               }`}
             >
@@ -244,7 +244,7 @@ export function BudgetsView({
               onClick={() => setFilterTab("budgeted")}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap ${
                 filterTab === "budgeted"
-                  ? "bg-[#1E4D2B] dark:bg-emerald-500 text-white dark:text-slate-900 shadow-sm"
+                  ? "bg-emerald-600 text-white shadow-sm"
                   : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800"
               }`}
             >
@@ -254,7 +254,7 @@ export function BudgetsView({
               onClick={() => setFilterTab("unbudgeted")}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap ${
                 filterTab === "unbudgeted"
-                  ? "bg-[#1E4D2B] dark:bg-emerald-500 text-white dark:text-slate-900 shadow-sm"
+                  ? "bg-emerald-600 text-white shadow-sm"
                   : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800"
               }`}
             >
@@ -307,12 +307,12 @@ export function BudgetsView({
                     <div className="flex items-center gap-3 min-w-0">
                       <div
                         className="w-10 h-10 rounded-xl flex items-center justify-center text-white shrink-0 shadow-sm transition group-hover:scale-105"
-                        style={{ backgroundColor: cat.color || "#1E4D2B" }}
+                        style={{ backgroundColor: cat.color || "#10B981" }}
                       >
                         <DynamicIcon name={cat.icon} className="w-5 h-5" />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-xs md:text-sm font-bold text-slate-800 dark:text-slate-100 truncate group-hover:text-[#1E4D2B] dark:group-hover:text-emerald-300 transition">
+                        <p className="text-xs md:text-sm font-bold text-slate-800 dark:text-slate-100 truncate group-hover:text-emerald-700 dark:group-hover:text-emerald-300 transition">
                           {cat.name}
                         </p>
                         <p className="text-[11px] text-slate-400">
@@ -337,7 +337,7 @@ export function BudgetsView({
                                 ? "bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400"
                                 : percentage >= 80
                                 ? "bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400"
-                                : "bg-[#1E4D2B]/10 dark:bg-emerald-500/15 text-[#1E4D2B] dark:text-emerald-300"
+                                : "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300"
                             }`}
                           >
                             {percentage.toFixed(0)}% pagu
@@ -346,7 +346,7 @@ export function BudgetsView({
                       ) : (
                         <button
                           type="button"
-                          className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#1E4D2B]/10 dark:bg-emerald-500/10 text-[#1E4D2B] dark:text-emerald-300 hover:bg-[#1E4D2B]/20 rounded-xl text-xs font-bold transition"
+                          className="inline-flex items-center gap-1 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 rounded-xl text-xs font-bold transition"
                         >
                           <Plus className="w-3.5 h-3.5" />
                           <span>Atur Pagu</span>
@@ -366,7 +366,7 @@ export function BudgetsView({
                               ? "bg-rose-500"
                               : percentage >= 80
                               ? "bg-amber-500"
-                              : "bg-[#1E4D2B] dark:bg-emerald-500"
+                              : "bg-emerald-600"
                           }`}
                           style={{ width: `${Math.min(percentage, 100)}%` }}
                         />
@@ -377,7 +377,7 @@ export function BudgetsView({
                         </span>
                         <span
                           className={`font-bold ${
-                            remaining >= 0 ? "text-[#1E4D2B] dark:text-emerald-300" : "text-rose-600 dark:text-rose-400"
+                            remaining >= 0 ? "text-emerald-700 dark:text-emerald-300" : "text-rose-600 dark:text-rose-400"
                           }`}
                         >
                           {remaining >= 0

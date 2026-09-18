@@ -260,13 +260,13 @@ export function QuickTransactionModal({
                     onClick={() => setWalletId(w.id)}
                     className={`p-2.5 rounded-2xl border text-left flex items-center gap-2.5 transition ${
                       walletId === w.id
-                        ? "border-[#1E4D2B] dark:border-emerald-400 bg-[#1E4D2B]/10 dark:bg-emerald-400/10 text-[#1E4D2B] dark:text-emerald-300 ring-2 ring-emerald-400/20"
+                        ? "border-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-200 ring-2 ring-emerald-500/20"
                         : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 text-slate-700 dark:text-slate-300"
                     }`}
                   >
                     <div
                       className="w-8 h-8 rounded-xl flex items-center justify-center text-white shrink-0 shadow-sm"
-                      style={{ backgroundColor: w.color || "#1E4D2B" }}
+                      style={{ backgroundColor: w.color || "#10B981" }}
                     >
                       <DynamicIcon name={w.icon} className="w-4 h-4" />
                     </div>
@@ -292,13 +292,13 @@ export function QuickTransactionModal({
                       onClick={() => setDestWalletId(w.id)}
                       className={`p-2.5 rounded-2xl border text-left flex items-center gap-2.5 transition disabled:opacity-30 ${
                         destWalletId === w.id
-                          ? "border-[#1E4D2B] dark:border-emerald-400 bg-[#1E4D2B]/10 dark:bg-emerald-400/10 text-[#1E4D2B] dark:text-emerald-300 ring-2 ring-emerald-400/20"
+                          ? "border-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-200 ring-2 ring-emerald-500/20"
                           : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 text-slate-700 dark:text-slate-300"
                       }`}
                     >
                       <div
                         className="w-8 h-8 rounded-xl flex items-center justify-center text-white shrink-0 shadow-sm"
-                        style={{ backgroundColor: w.color || "#1E4D2B" }}
+                        style={{ backgroundColor: w.color || "#10B981" }}
                       >
                         <DynamicIcon name={w.icon} className="w-4 h-4" />
                       </div>
@@ -320,7 +320,7 @@ export function QuickTransactionModal({
                   <button
                     type="button"
                     onClick={() => setIsCategoryModalOpen(true)}
-                    className="text-[11px] font-bold text-[#1E4D2B] dark:text-emerald-400 hover:underline flex items-center gap-1"
+                    className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>Kategori Kustom</span>
@@ -335,13 +335,13 @@ export function QuickTransactionModal({
                       onClick={() => setCategoryId(c.id)}
                       className={`p-2.5 rounded-2xl border flex flex-col items-center justify-center text-center gap-1.5 transition ${
                         categoryId === c.id
-                          ? "border-[#1E4D2B] dark:border-emerald-400 bg-[#1E4D2B]/10 dark:bg-emerald-400/10 text-[#1E4D2B] dark:text-emerald-300 shadow-sm ring-2 ring-emerald-400/20"
+                          ? "border-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-200 shadow-sm ring-2 ring-emerald-500/20"
                           : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 text-slate-700 dark:text-slate-300"
                       }`}
                     >
                       <div
                         className="w-8 h-8 rounded-xl flex items-center justify-center text-white shrink-0 shadow-sm"
-                        style={{ backgroundColor: c.color || "#1E4D2B" }}
+                        style={{ backgroundColor: c.color || "#10B981" }}
                       >
                         <DynamicIcon name={c.icon} className="w-4 h-4" />
                       </div>
@@ -395,9 +395,9 @@ export function QuickTransactionModal({
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 py-3 bg-gradient-to-r from-[#1E4D2B] via-[#166534] to-[#0F5132] hover:from-[#144222] hover:to-[#1E4D2B] active:scale-[0.98] text-white font-bold text-xs rounded-2xl shadow-lg shadow-emerald-950/30 border border-emerald-400/25 flex items-center justify-center gap-1.5 transition disabled:opacity-50"
+                className="flex-1 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 active:scale-[0.98] text-white font-bold text-xs rounded-2xl shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-1.5 transition disabled:opacity-50"
               >
-                <CheckCircle2 className="w-4 h-4 text-emerald-300" />
+                <CheckCircle2 className="w-4 h-4 text-white" />
                 <span>{loading ? "Menyimpan..." : "Simpan Transaksi"}</span>
               </button>
             </div>

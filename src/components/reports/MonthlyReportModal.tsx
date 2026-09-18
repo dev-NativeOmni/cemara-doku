@@ -71,9 +71,9 @@ export function MonthlyReportModal({
           <div className="flex items-center gap-2">
             <button
               onClick={handlePrint}
-              className="px-3.5 py-1.5 bg-gradient-to-r from-[#1E4D2B] via-[#166534] to-[#0F5132] hover:from-[#144222] hover:to-[#1E4D2B] text-white rounded-xl text-xs font-bold shadow-md shadow-[#1E4D2B]/20 border border-emerald-400/25 flex items-center gap-1.5 transition"
+              className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-md shadow-emerald-600/20 flex items-center gap-1.5 transition"
             >
-              <Printer className="w-4 h-4 text-emerald-300" />
+              <Printer className="w-4 h-4" />
               <span>Cetak / Simpan PDF</span>
             </button>
             <button

@@ -14,7 +14,7 @@ interface WalletsViewProps {
 }
 
 const WALLET_ICONS = ["Wallet", "Landmark", "Smartphone", "PiggyBank", "CreditCard", "Coins", "Banknote", "DollarSign"];
-const WALLET_COLORS = ["#1E4D2B", "#0F5132", "#6EE7B7", "#10B981", "#2563EB", "#8B5CF6", "#F59E0B", "#EC4899"];
+const WALLET_COLORS = ["#10B981", "#059669", "#047857", "#0D9488", "#2563EB", "#8B5CF6", "#F59E0B", "#EC4899"];
 
 export function WalletsView({ wallets, onCreateWallet, onUpdateWallet }: WalletsViewProps) {
   const [modalOpen, setModalOpen] = useState(false);
@@ -101,9 +101,9 @@ export function WalletsView({ wallets, onCreateWallet, onUpdateWallet }: Wallets
         </div>
         <button
           onClick={handleOpenCreate}
-          className="flex items-center gap-1.5 px-3.5 py-2 bg-gradient-to-r from-[#1E4D2B] via-[#166534] to-[#0F5132] hover:from-[#144222] hover:to-[#1E4D2B] text-white rounded-2xl text-xs font-bold shadow-md shadow-emerald-950/20 border border-emerald-400/25 transition"
+          className="flex items-center gap-1.5 px-3.5 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-2xl text-xs font-bold shadow-md shadow-emerald-600/20 transition"
         >
-          <Plus className="w-4 h-4 text-emerald-300" />
+          <Plus className="w-4 h-4" />
           <span>Tambah Dompet</span>
         </button>
       </div>
@@ -119,7 +119,7 @@ export function WalletsView({ wallets, onCreateWallet, onUpdateWallet }: Wallets
               <div className="flex items-center gap-3">
                 <div
                   className="w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-sm shrink-0"
-                  style={{ backgroundColor: w.color || "#1E4D2B" }}
+                  style={{ backgroundColor: w.color || "#10B981" }}
                 >
                   <DynamicIcon name={w.icon} className="w-6 h-6" />
                 </div>
@@ -176,7 +176,7 @@ export function WalletsView({ wallets, onCreateWallet, onUpdateWallet }: Wallets
                   placeholder="Contoh: BCA, Dompet Tunai, GoPay"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs font-bold text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500/30"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs font-bold text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
                 />
               </div>
 
@@ -185,7 +185,7 @@ export function WalletsView({ wallets, onCreateWallet, onUpdateWallet }: Wallets
                 <select
                   value={type}
                   onChange={(e) => setType(e.target.value as WalletType)}
-                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs font-bold text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500/30"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs font-bold text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
                 >
                   <option value="bank">Bank / Rekening</option>
                   <option value="cash">Tunai / Cash</option>
@@ -219,7 +219,7 @@ export function WalletsView({ wallets, onCreateWallet, onUpdateWallet }: Wallets
                       onClick={() => setIcon(ic)}
                       className={`p-2.5 rounded-xl border flex items-center justify-center transition ${
                         icon === ic
-                          ? "border-[#1E4D2B] dark:border-emerald-400 bg-[#1E4D2B]/10 dark:bg-emerald-400/10 text-[#1E4D2B] dark:text-emerald-400"
+                          ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400"
                           : "border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
                       }`}
                     >
@@ -259,7 +259,7 @@ export function WalletsView({ wallets, onCreateWallet, onUpdateWallet }: Wallets
                 <button
                   type="submit"
                   disabled={submitting || !name.trim()}
-                  className="flex-1 py-3 bg-gradient-to-r from-[#1E4D2B] via-[#166534] to-[#0F5132] hover:from-[#144222] hover:to-[#1E4D2B] text-white font-bold text-xs rounded-2xl shadow-lg shadow-emerald-950/25 border border-emerald-400/25 transition disabled:opacity-50"
+                  className="flex-1 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-xs rounded-2xl shadow-lg shadow-emerald-600/25 transition disabled:opacity-50"
                 >
                   {submitting ? "Menyimpan..." : "Simpan Dompet"}
                 </button>

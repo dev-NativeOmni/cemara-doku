@@ -113,9 +113,9 @@ export function DailyTrendChart({
                   isHovered
                     ? "bg-rose-600 dark:bg-rose-500 shadow-md shadow-rose-600/30"
                     : isPeak
-                    ? "bg-emerald-500 dark:bg-emerald-400"
+                    ? "bg-emerald-600 dark:bg-emerald-500"
                     : amount > 0
-                    ? "bg-[#1E4D2B]/80 hover:bg-[#1E4D2B] dark:bg-emerald-600/70 dark:hover:bg-emerald-500"
+                    ? "bg-emerald-400/80 hover:bg-emerald-500 dark:bg-emerald-600/70 dark:hover:bg-emerald-500"
                     : "bg-slate-100 dark:bg-slate-800"
                 }`}
               />

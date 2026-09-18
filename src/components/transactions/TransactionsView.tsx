@@ -165,9 +165,9 @@ export function TransactionsView({
         {/* Filter Toggle */}
         <button
           onClick={() => setShowFilters(!showFilters)}
-          className={`p-2.5 rounded-2xl border flex items-center justify-center transition shadow-sm ${
+          className={`p-2.5 rounded-2xl border transition shadow-sm ${
             showFilters || hasActiveFilters
-              ? "bg-[#1E4D2B] dark:bg-emerald-500 text-white dark:text-slate-900 border-[#1E4D2B] dark:border-emerald-500 shadow-md shadow-emerald-950/20"
+              ? "bg-emerald-600 text-white border-emerald-600 shadow-md shadow-emerald-600/20"
               : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800"
           }`}
           title="Filter Transaksi"
@@ -179,7 +179,7 @@ export function TransactionsView({
         {onOpenReportModal && (
           <button
             onClick={onOpenReportModal}
-            className="p-2.5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-[#1E4D2B] dark:text-emerald-400 transition shadow-sm"
+            className="p-2.5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-emerald-600 dark:text-emerald-400 transition shadow-sm"
             title="Cetak Laporan Bulanan / PDF"
           >
             <FileText className="w-4 h-4" />
@@ -312,7 +312,7 @@ export function TransactionsView({
           <p className="text-sm text-slate-400">Tidak ada transaksi yang cocok dengan filter</p>
           <button
             onClick={onOpenQuickModal}
-            className="px-4 py-2 bg-gradient-to-r from-[#1E4D2B] via-[#166534] to-[#0F5132] hover:from-[#144222] hover:to-[#1E4D2B] text-white border border-emerald-400/20 rounded-xl text-xs font-semibold shadow-md shadow-emerald-950/20 transition"
+            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold shadow-md shadow-emerald-600/20 transition"
           >
             + Catat Transaksi Baru
           </button>
@@ -335,7 +335,7 @@ export function TransactionsView({
                     style={{
                       backgroundColor:
                         tx.type === "transfer"
-                          ? "#1E4D2B"
+                          ? "#059669"
                           : category?.color || (tx.type === "income" ? "#10B981" : "#EF4444"),
                     }}
                   >
@@ -370,7 +370,7 @@ export function TransactionsView({
                         ? "text-emerald-600 dark:text-emerald-400"
                         : tx.type === "expense"
                         ? "text-rose-600 dark:text-rose-400"
-                        : "text-[#1E4D2B] dark:text-emerald-400"
+                        : "text-emerald-700 dark:text-emerald-400"
                     }`}
                   >
                     {tx.type === "income" ? "+" : tx.type === "expense" ? "-" : ""}
