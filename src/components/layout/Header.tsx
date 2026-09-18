@@ -31,7 +31,7 @@ interface HeaderProps {
 }
 
 const TAB_TITLES: Record<NavigationTab, { title: string; subtitle: string }> = {
-  home: { title: "Beranda", subtitle: "Ringkasan & arus kas keuangan keluarga" },
+  home: { title: "Beranda", subtitle: "Ringkasan & arus kas keuangan" },
   transactions: { title: "Transaksi", subtitle: "Daftar pencatatan pemasukan, pengeluaran & transfer" },
   budgets: { title: "Anggaran", subtitle: "Target & pagu pengeluaran per kategori" },
   savings: { title: "Tabungan Impian", subtitle: "Target tabungan terencana & celengan masa depan" },
@@ -70,14 +70,15 @@ export function Header({
   };
 
   const currentTabMeta = TAB_TITLES[activeTab] || TAB_TITLES.home;
+  const isMonthSensitiveTab = ["home", "transactions", "budgets"].includes(activeTab);
 
   return (
-    <>
+    <header className="sticky top-0 z-30 w-full bg-white/95 dark:bg-[#07101E]/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 transition-colors duration-200">
       {/* ========================================================================= */}
-      {/* 1. DESKTOP TOP BAR (Only visible on lg: screens and above)               */}
+      {/* 1. DESKTOP NAVBAR (lg:flex)                                               */}
       {/* ========================================================================= */}
-      <header className="hidden lg:flex sticky top-0 z-20 bg-white/90 dark:bg-[#0A192F]/90 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 px-8 py-3.5 items-center justify-between">
-        {/* Left: Page Title & Breadcrumb */}
+      <div className="hidden lg:flex px-8 py-3.5 items-center justify-between">
+        {/* Left: Page Title & Subtitle */}
         <div>
           <h2 className="text-lg font-extrabold text-[#0F2C59] dark:text-amber-400 tracking-tight flex items-center gap-2">
             {currentTabMeta.title}
@@ -87,27 +88,29 @@ export function Header({
           </p>
         </div>
 
-        {/* Center: Month Navigator */}
-        <div className="flex items-center bg-slate-100/90 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 rounded-2xl p-1 shadow-sm">
-          <button
-            onClick={handlePrevMonth}
-            className="p-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-xl text-slate-500 dark:text-slate-400 hover:text-[#0F2C59] dark:hover:text-amber-400 transition shadow-none hover:shadow-sm"
-            aria-label="Bulan Sebelumnya"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-          <div className="flex items-center gap-1.5 px-3 text-xs font-bold text-[#0F2C59] dark:text-amber-300 select-none">
-            <Calendar className="w-3.5 h-3.5 text-amber-500" />
-            <span>{getMonthName(currentMonth - 1)} {currentYear}</span>
+        {/* Center: Month Navigator (Only shown on month-sensitive tabs) */}
+        {isMonthSensitiveTab && (
+          <div className="flex items-center bg-slate-100/90 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 rounded-2xl p-1 shadow-sm">
+            <button
+              onClick={handlePrevMonth}
+              className="p-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-xl text-slate-500 dark:text-slate-400 hover:text-[#0F2C59] dark:hover:text-amber-400 transition shadow-none hover:shadow-sm"
+              aria-label="Bulan Sebelumnya"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <div className="flex items-center gap-1.5 px-3 text-xs font-bold text-[#0F2C59] dark:text-amber-300 select-none">
+              <Calendar className="w-3.5 h-3.5 text-amber-500" />
+              <span>{getMonthName(currentMonth - 1)} {currentYear}</span>
+            </div>
+            <button
+              onClick={handleNextMonth}
+              className="p-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-xl text-slate-500 dark:text-slate-400 hover:text-[#0F2C59] dark:hover:text-amber-400 transition shadow-none hover:shadow-sm"
+              aria-label="Bulan Selanjutnya"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
           </div>
-          <button
-            onClick={handleNextMonth}
-            className="p-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-xl text-slate-500 dark:text-slate-400 hover:text-[#0F2C59] dark:hover:text-amber-400 transition shadow-none hover:shadow-sm"
-            aria-label="Bulan Selanjutnya"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
+        )}
 
         {/* Right: Net Balance Pill, PDF Report, Theme Toggle & CTA */}
         <div className="flex items-center gap-2.5">
@@ -166,102 +169,74 @@ export function Header({
             </button>
           )}
         </div>
-      </header>
+      </div>
 
       {/* ========================================================================= */}
-      {/* 2. MOBILE / TABLET HEADER (Navy Blue & Warm Gold Theme)                  */}
+      {/* 2. MOBILE / TABLET FIXED NAVBAR (lg:hidden)                               */}
       {/* ========================================================================= */}
-      <header className="block lg:hidden bg-gradient-to-b from-[#0F2C59] via-[#153464] to-[#1A365D] text-white pt-6 pb-6 px-4 md:px-8 rounded-b-[2rem] shadow-xl shadow-blue-950/25 relative overflow-hidden">
-        {/* Ambient Warm Gold & Royal Blue Accents */}
-        <div className="absolute top-0 right-0 w-72 h-72 bg-amber-500/15 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-10 left-10 w-48 h-48 bg-blue-600/20 rounded-full blur-2xl pointer-events-none" />
-
-        <div className="max-w-5xl mx-auto relative z-10 space-y-4">
-          {/* Top Profile & Household Row */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 md:w-11 md:h-11 rounded-2xl bg-white/15 backdrop-blur-md border border-amber-400/30 flex items-center justify-center p-1 shadow-inner shrink-0">
-                <img src="/logo.png" alt="Cemara" className="w-full h-full object-contain drop-shadow-sm" />
-              </div>
-              <div>
-                <p className="text-[11px] md:text-xs text-amber-300 font-semibold tracking-wide">Buku Kas</p>
-                <h2 className="text-sm md:text-base font-extrabold text-white leading-tight">
-                  {household?.name || "Keluarga Cemara"}
-                </h2>
-              </div>
-            </div>
-
-            {/* Profile & Dark Toggle Badge */}
-            <div className="flex items-center gap-2">
-              <button
-                onClick={toggleTheme}
-                className="p-2 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full border border-white/15 text-white transition"
-                title={isDark ? "Mode Terang" : "Mode Gelap"}
-              >
-                {isDark ? <Sun className="w-3.5 h-3.5 text-amber-300" /> : <Moon className="w-3.5 h-3.5 text-slate-200" />}
-              </button>
-
-              <button
-                onClick={onOpenSettings}
-                className="flex items-center gap-2 px-3 py-1.5 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full border border-amber-400/25 text-xs text-slate-100 transition shadow-sm"
-              >
-                {userProfile?.photoURL ? (
-                  <img
-                    src={userProfile.photoURL}
-                    alt="Profile"
-                    className="w-5 h-5 rounded-full object-cover border border-amber-400/60"
-                  />
-                ) : userProfile?.avatar ? (
-                  <span className="text-sm leading-none">{userProfile.avatar}</span>
-                ) : (
-                  <Users className="w-3.5 h-3.5 text-amber-300" />
-                )}
-                <span className="font-medium truncate max-w-[120px]">
-                  {userProfile?.displayName || "Saya"}
-                </span>
-              </button>
-            </div>
+      <div className="flex lg:hidden items-center justify-between px-4 py-3 max-w-5xl mx-auto">
+        {/* Left: App Logo & Household / App Name */}
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="w-9 h-9 rounded-xl bg-[#0F2C59] dark:bg-amber-400/10 border border-amber-400/30 flex items-center justify-center p-1 shadow-sm shrink-0">
+            <img src="/logo.png" alt="Cemara" className="w-full h-full object-contain" />
           </div>
-
-          {/* Month Picker Row (Mobile) */}
-          <div className="flex items-center justify-between bg-black/20 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-amber-400/20 w-fit mx-auto">
-            <button
-              onClick={handlePrevMonth}
-              className="p-1 hover:bg-white/15 rounded-full text-amber-300 hover:text-white transition"
-              aria-label="Bulan Sebelumnya"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <span className="text-xs font-bold px-3 tracking-wide text-white">
-              {getMonthName(currentMonth - 1)} {currentYear}
-            </span>
-            <button
-              onClick={handleNextMonth}
-              className="p-1 hover:bg-white/15 rounded-full text-amber-300 hover:text-white transition"
-              aria-label="Bulan Selanjutnya"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
-
-          {/* Total Net Balance Card */}
-          <div className="bg-white/10 backdrop-blur-md border border-amber-400/25 rounded-2xl p-4 md:p-5 text-center shadow-inner max-w-xl mx-auto">
-            <div className="flex items-center justify-center gap-2 text-amber-300 text-xs md:text-sm font-semibold mb-1">
-              <span>Total Saldo Seluruh Dompet</span>
-              <button
-                onClick={() => setShowBalance(!showBalance)}
-                className="hover:text-white transition"
-                aria-label="Toggle Saldo"
-              >
-                {showBalance ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-              </button>
-            </div>
-            <div className="text-2xl md:text-3xl font-extrabold tracking-tight text-white">
-              {showBalance ? formatRupiah(totalBalance) : "••••••••••"}
-            </div>
+          <div className="min-w-0">
+            <p className="text-[10px] text-amber-600 dark:text-amber-400 font-bold uppercase tracking-wider leading-none">
+              Buku Kas
+            </p>
+            <h2 className="text-sm font-extrabold text-[#0F2C59] dark:text-white truncate leading-tight mt-0.5">
+              {household?.name || "Keluarga Cemara"}
+            </h2>
           </div>
         </div>
-      </header>
-    </>
+
+        {/* Right: Controls & Profile Badge */}
+        <div className="flex items-center gap-2 shrink-0">
+          {/* PDF Report Button on mobile */}
+          {onOpenReportModal && isMonthSensitiveTab && (
+            <button
+              onClick={onOpenReportModal}
+              className="p-2 bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-[#0F2C59] dark:text-amber-400 border border-slate-200 dark:border-slate-700/80 transition"
+              title="Cetak Laporan Bulanan (PDF)"
+            >
+              <FileText className="w-4 h-4" />
+            </button>
+          )}
+
+          {/* Theme Toggle */}
+          <button
+            onClick={toggleTheme}
+            className="p-2 bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-700/80 text-slate-700 dark:text-slate-300 transition"
+            title={isDark ? "Mode Terang" : "Mode Gelap"}
+          >
+            {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-700" />}
+          </button>
+
+          {/* Profile Badge (Tap to go to Settings) */}
+          <button
+            onClick={onOpenSettings}
+            className="flex items-center gap-1.5 pl-1.5 pr-2.5 py-1 bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full border border-amber-400/30 text-xs text-slate-800 dark:text-slate-100 transition shadow-sm max-w-[130px]"
+            title="Buka Pengaturan Akun"
+          >
+            {userProfile?.photoURL ? (
+              <img
+                src={userProfile.photoURL}
+                alt="Profile"
+                className="w-6 h-6 rounded-full object-cover border border-amber-400/60 shrink-0"
+              />
+            ) : userProfile?.avatar ? (
+              <span className="text-sm leading-none shrink-0">{userProfile.avatar}</span>
+            ) : (
+              <div className="w-6 h-6 rounded-full bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center shrink-0">
+                <Users className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+              </div>
+            )}
+            <span className="font-semibold truncate text-[11px] text-[#0F2C59] dark:text-slate-200">
+              {userProfile?.displayName?.split(" ")[0] || "Saya"}
+            </span>
+          </button>
+        </div>
+      </div>
+    </header>
   );
 }

@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Category, Transaction, TransactionType, Wallet, UserProfile } from "@/types";
 import { formatRupiah, formatDateTime, formatDate } from "@/lib/formatters";
 import { DynamicIcon } from "../ui/DynamicIcon";
+import { MonthSelector } from "../ui/MonthSelector";
 import {
   Search,
   Download,
@@ -25,6 +26,9 @@ interface TransactionsViewProps {
   onOpenQuickModal: () => void;
   householdMembers?: UserProfile[];
   onOpenReportModal?: () => void;
+  currentMonth?: number;
+  currentYear?: number;
+  onMonthChange?: (month: number, year: number) => void;
 }
 
 export function TransactionsView({
@@ -35,6 +39,9 @@ export function TransactionsView({
   onOpenQuickModal,
   householdMembers = [],
   onOpenReportModal,
+  currentMonth,
+  currentYear,
+  onMonthChange,
 }: TransactionsViewProps) {
   const [search, setSearch] = useState("");
   const [selectedType, setSelectedType] = useState<string>("all");
@@ -122,7 +129,18 @@ export function TransactionsView({
     selectedMember !== "all";
 
   return (
-    <div className="space-y-4 pb-28 max-w-5xl lg:max-w-7xl mx-auto px-4 lg:px-0 pt-2 lg:pt-0">
+    <div className="space-y-4 pb-28 max-w-5xl lg:max-w-7xl mx-auto px-4 lg:px-0 pt-3 lg:pt-0">
+      {/* Month Selector on Mobile / Tablet */}
+      {currentMonth && currentYear && onMonthChange && (
+        <div className="block lg:hidden">
+          <MonthSelector
+            currentMonth={currentMonth}
+            currentYear={currentYear}
+            onMonthChange={onMonthChange}
+          />
+        </div>
+      )}
+
       {/* Search & Actions Bar */}
       <div className="flex items-center gap-2">
         <div className="relative flex-1">

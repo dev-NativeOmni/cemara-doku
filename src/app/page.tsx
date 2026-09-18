@@ -219,7 +219,7 @@ export default function HomePage() {
         />
 
         {/* Main Content Area */}
-        <main className="flex-1 w-full max-w-5xl lg:max-w-7xl mx-auto -mt-2 lg:mt-0 lg:p-8">
+        <main className="flex-1 w-full max-w-5xl lg:max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
           {activeTab === "home" && (
             <DashboardView
               wallets={wallets}
@@ -227,6 +227,8 @@ export default function HomePage() {
               transactions={transactions}
               currentMonth={currentMonth}
               currentYear={currentYear}
+              totalBalance={totalBalance}
+              onMonthChange={handleMonthChange}
               onOpenQuickModal={() => setQuickModalOpen(true)}
               onNavigateToTransactions={() => setActiveTab("transactions")}
               onNavigateToWallets={() => setActiveTab("wallets")}
@@ -240,6 +242,9 @@ export default function HomePage() {
               transactions={transactions}
               wallets={wallets}
               categories={categories}
+              currentMonth={currentMonth}
+              currentYear={currentYear}
+              onMonthChange={handleMonthChange}
               onDeleteTransaction={handleDeleteTransaction}
               onOpenQuickModal={() => setQuickModalOpen(true)}
               householdMembers={householdMembers}
@@ -254,6 +259,7 @@ export default function HomePage() {
               transactions={transactions}
               currentMonth={currentMonth}
               currentYear={currentYear}
+              onMonthChange={handleMonthChange}
               onSaveBudget={handleSaveBudget}
               onDeleteBudget={handleDeleteBudget}
               onCopyPreviousMonth={handleCopyPreviousMonthBudgets}

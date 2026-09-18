@@ -5,6 +5,7 @@ import { Budget, Category, Transaction } from "@/types";
 import { formatRupiah, getMonthName } from "@/lib/formatters";
 import { DynamicIcon } from "../ui/DynamicIcon";
 import { CategoryBudgetModal } from "./CategoryBudgetModal";
+import { MonthSelector } from "../ui/MonthSelector";
 import {
   PieChart,
   Plus,
@@ -28,6 +29,7 @@ interface BudgetsViewProps {
   onSaveBudget: (categoryId: string, limitAmount: number) => Promise<void>;
   onDeleteBudget?: (categoryId: string) => Promise<void>;
   onCopyPreviousMonth?: () => Promise<number>;
+  onMonthChange?: (month: number, year: number) => void;
 }
 
 export function BudgetsView({
@@ -39,6 +41,7 @@ export function BudgetsView({
   onSaveBudget,
   onDeleteBudget,
   onCopyPreviousMonth,
+  onMonthChange,
 }: BudgetsViewProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterTab, setFilterTab] = useState<"all" | "budgeted" | "unbudgeted">("all");
@@ -111,7 +114,18 @@ export function BudgetsView({
   };
 
   return (
-    <div className="space-y-5 pb-28 max-w-5xl lg:max-w-7xl mx-auto px-4 lg:px-0 pt-2 lg:pt-0">
+    <div className="space-y-5 pb-28 max-w-5xl lg:max-w-7xl mx-auto px-4 lg:px-0 pt-3 lg:pt-0">
+      {/* Month Selector on Mobile / Tablet */}
+      {onMonthChange && (
+        <div className="block lg:hidden">
+          <MonthSelector
+            currentMonth={currentMonth}
+            currentYear={currentYear}
+            onMonthChange={onMonthChange}
+          />
+        </div>
+      )}
+
       {/* Overall Budget Overview Card */}
       <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-6 border border-slate-100 dark:border-slate-800 shadow-sm space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-2">

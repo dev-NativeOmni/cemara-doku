@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Wallet, WalletType } from "@/types";
 import { formatRupiah } from "@/lib/formatters";
 import { DynamicIcon } from "../ui/DynamicIcon";
+import { TotalBalanceCard } from "../dashboard/TotalBalanceCard";
 import { Plus, Wallet as WalletIcon, Edit2, Archive, X, CheckCircle2 } from "lucide-react";
 
 interface WalletsViewProps {
@@ -81,9 +82,16 @@ export function WalletsView({ wallets, onCreateWallet, onUpdateWallet }: Wallets
   };
 
   return (
-    <div className="space-y-5 pb-28 max-w-5xl lg:max-w-7xl mx-auto px-4 lg:px-0 pt-2 lg:pt-0">
+    <div className="space-y-5 pb-28 max-w-5xl lg:max-w-7xl mx-auto px-4 lg:px-0 pt-3 lg:pt-0">
+      {/* Total Balance Hero Card */}
+      <TotalBalanceCard
+        totalBalance={totalBalance}
+        walletCount={wallets.length}
+        onOpenQuickModal={handleOpenCreate}
+      />
+
       {/* Header Actions */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between pt-1">
         <div>
           <h3 className="text-sm md:text-base font-bold text-slate-800 dark:text-white">Daftar Dompet</h3>
           <p className="text-xs text-slate-400">Total {wallets.length} sumber dana aktif</p>

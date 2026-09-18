@@ -6,6 +6,8 @@ import { formatRupiah, formatDateTime } from "@/lib/formatters";
 import { DynamicIcon } from "../ui/DynamicIcon";
 import { ExpenseDonutChart, CategoryBreakdownItem } from "../analytics/ExpenseDonutChart";
 import { DailyTrendChart } from "../analytics/DailyTrendChart";
+import { MonthSelector } from "../ui/MonthSelector";
+import { TotalBalanceCard } from "./TotalBalanceCard";
 import {
   TrendingDown,
   TrendingUp,
@@ -27,6 +29,8 @@ interface DashboardViewProps {
   transactions: Transaction[];
   currentMonth: number;
   currentYear: number;
+  totalBalance: number;
+  onMonthChange?: (month: number, year: number) => void;
   onOpenQuickModal: () => void;
   onNavigateToTransactions: () => void;
   onNavigateToWallets: () => void;
@@ -40,6 +44,8 @@ export function DashboardView({
   transactions,
   currentMonth,
   currentYear,
+  totalBalance,
+  onMonthChange,
   onOpenQuickModal,
   onNavigateToTransactions,
   onNavigateToWallets,
@@ -114,7 +120,26 @@ export function DashboardView({
   const recentTransactions = transactions.slice(0, 8);
 
   return (
-    <div className="space-y-6 pb-28 max-w-5xl lg:max-w-7xl mx-auto px-4 lg:px-0 pt-2 lg:pt-0">
+    <div className="space-y-5 pb-28 max-w-5xl lg:max-w-7xl mx-auto px-4 lg:px-0 pt-3 lg:pt-0">
+      {/* Month Selector on Mobile / Tablet (lg:hidden because desktop has it in the top navbar) */}
+      {onMonthChange && (
+        <div className="block lg:hidden">
+          <MonthSelector
+            currentMonth={currentMonth}
+            currentYear={currentYear}
+            onMonthChange={onMonthChange}
+          />
+        </div>
+      )}
+
+      {/* Dedicated Total Saldo Hero Card */}
+      <TotalBalanceCard
+        totalBalance={totalBalance}
+        walletCount={wallets.length}
+        onOpenQuickModal={onOpenQuickModal}
+        onNavigateToWallets={onNavigateToWallets}
+      />
+
       {/* Top Cashflow Summary Bento (3 cols on md/lg, 2 cols on mobile) */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
         {/* Income Card */}
