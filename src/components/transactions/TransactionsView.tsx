@@ -132,7 +132,7 @@ export function TransactionsView({
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Cari transaksi, kategori, atau catatan..."
-            className="w-full pl-10 pr-9 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-xs text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 shadow-sm"
+            className="w-full pl-10 pr-9 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-xs text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500/30 shadow-sm"
           />
           {search && (
             <button
@@ -149,7 +149,7 @@ export function TransactionsView({
           onClick={() => setShowFilters(!showFilters)}
           className={`p-2.5 rounded-2xl border flex items-center justify-center transition shadow-sm ${
             showFilters || hasActiveFilters
-              ? "bg-emerald-600 text-white border-emerald-600 shadow-md shadow-emerald-600/20"
+              ? "bg-[#0F2C59] dark:bg-amber-400 text-white dark:text-slate-900 border-[#0F2C59] dark:border-amber-400 shadow-md shadow-[#0F2C59]/20"
               : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800"
           }`}
           title="Filter Transaksi"
@@ -161,7 +161,7 @@ export function TransactionsView({
         {onOpenReportModal && (
           <button
             onClick={onOpenReportModal}
-            className="p-2.5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-emerald-700 dark:text-emerald-400 transition shadow-sm"
+            className="p-2.5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-[#0F2C59] dark:text-amber-400 transition shadow-sm"
             title="Cetak Laporan Bulanan / PDF"
           >
             <FileText className="w-4 h-4" />
@@ -294,7 +294,7 @@ export function TransactionsView({
           <p className="text-sm text-slate-400">Tidak ada transaksi yang cocok dengan filter</p>
           <button
             onClick={onOpenQuickModal}
-            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold shadow-md shadow-emerald-600/20 transition"
+            className="px-4 py-2 bg-gradient-to-r from-[#0F2C59] via-[#153464] to-[#1A365D] hover:from-[#0A1F3F] hover:to-[#0F2C59] text-white border border-amber-400/20 rounded-xl text-xs font-semibold shadow-md shadow-[#0F2C59]/20 transition"
           >
             + Catat Transaksi Baru
           </button>
@@ -317,7 +317,7 @@ export function TransactionsView({
                     style={{
                       backgroundColor:
                         tx.type === "transfer"
-                          ? "#4F46E5"
+                          ? "#0F2C59"
                           : category?.color || (tx.type === "income" ? "#10B981" : "#EF4444"),
                     }}
                   >
@@ -352,7 +352,7 @@ export function TransactionsView({
                         ? "text-emerald-600 dark:text-emerald-400"
                         : tx.type === "expense"
                         ? "text-rose-600 dark:text-rose-400"
-                        : "text-indigo-600 dark:text-indigo-400"
+                        : "text-[#0F2C59] dark:text-amber-400"
                     }`}
                   >
                     {tx.type === "income" ? "+" : tx.type === "expense" ? "-" : ""}

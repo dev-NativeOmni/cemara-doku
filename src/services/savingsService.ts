@@ -115,3 +115,4 @@ export async function deleteSavingsGoal(
   const goalRef = doc(db, `households/${householdId}/savingsGoals/${goalId}`);
   await deleteDoc(goalRef);
 }
+

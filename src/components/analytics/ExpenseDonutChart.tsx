@@ -145,3 +145,4 @@ export function ExpenseDonutChart({ data, totalExpense }: ExpenseDonutChartProps
     </div>
   );
 }
+

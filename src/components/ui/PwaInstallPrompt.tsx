@@ -54,7 +54,7 @@ export function PwaInstallPrompt() {
   return (
     <div className="fixed bottom-20 lg:bottom-6 right-4 left-4 sm:left-auto sm:max-w-sm z-40 animate-in slide-in-from-bottom duration-300">
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-4 shadow-2xl flex items-center gap-3">
-        <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-100 dark:border-emerald-800 p-1.5 flex items-center justify-center shrink-0">
+        <div className="w-12 h-12 rounded-2xl bg-slate-50 dark:bg-[#0F2C59]/40 border border-slate-200 dark:border-amber-400/20 p-1.5 flex items-center justify-center shrink-0">
           <img src="/logo.png" alt="Cemara" className="w-full h-full object-contain drop-shadow" />
         </div>
 
@@ -68,9 +68,9 @@ export function PwaInstallPrompt() {
           <div className="flex items-center gap-2 mt-2.5">
             <button
               onClick={handleInstall}
-              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-md shadow-emerald-600/20 flex items-center gap-1.5 transition"
+              className="px-3 py-1.5 bg-gradient-to-r from-[#0F2C59] via-[#153464] to-[#1A365D] hover:from-[#0A1F3F] hover:to-[#0F2C59] text-white rounded-xl text-xs font-bold shadow-md shadow-[#0F2C59]/20 border border-amber-400/25 flex items-center gap-1.5 transition"
             >
-              <Download className="w-3.5 h-3.5" />
+              <Download className="w-3.5 h-3.5 text-amber-300" />
               <span>Pasang</span>
             </button>
             <button
@@ -92,3 +92,4 @@ export function PwaInstallPrompt() {
     </div>
   );
 }
+

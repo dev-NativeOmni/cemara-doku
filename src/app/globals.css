@@ -3,13 +3,19 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #f8fafc;
+  --background: #f8f9fa;
   --foreground: #0f172a;
+  --primary-navy: #0f2c59;
+  --primary-royal: #1a365d;
+  --accent-gold: #d4af37;
+  --accent-gold-hover: #c5a059;
 }
 
 .dark {
-  --background: #090d16;
-  --foreground: #f1f5f9;
+  --background: #07101e;
+  --foreground: #f8fafc;
+  --primary-navy: #1a365d;
+  --accent-gold: #d4af37;
 }
 
 body {

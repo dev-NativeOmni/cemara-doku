@@ -113,7 +113,7 @@ export function DepositSavingsModal({
                   setAmountStr(raw ? Number(raw).toLocaleString("id-ID") : "");
                 }}
                 placeholder="0"
-                className="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-white font-bold text-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500"
+                className="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-white font-bold text-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500"
               />
             </div>
           </div>
@@ -125,7 +125,7 @@ export function DepositSavingsModal({
                 key={val}
                 type="button"
                 onClick={() => setAmountStr(val.toLocaleString("id-ID"))}
-                className="text-xs px-2.5 py-1 rounded-xl font-semibold border border-slate-200 dark:border-slate-700 hover:border-emerald-300 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 transition"
+                className="text-xs px-2.5 py-1 rounded-xl font-semibold border border-slate-200 dark:border-slate-700 hover:border-amber-400/50 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 transition"
               >
                 +{formatRupiah(val)}
               </button>
@@ -140,7 +140,7 @@ export function DepositSavingsModal({
                   type="checkbox"
                   checked={deductWallet}
                   onChange={(e) => setDeductWallet(e.target.checked)}
-                  className="rounded text-emerald-600 focus:ring-emerald-500"
+                  className="rounded text-[#0F2C59] focus:ring-amber-500"
                 />
                 <span>Potong Saldo Dompet</span>
               </label>
@@ -150,7 +150,7 @@ export function DepositSavingsModal({
               <select
                 value={selectedWalletId}
                 onChange={(e) => setSelectedWalletId(e.target.value)}
-                className="w-full p-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                className="w-full p-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500/20"
               >
                 {wallets.map((w) => (
                   <option key={w.id} value={w.id}>
@@ -174,9 +174,9 @@ export function DepositSavingsModal({
             <button
               type="submit"
               disabled={loading || numericAmount <= 0}
-              className="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-bold text-xs rounded-2xl shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-1.5 transition disabled:opacity-50"
+              className="flex-1 py-3 bg-gradient-to-r from-[#0F2C59] via-[#153464] to-[#1A365D] hover:from-[#0A1F3F] hover:to-[#0F2C59] active:scale-[0.98] text-white font-bold text-xs rounded-2xl shadow-lg shadow-[#0F2C59]/25 border border-amber-400/25 flex items-center justify-center gap-1.5 transition disabled:opacity-50"
             >
-              <Check className="w-4 h-4" />
+              <Check className="w-4 h-4 text-amber-300" />
               {loading ? "Menyimpan..." : "Setor Tabungan"}
             </button>
           </div>
@@ -185,3 +185,4 @@ export function DepositSavingsModal({
     </div>
   );
 }
+

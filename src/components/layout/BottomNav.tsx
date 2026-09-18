@@ -19,7 +19,7 @@ export function BottomNav({ activeTab, onSelectTab, onOpenQuickModal }: BottomNa
           onClick={() => onSelectTab("home")}
           className={`flex flex-col items-center justify-center flex-1 py-1 transition ${
             activeTab === "home"
-              ? "text-emerald-700 dark:text-emerald-400 font-bold"
+              ? "text-[#0F2C59] dark:text-amber-400 font-bold"
               : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
           }`}
         >
@@ -32,7 +32,7 @@ export function BottomNav({ activeTab, onSelectTab, onOpenQuickModal }: BottomNa
           onClick={() => onSelectTab("transactions")}
           className={`flex flex-col items-center justify-center flex-1 py-1 transition ${
             activeTab === "transactions"
-              ? "text-emerald-700 dark:text-emerald-400 font-bold"
+              ? "text-[#0F2C59] dark:text-amber-400 font-bold"
               : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
           }`}
         >
@@ -44,7 +44,7 @@ export function BottomNav({ activeTab, onSelectTab, onOpenQuickModal }: BottomNa
         <div className="flex-1 flex justify-center -mt-6">
           <button
             onClick={onOpenQuickModal}
-            className="w-13 h-13 rounded-full bg-gradient-to-tr from-emerald-700 to-emerald-500 text-white flex items-center justify-center shadow-lg shadow-emerald-700/30 active:scale-95 hover:scale-105 transition transform border-4 border-white dark:border-slate-900"
+            className="w-13 h-13 rounded-full bg-gradient-to-tr from-[#0F2C59] via-[#153464] to-[#1A365D] text-amber-300 flex items-center justify-center shadow-lg shadow-[#0F2C59]/40 active:scale-95 hover:scale-105 transition transform border-4 border-white dark:border-slate-900"
             aria-label="Catat Transaksi Baru"
           >
             <Plus className="w-7 h-7 stroke-[2.5]" />
@@ -56,7 +56,7 @@ export function BottomNav({ activeTab, onSelectTab, onOpenQuickModal }: BottomNa
           onClick={() => onSelectTab("budgets")}
           className={`flex flex-col items-center justify-center flex-1 py-1 transition ${
             activeTab === "budgets"
-              ? "text-emerald-700 dark:text-emerald-400 font-bold"
+              ? "text-[#0F2C59] dark:text-amber-400 font-bold"
               : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
           }`}
         >
@@ -69,7 +69,7 @@ export function BottomNav({ activeTab, onSelectTab, onOpenQuickModal }: BottomNa
           onClick={() => onSelectTab("savings")}
           className={`flex flex-col items-center justify-center flex-1 py-1 transition ${
             activeTab === "savings"
-              ? "text-emerald-700 dark:text-emerald-400 font-bold"
+              ? "text-[#0F2C59] dark:text-amber-400 font-bold"
               : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
           }`}
         >
@@ -82,7 +82,7 @@ export function BottomNav({ activeTab, onSelectTab, onOpenQuickModal }: BottomNa
           onClick={() => onSelectTab("wallets")}
           className={`flex flex-col items-center justify-center flex-1 py-1 transition ${
             activeTab === "wallets"
-              ? "text-emerald-700 dark:text-emerald-400 font-bold"
+              ? "text-[#0F2C59] dark:text-amber-400 font-bold"
               : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
           }`}
         >

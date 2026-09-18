@@ -115,7 +115,7 @@ export function DailyTrendChart({
                     : isPeak
                     ? "bg-amber-500 dark:bg-amber-400"
                     : amount > 0
-                    ? "bg-emerald-500/80 hover:bg-emerald-600 dark:bg-emerald-600/80"
+                    ? "bg-[#0F2C59]/80 hover:bg-[#0F2C59] dark:bg-amber-500/70 dark:hover:bg-amber-500"
                     : "bg-slate-100 dark:bg-slate-800"
                 }`}
               />
@@ -133,3 +133,4 @@ export function DailyTrendChart({
     </div>
   );
 }
+

@@ -68,7 +68,7 @@ export function DesktopSidebar({
         {/* Brand Header */}
         <div className="flex items-center justify-between px-2">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-100/80 dark:border-emerald-800 p-1.5 flex items-center justify-center shrink-0 shadow-sm">
+            <div className="w-10 h-10 rounded-2xl bg-slate-50 dark:bg-[#0F2C59]/40 border border-slate-200/80 dark:border-amber-400/20 p-1.5 flex items-center justify-center shrink-0 shadow-sm">
               <img src="/logo.png" alt="Cemara" className="w-full h-full object-contain drop-shadow" />
             </div>
             <div className="min-w-0">
@@ -94,10 +94,10 @@ export function DesktopSidebar({
         {/* Primary CTA Button */}
         <button
           onClick={onOpenQuickModal}
-          className="w-full py-3 px-4 bg-gradient-to-r from-emerald-700 to-emerald-600 hover:from-emerald-800 hover:to-emerald-700 text-white font-bold text-xs rounded-2xl shadow-lg shadow-emerald-700/20 flex items-center justify-center gap-2 active:scale-[0.98] transition"
+          className="w-full py-3 px-4 bg-gradient-to-r from-[#0F2C59] via-[#153464] to-[#1A365D] hover:from-[#0A1F3F] hover:to-[#0F2C59] text-white font-bold text-xs rounded-2xl shadow-lg shadow-[#0F2C59]/25 border border-amber-400/25 flex items-center justify-center gap-2 active:scale-[0.98] transition group"
         >
-          <Plus className="w-4 h-4 stroke-[2.5]" />
-          <span>Catat Transaksi</span>
+          <Plus className="w-4 h-4 stroke-[2.5] text-amber-300 group-hover:rotate-90 transition-transform duration-300" />
+          <span className="tracking-wide">Catat Transaksi</span>
         </button>
 
         {/* Navigation List */}
@@ -114,14 +114,14 @@ export function DesktopSidebar({
                 onClick={() => onSelectTab(item.id)}
                 className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-bold transition ${
                   isActive
-                    ? "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 shadow-sm"
+                    ? "bg-[#0F2C59]/10 dark:bg-amber-400/10 text-[#0F2C59] dark:text-amber-300 shadow-sm border border-[#0F2C59]/15 dark:border-amber-400/20"
                     : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <Icon
                     className={`w-4 h-4 ${
-                      isActive ? "text-emerald-700 dark:text-emerald-400 stroke-[2.5]" : "text-slate-400"
+                      isActive ? "text-[#0F2C59] dark:text-amber-400 stroke-[2.5]" : "text-slate-400"
                     }`}
                   />
                   <span>{item.label}</span>
@@ -143,17 +143,17 @@ export function DesktopSidebar({
         {household?.inviteCode && (
           <div
             onClick={handleCopyInviteCode}
-            className="p-2.5 bg-white dark:bg-slate-800 rounded-xl border border-slate-200/80 dark:border-slate-700 flex items-center justify-between cursor-pointer hover:border-emerald-300 dark:hover:border-emerald-500 transition group"
+            className="p-2.5 bg-white dark:bg-slate-800 rounded-xl border border-slate-200/80 dark:border-slate-700 flex items-center justify-between cursor-pointer hover:border-amber-400/60 dark:hover:border-amber-400/60 transition group"
             title="Klik untuk menyalin kode undangan keluarga"
           >
             <div className="min-w-0">
               <span className="text-[10px] text-slate-400 font-medium block">Kode Undangan:</span>
-              <span className="text-xs font-mono font-bold text-emerald-800 dark:text-emerald-300 tracking-wider">
+              <span className="text-xs font-mono font-bold text-[#0F2C59] dark:text-amber-300 tracking-wider">
                 {household.inviteCode}
               </span>
             </div>
-            <div className="p-1 text-slate-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition">
-              {copiedCode ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+            <div className="p-1 text-slate-400 group-hover:text-amber-500 dark:group-hover:text-amber-400 transition">
+              {copiedCode ? <Check className="w-3.5 h-3.5 text-amber-500" /> : <Copy className="w-3.5 h-3.5" />}
             </div>
           </div>
         )}
@@ -168,10 +168,10 @@ export function DesktopSidebar({
               <img
                 src={userProfile.photoURL}
                 alt="Profile"
-                className="w-9 h-9 rounded-full object-cover border border-slate-200 dark:border-slate-700 shadow-sm shrink-0 group-hover:border-emerald-500 transition"
+                className="w-9 h-9 rounded-full object-cover border border-slate-200 dark:border-slate-700 shadow-sm shrink-0 group-hover:border-amber-400 transition"
               />
             ) : userProfile?.avatar ? (
-              <div className="w-9 h-9 rounded-full bg-emerald-100 dark:bg-emerald-900/60 flex items-center justify-center text-sm shadow-sm shrink-0">
+              <div className="w-9 h-9 rounded-full bg-amber-50 dark:bg-amber-950/60 border border-amber-200/50 dark:border-amber-800/40 flex items-center justify-center text-sm shadow-sm shrink-0">
                 {userProfile.avatar}
               </div>
             ) : (
@@ -180,11 +180,11 @@ export function DesktopSidebar({
               </div>
             )}
             <div className="min-w-0">
-              <p className="text-xs font-bold text-slate-800 dark:text-white truncate group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition">
+              <p className="text-xs font-bold text-slate-800 dark:text-white truncate group-hover:text-[#0F2C59] dark:group-hover:text-amber-300 transition">
                 {userProfile?.displayName || user?.email?.split("@")[0] || "Pengguna"}
               </p>
               <p className="text-[10px] text-slate-400 truncate flex items-center gap-1">
-                <ShieldCheck className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+                <ShieldCheck className="w-3 h-3 text-amber-500" />
                 {userProfile?.role === "owner" ? "Kepala Keluarga" : "Anggota"}
               </p>
             </div>
