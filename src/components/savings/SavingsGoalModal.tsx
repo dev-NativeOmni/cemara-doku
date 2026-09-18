@@ -14,7 +14,7 @@ interface SavingsGoalModalProps {
 }
 
 const ICONS = ["Target", "Car", "Plane", "Home", "GraduationCap", "Heart", "Gift", "Shield", "Laptop", "PiggyBank", "Umbrella", "Sparkles"];
-const COLORS = ["#10B981", "#3B82F6", "#8B5CF6", "#EC4899", "#F59E0B", "#EF4444", "#06B6D4", "#6366F1"];
+const COLORS = ["#1E4D2B", "#0F5132", "#6EE7B7", "#10B981", "#3B82F6", "#8B5CF6", "#F59E0B", "#EF4444"];
 
 export function SavingsGoalModal({
   isOpen,
@@ -135,7 +135,7 @@ export function SavingsGoalModal({
               placeholder="Contoh: Liburan Akhir Tahun, Dana Darurat"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500"
+              className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500"
             />
           </div>
 
@@ -154,7 +154,7 @@ export function SavingsGoalModal({
                 const raw = e.target.value.replace(/\D/g, "");
                 setTargetAmountStr(raw ? Number(raw).toLocaleString("id-ID") : "");
               }}
-              className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500"
+              className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500"
             />
           </div>
 
@@ -172,7 +172,7 @@ export function SavingsGoalModal({
                 const raw = e.target.value.replace(/\D/g, "");
                 setCurrentAmountStr(raw ? Number(raw).toLocaleString("id-ID") : "");
               }}
-              className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500"
+              className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500"
             />
           </div>
 
@@ -185,7 +185,7 @@ export function SavingsGoalModal({
               type="date"
               value={targetDate}
               onChange={(e) => setTargetDate(e.target.value)}
-              className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500"
+              className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500"
             />
           </div>
 
@@ -202,7 +202,7 @@ export function SavingsGoalModal({
                   onClick={() => setIcon(ic)}
                   className={`p-2.5 rounded-xl border flex items-center justify-center transition ${
                     icon === ic
-                      ? "border-[#0F2C59] dark:border-amber-400 bg-[#0F2C59]/10 dark:bg-amber-400/10 text-[#0F2C59] dark:text-amber-400 shadow-sm"
+                      ? "border-[#1E4D2B] dark:border-emerald-400 bg-[#1E4D2B]/10 dark:bg-emerald-400/10 text-[#1E4D2B] dark:text-emerald-400 shadow-sm"
                       : "border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
                   }`}
                 >
@@ -224,7 +224,7 @@ export function SavingsGoalModal({
                   type="button"
                   onClick={() => setColor(c)}
                   className={`w-7 h-7 rounded-full transition flex items-center justify-center ${
-                    color === c ? "ring-2 ring-offset-2 ring-amber-500" : "hover:scale-110"
+                    color === c ? "ring-2 ring-offset-2 ring-emerald-500" : "hover:scale-110"
                   }`}
                   style={{ backgroundColor: c }}
                 >
@@ -247,9 +247,9 @@ export function SavingsGoalModal({
             <button
               type="submit"
               disabled={loading || !title.trim() || targetAmount <= 0}
-              className="flex-1 py-3 bg-gradient-to-r from-[#0F2C59] via-[#153464] to-[#1A365D] hover:from-[#0A1F3F] hover:to-[#0F2C59] active:scale-[0.98] text-white font-bold text-xs rounded-2xl shadow-lg shadow-[#0F2C59]/25 border border-amber-400/25 flex items-center justify-center gap-1.5 transition disabled:opacity-50"
+              className="flex-1 py-3 bg-gradient-to-r from-[#1E4D2B] via-[#166534] to-[#0F5132] hover:from-[#144222] hover:to-[#1E4D2B] active:scale-[0.98] text-white font-bold text-xs rounded-2xl shadow-lg shadow-emerald-950/25 border border-emerald-400/25 flex items-center justify-center gap-1.5 transition disabled:opacity-50"
             >
-              <Check className="w-4 h-4 text-amber-300" />
+              <Check className="w-4 h-4 text-emerald-300" />
               {loading ? "Menyimpan..." : goal ? "Simpan Perubahan" : "Buat Celengan"}
             </button>
           </div>

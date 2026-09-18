@@ -14,7 +14,7 @@ interface WalletsViewProps {
 }
 
 const WALLET_ICONS = ["Wallet", "Landmark", "Smartphone", "PiggyBank", "CreditCard", "Coins", "Banknote", "DollarSign"];
-const WALLET_COLORS = ["#0F2C59", "#D4AF37", "#1A365D", "#2563EB", "#10B981", "#8B5CF6", "#F59E0B", "#EC4899"];
+const WALLET_COLORS = ["#1E4D2B", "#0F5132", "#6EE7B7", "#10B981", "#2563EB", "#8B5CF6", "#F59E0B", "#EC4899"];
 
 export function WalletsView({ wallets, onCreateWallet, onUpdateWallet }: WalletsViewProps) {
   const [modalOpen, setModalOpen] = useState(false);
@@ -61,21 +61,24 @@ export function WalletsView({ wallets, onCreateWallet, onUpdateWallet }: Wallets
         await onUpdateWallet(editingWallet.id, {
           name: name.trim(),
           type,
+          currentBalance: balanceNum,
           color,
           icon,
-          currentBalance: balanceNum,
         });
       } else {
         await onCreateWallet({
           name: name.trim(),
           type,
+          initialBalance: balanceNum,
           currentBalance: balanceNum,
           color,
           icon,
-          isArchived: false,
-        });
+        } as any);
       }
       setModalOpen(false);
+    } catch (err) {
+      console.error(err);
+      alert("Gagal menyimpan data dompet");
     } finally {
       setSubmitting(false);
     }
@@ -98,9 +101,9 @@ export function WalletsView({ wallets, onCreateWallet, onUpdateWallet }: Wallets
         </div>
         <button
           onClick={handleOpenCreate}
-          className="flex items-center gap-1.5 px-3.5 py-2 bg-gradient-to-r from-[#0F2C59] via-[#153464] to-[#1A365D] hover:from-[#0A1F3F] hover:to-[#0F2C59] text-white rounded-2xl text-xs font-bold shadow-md shadow-[#0F2C59]/20 border border-amber-400/25 transition"
+          className="flex items-center gap-1.5 px-3.5 py-2 bg-gradient-to-r from-[#1E4D2B] via-[#166534] to-[#0F5132] hover:from-[#144222] hover:to-[#1E4D2B] text-white rounded-2xl text-xs font-bold shadow-md shadow-emerald-950/20 border border-emerald-400/25 transition"
         >
-          <Plus className="w-4 h-4 text-amber-300" />
+          <Plus className="w-4 h-4 text-emerald-300" />
           <span>Tambah Dompet</span>
         </button>
       </div>
@@ -116,7 +119,7 @@ export function WalletsView({ wallets, onCreateWallet, onUpdateWallet }: Wallets
               <div className="flex items-center gap-3">
                 <div
                   className="w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-sm shrink-0"
-                  style={{ backgroundColor: w.color || "#0F2C59" }}
+                  style={{ backgroundColor: w.color || "#1E4D2B" }}
                 >
                   <DynamicIcon name={w.icon} className="w-6 h-6" />
                 </div>
@@ -202,7 +205,7 @@ export function WalletsView({ wallets, onCreateWallet, onUpdateWallet }: Wallets
                   placeholder="0"
                   value={initialBalance ? Number(initialBalance.replace(/\D/g, "")).toLocaleString("id-ID") : ""}
                   onChange={(e) => setInitialBalance(e.target.value.replace(/\D/g, ""))}
-                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs font-bold text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500/30"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs font-bold text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
                 />
               </div>
 
@@ -216,7 +219,7 @@ export function WalletsView({ wallets, onCreateWallet, onUpdateWallet }: Wallets
                       onClick={() => setIcon(ic)}
                       className={`p-2.5 rounded-xl border flex items-center justify-center transition ${
                         icon === ic
-                          ? "border-[#0F2C59] dark:border-amber-400 bg-[#0F2C59]/10 dark:bg-amber-400/10 text-[#0F2C59] dark:text-amber-400"
+                          ? "border-[#1E4D2B] dark:border-emerald-400 bg-[#1E4D2B]/10 dark:bg-emerald-400/10 text-[#1E4D2B] dark:text-emerald-400"
                           : "border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
                       }`}
                     >
@@ -235,7 +238,7 @@ export function WalletsView({ wallets, onCreateWallet, onUpdateWallet }: Wallets
                       type="button"
                       onClick={() => setColor(c)}
                       className={`w-7 h-7 rounded-full transition flex items-center justify-center ${
-                        color === c ? "ring-2 ring-offset-2 ring-amber-500" : "hover:scale-110"
+                        color === c ? "ring-2 ring-offset-2 ring-emerald-500" : "hover:scale-110"
                       }`}
                       style={{ backgroundColor: c }}
                     >
@@ -256,7 +259,7 @@ export function WalletsView({ wallets, onCreateWallet, onUpdateWallet }: Wallets
                 <button
                   type="submit"
                   disabled={submitting || !name.trim()}
-                  className="flex-1 py-3 bg-gradient-to-r from-[#0F2C59] via-[#153464] to-[#1A365D] hover:from-[#0A1F3F] hover:to-[#0F2C59] text-white font-bold text-xs rounded-2xl shadow-lg shadow-[#0F2C59]/25 border border-amber-400/25 transition disabled:opacity-50"
+                  className="flex-1 py-3 bg-gradient-to-r from-[#1E4D2B] via-[#166534] to-[#0F5132] hover:from-[#144222] hover:to-[#1E4D2B] text-white font-bold text-xs rounded-2xl shadow-lg shadow-emerald-950/25 border border-emerald-400/25 transition disabled:opacity-50"
                 >
                   {submitting ? "Menyimpan..." : "Simpan Dompet"}
                 </button>

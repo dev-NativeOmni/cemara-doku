@@ -43,17 +43,17 @@ const AVAILABLE_ICONS = [
 ];
 
 const AVAILABLE_COLORS = [
-  "#0F2C59", // Navy
-  "#D4AF37", // Warm Gold
+  "#1E4D2B", // Forest Green
+  "#0F5132", // Deep Emerald
   "#10B981", // Emerald
-  "#2563EB", // Blue
+  "#14B8A6", // Teal
   "#0EA5E9", // Sky
+  "#2563EB", // Blue
   "#8B5CF6", // Purple
+  "#EC4899", // Pink
   "#F59E0B", // Amber
   "#EF4444", // Red
-  "#EC4899", // Pink
-  "#14B8A6", // Teal
-  "#64748B", // Slate
+  "#475569", // Slate Gray
 ];
 
 export function CategoryModal({
@@ -138,7 +138,7 @@ export function CategoryModal({
               onClick={() => setType("income")}
               className={`py-2 text-xs font-bold rounded-xl transition ${
                 type === "income"
-                  ? "bg-[#0F2C59] dark:bg-amber-400 text-white dark:text-slate-900 shadow-sm"
+                  ? "bg-[#1E4D2B] dark:bg-emerald-400 text-white dark:text-slate-900 shadow-sm"
                   : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
               }`}
             >
@@ -156,7 +156,7 @@ export function CategoryModal({
               placeholder="Contoh: Skincare, Kursus Anak, Hobi"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500/30"
+              className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
             />
           </div>
 
@@ -171,7 +171,7 @@ export function CategoryModal({
                   onClick={() => setIcon(ic)}
                   className={`p-2 rounded-xl flex items-center justify-center transition ${
                     icon === ic
-                      ? "bg-[#0F2C59] dark:bg-amber-400 text-white dark:text-slate-900 shadow-sm"
+                      ? "bg-[#1E4D2B] dark:bg-emerald-400 text-white dark:text-slate-900 shadow-sm"
                       : "text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800"
                   }`}
                 >
@@ -191,7 +191,7 @@ export function CategoryModal({
                   type="button"
                   onClick={() => setColor(c)}
                   className={`w-7 h-7 rounded-full flex items-center justify-center transition ${
-                    color === c ? "ring-2 ring-offset-2 ring-amber-500" : "hover:scale-110"
+                    color === c ? "ring-2 ring-offset-2 ring-emerald-500" : "hover:scale-110"
                   }`}
                   style={{ backgroundColor: c }}
                 >
@@ -230,9 +230,9 @@ export function CategoryModal({
             <button
               type="submit"
               disabled={submitting || !name.trim()}
-              className="flex-1 py-3 bg-gradient-to-r from-[#0F2C59] via-[#153464] to-[#1A365D] hover:from-[#0A1F3F] hover:to-[#0F2C59] active:scale-[0.98] text-white font-bold text-xs rounded-2xl shadow-lg shadow-[#0F2C59]/25 border border-amber-400/25 flex items-center justify-center gap-1.5 transition disabled:opacity-50"
+              className="flex-1 py-3 bg-gradient-to-r from-[#1E4D2B] via-[#166534] to-[#0F5132] hover:from-[#144222] hover:to-[#1E4D2B] active:scale-[0.98] text-white font-bold text-xs rounded-2xl shadow-lg shadow-[#1E4D2B]/25 border border-emerald-400/25 flex items-center justify-center gap-1.5 transition disabled:opacity-50"
             >
-              <Check className="w-4 h-4 text-amber-300" />
+              <Check className="w-4 h-4 text-emerald-300" />
               <span>{submitting ? "Menyimpan..." : "Buat Kategori"}</span>
             </button>
           </div>

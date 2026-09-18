@@ -62,7 +62,7 @@ export function SavingsView({
       <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-6 border border-slate-100 dark:border-slate-800 shadow-sm space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-[#0F2C59]/10 dark:bg-amber-400/10 text-[#0F2C59] dark:text-amber-400 flex items-center justify-center shrink-0">
+            <div className="w-11 h-11 rounded-2xl bg-[#1E4D2B]/10 dark:bg-emerald-400/10 text-[#1E4D2B] dark:text-emerald-400 flex items-center justify-center shrink-0">
               <PiggyBank className="w-6 h-6" />
             </div>
             <div>
@@ -80,9 +80,9 @@ export function SavingsView({
               setEditingGoal(null);
               setIsCreateModalOpen(true);
             }}
-            className="px-3.5 py-2 bg-gradient-to-r from-[#0F2C59] via-[#153464] to-[#1A365D] hover:from-[#0A1F3F] hover:to-[#0F2C59] text-white rounded-2xl text-xs font-bold shadow-md shadow-[#0F2C59]/20 border border-amber-400/25 flex items-center gap-1.5 transition"
+            className="px-3.5 py-2 bg-gradient-to-r from-[#1E4D2B] via-[#166534] to-[#0F5132] hover:from-[#144222] hover:to-[#1E4D2B] text-white rounded-2xl text-xs font-bold shadow-md shadow-emerald-950/20 border border-emerald-400/25 flex items-center gap-1.5 transition"
           >
-            <Plus className="w-4 h-4 stroke-[2.5] text-amber-300" />
+            <Plus className="w-4 h-4 stroke-[2.5] text-emerald-300" />
             <span>Target Baru</span>
           </button>
         </div>
@@ -105,7 +105,7 @@ export function SavingsView({
 
           <div className="bg-slate-50 dark:bg-slate-800/60 rounded-2xl p-3 border border-slate-100 dark:border-slate-700/60">
             <span className="text-[11px] font-medium text-slate-400 block">Pencapaian</span>
-            <span className="text-xs md:text-sm font-bold text-[#0F2C59] dark:text-amber-400 tracking-tight">
+            <span className="text-xs md:text-sm font-bold text-[#1E4D2B] dark:text-emerald-300 tracking-tight">
               {overallPercentage.toFixed(0)}%
             </span>
           </div>
@@ -115,7 +115,7 @@ export function SavingsView({
         {totalTarget > 0 && (
           <div className="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-[#0F2C59] to-[#254B8C] dark:from-amber-500 dark:to-amber-300 transition-all duration-500"
+              className="h-full rounded-full bg-[#1E4D2B] dark:bg-emerald-500 transition-all duration-500"
               style={{ width: `${Math.min(overallPercentage, 100)}%` }}
             />
           </div>
@@ -129,7 +129,7 @@ export function SavingsView({
             onClick={() => setFilterTab("all")}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
               filterTab === "all"
-                ? "bg-[#0F2C59] dark:bg-amber-400 text-white dark:text-slate-900 shadow-sm"
+                ? "bg-[#1E4D2B] dark:bg-emerald-500 text-white dark:text-slate-900 shadow-sm"
                 : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
             }`}
           >
@@ -139,7 +139,7 @@ export function SavingsView({
             onClick={() => setFilterTab("active")}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
               filterTab === "active"
-                ? "bg-[#0F2C59] dark:bg-amber-400 text-white dark:text-slate-900 shadow-sm"
+                ? "bg-[#1E4D2B] dark:bg-emerald-500 text-white dark:text-slate-900 shadow-sm"
                 : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
             }`}
           >
@@ -149,7 +149,7 @@ export function SavingsView({
             onClick={() => setFilterTab("completed")}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
               filterTab === "completed"
-                ? "bg-[#0F2C59] dark:bg-amber-400 text-white dark:text-slate-900 shadow-sm"
+                ? "bg-[#1E4D2B] dark:bg-emerald-500 text-white dark:text-slate-900 shadow-sm"
                 : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
             }`}
           >
@@ -161,7 +161,7 @@ export function SavingsView({
       {/* Goals Cards List */}
       {filteredGoals.length === 0 ? (
         <div className="bg-white dark:bg-slate-900 rounded-3xl p-10 text-center border border-slate-100 dark:border-slate-800 shadow-sm space-y-3">
-          <div className="w-14 h-14 rounded-2xl bg-[#0F2C59]/10 dark:bg-amber-400/10 text-[#0F2C59] dark:text-amber-400 flex items-center justify-center mx-auto">
+          <div className="w-14 h-14 rounded-2xl bg-[#1E4D2B]/10 dark:bg-emerald-500/10 text-[#1E4D2B] dark:text-emerald-400 flex items-center justify-center mx-auto">
             <Target className="w-7 h-7" />
           </div>
           <h4 className="font-bold text-slate-800 dark:text-white text-sm">
@@ -175,9 +175,9 @@ export function SavingsView({
               setEditingGoal(null);
               setIsCreateModalOpen(true);
             }}
-            className="px-4 py-2 bg-gradient-to-r from-[#0F2C59] via-[#153464] to-[#1A365D] hover:from-[#0A1F3F] hover:to-[#0F2C59] text-white rounded-xl text-xs font-bold shadow-md shadow-[#0F2C59]/20 border border-amber-400/25 inline-flex items-center gap-1.5 transition"
+            className="px-4 py-2 bg-gradient-to-r from-[#1E4D2B] via-[#166534] to-[#0F5132] hover:from-[#144222] hover:to-[#1E4D2B] text-white rounded-xl text-xs font-bold shadow-md shadow-emerald-950/20 border border-emerald-400/25 inline-flex items-center gap-1.5 transition"
           >
-            <Plus className="w-4 h-4 text-amber-300" />
+            <Plus className="w-4 h-4 text-emerald-300" />
             <span>Buat Target Pertama</span>
           </button>
         </div>
@@ -198,7 +198,7 @@ export function SavingsView({
                   <div className="flex items-center gap-3 min-w-0">
                     <div
                       className="w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-sm shrink-0"
-                      style={{ backgroundColor: goal.color || "#0F2C59" }}
+                      style={{ backgroundColor: goal.color || "#1E4D2B" }}
                     >
                       <DynamicIcon name={goal.icon} className="w-6 h-6" />
                     </div>
@@ -255,7 +255,7 @@ export function SavingsView({
                       className="h-full rounded-full transition-all duration-500"
                       style={{
                         width: `${Math.min(percent, 100)}%`,
-                        backgroundColor: goal.color || "#0F2C59",
+                        backgroundColor: goal.color || "#1E4D2B",
                       }}
                     />
                   </div>
@@ -275,7 +275,7 @@ export function SavingsView({
                 <div className="pt-2 border-t border-slate-50 dark:border-slate-800 flex items-center justify-between">
                   <button
                     onClick={() => setDepositingGoal(goal)}
-                    className="w-full py-2.5 bg-[#0F2C59]/10 dark:bg-amber-400/10 hover:bg-[#0F2C59]/20 text-[#0F2C59] dark:text-amber-300 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 border border-[#0F2C59]/20 dark:border-amber-400/20"
+                    className="w-full py-2.5 bg-[#1E4D2B]/10 dark:bg-emerald-500/10 hover:bg-[#1E4D2B]/20 text-[#1E4D2B] dark:text-emerald-300 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 border border-[#1E4D2B]/20 dark:border-emerald-500/20"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>+ Setor Tabungan</span>

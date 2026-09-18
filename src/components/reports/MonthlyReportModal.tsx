@@ -62,7 +62,7 @@ export function MonthlyReportModal({
         {/* Header Action Bar (Hidden on print) */}
         <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-800/60 no-print">
           <div className="flex items-center gap-2">
-            <FileText className="w-5 h-5 text-amber-500" />
+            <FileText className="w-5 h-5 text-emerald-500" />
             <h3 className="font-bold text-slate-800 dark:text-white text-sm">
               Laporan Keuangan Bulanan
             </h3>
@@ -71,9 +71,9 @@ export function MonthlyReportModal({
           <div className="flex items-center gap-2">
             <button
               onClick={handlePrint}
-              className="px-3.5 py-1.5 bg-gradient-to-r from-[#0F2C59] via-[#153464] to-[#1A365D] hover:from-[#0A1F3F] hover:to-[#0F2C59] text-white rounded-xl text-xs font-bold shadow-md shadow-[#0F2C59]/20 border border-amber-400/25 flex items-center gap-1.5 transition"
+              className="px-3.5 py-1.5 bg-gradient-to-r from-[#1E4D2B] via-[#166534] to-[#0F5132] hover:from-[#144222] hover:to-[#1E4D2B] text-white rounded-xl text-xs font-bold shadow-md shadow-[#1E4D2B]/20 border border-emerald-400/25 flex items-center gap-1.5 transition"
             >
-              <Printer className="w-4 h-4 text-amber-300" />
+              <Printer className="w-4 h-4 text-emerald-300" />
               <span>Cetak / Simpan PDF</span>
             </button>
             <button

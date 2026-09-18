@@ -87,15 +87,15 @@ export function AuthScreen() {
   // If user is authenticated but not yet associated with a household
   if (user && !userProfile?.householdId) {
     return (
-      <div className="min-h-screen bg-slate-900/95 flex flex-col justify-center items-center p-4 bg-gradient-to-br from-[#07101E] via-[#0F2C59] to-[#1A365D]">
-        <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-amber-400/20 p-6 md:p-8">
+      <div className="min-h-screen bg-slate-900/95 flex flex-col justify-center items-center p-4 bg-gradient-to-br from-[#061A10] via-[#1E4D2B] to-[#0F5132]">
+        <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-emerald-400/20 p-6 md:p-8">
           <div className="flex flex-col items-center text-center mb-8">
-            <div className="w-20 h-20 bg-slate-50 dark:bg-[#0F2C59]/40 rounded-3xl flex items-center justify-center p-2 mb-3 shadow-inner border border-amber-400/30">
+            <div className="w-20 h-20 bg-slate-50 dark:bg-[#1E4D2B]/40 rounded-3xl flex items-center justify-center p-2 mb-3 shadow-inner border border-emerald-400/30">
               <img src="/logo.png" alt="Cemara Logo" className="w-full h-full object-contain drop-shadow" />
             </div>
             <h1 className="text-2xl font-extrabold text-slate-800 dark:text-white">Selamat Datang di Cemara!</h1>
             <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-              Halo, <span className="font-semibold text-[#0F2C59] dark:text-amber-300">{user.displayName || user.email}</span>. Pilih cara memulai buku kas rumah tangga Anda.
+              Halo, <span className="font-semibold text-[#1E4D2B] dark:text-emerald-300">{user.displayName || user.email}</span>. Pilih cara memulai buku kas rumah tangga Anda.
             </p>
           </div>
 
@@ -110,16 +110,16 @@ export function AuthScreen() {
             <div className="space-y-4">
               <button
                 onClick={() => setOnboardingMode("create")}
-                className="w-full p-4.5 rounded-2xl border-2 border-amber-400/30 bg-amber-50/30 dark:bg-amber-400/5 hover:bg-amber-50/70 dark:hover:bg-amber-400/10 transition flex items-center gap-4 text-left group"
+                className="w-full p-4.5 rounded-2xl border-2 border-emerald-400/30 bg-emerald-50/30 dark:bg-emerald-400/5 hover:bg-emerald-50/70 dark:hover:bg-emerald-400/10 transition flex items-center gap-4 text-left group"
               >
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-[#0F2C59] to-[#1A365D] text-amber-300 flex items-center justify-center shrink-0 shadow-md border border-amber-400/30">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-[#1E4D2B] to-[#0F5132] text-emerald-300 flex items-center justify-center shrink-0 shadow-md border border-emerald-400/30">
                   <PlusCircle className="w-6 h-6" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-bold text-slate-800 dark:text-white text-base group-hover:text-[#0F2C59] dark:group-hover:text-amber-300">Buat Buku Kas Baru</h3>
+                  <h3 className="font-bold text-slate-800 dark:text-white text-base group-hover:text-[#1E4D2B] dark:group-hover:text-emerald-300">Buat Buku Kas Baru</h3>
                   <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Mulai buku kas baru untuk keluarga Anda dan dapatkan kode undangan</p>
                 </div>
-                <ArrowRight className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                <ArrowRight className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
               </button>
 
               <button
@@ -150,7 +150,7 @@ export function AuthScreen() {
                   onChange={(e) => setHouseholdName(e.target.value)}
                   placeholder="Misal: Keluarga Cemara"
                   required
-                  className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition"
+                  className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition"
                 />
               </div>
 
@@ -165,7 +165,7 @@ export function AuthScreen() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="flex-1 py-3 rounded-xl bg-gradient-to-r from-[#0F2C59] via-[#153464] to-[#1A365D] hover:from-[#0A1F3F] hover:to-[#0F2C59] text-white font-semibold text-sm shadow-md shadow-[#0F2C59]/30 border border-amber-400/30 disabled:opacity-50 transition"
+                  className="flex-1 py-3 rounded-xl bg-gradient-to-r from-[#1E4D2B] via-[#166534] to-[#0F5132] hover:from-[#144222] hover:to-[#1E4D2B] text-white font-semibold text-sm shadow-md shadow-[#1E4D2B]/30 border border-emerald-400/30 disabled:opacity-50 transition"
                 >
                   {submitting ? "Membuat..." : "Buat & Mulai"}
                 </button>
@@ -186,7 +186,7 @@ export function AuthScreen() {
                   placeholder="CONTOH: 7K2M9P"
                   maxLength={10}
                   required
-                  className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-center text-xl tracking-widest font-mono font-bold text-slate-800 dark:text-white uppercase focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition"
+                  className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-center text-xl tracking-widest font-mono font-bold text-slate-800 dark:text-white uppercase focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition"
                 />
               </div>
 
@@ -201,7 +201,7 @@ export function AuthScreen() {
                 <button
                   type="submit"
                   disabled={submitting || !inviteCode.trim()}
-                  className="flex-1 py-3 rounded-xl bg-gradient-to-r from-[#0F2C59] via-[#153464] to-[#1A365D] hover:from-[#0A1F3F] hover:to-[#0F2C59] text-white font-semibold text-sm shadow-md shadow-[#0F2C59]/30 border border-amber-400/30 disabled:opacity-50 transition"
+                  className="flex-1 py-3 rounded-xl bg-gradient-to-r from-[#1E4D2B] via-[#166534] to-[#0F5132] hover:from-[#144222] hover:to-[#1E4D2B] text-white font-semibold text-sm shadow-md shadow-[#1E4D2B]/30 border border-emerald-400/30 disabled:opacity-50 transition"
                 >
                   {submitting ? "Memproses..." : "Gabung Sekarang"}
                 </button>
@@ -214,16 +214,16 @@ export function AuthScreen() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#07101E] via-[#0F2C59] to-[#1A365D] flex flex-col justify-center items-center p-4">
-      <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden border border-amber-400/20">
+    <div className="min-h-screen bg-gradient-to-br from-[#061A10] via-[#1E4D2B] to-[#0F5132] flex flex-col justify-center items-center p-4">
+      <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden border border-emerald-400/20">
         {/* Brand Header */}
-        <div className="bg-gradient-to-r from-[#0F2C59] via-[#153464] to-[#1A365D] px-6 pt-8 pb-7 text-center relative overflow-hidden text-white border-b border-amber-400/20">
-          <div className="absolute -top-12 -right-12 w-36 h-36 bg-amber-400/20 rounded-full blur-2xl pointer-events-none" />
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-white/10 backdrop-blur-md rounded-2xl p-2 mb-3 shadow-inner border border-amber-400/30">
+        <div className="bg-gradient-to-r from-[#1E4D2B] via-[#166534] to-[#0F5132] px-6 pt-8 pb-7 text-center relative overflow-hidden text-white border-b border-emerald-400/20">
+          <div className="absolute -top-12 -right-12 w-36 h-36 bg-emerald-400/20 rounded-full blur-2xl pointer-events-none" />
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-white/10 backdrop-blur-md rounded-2xl p-2 mb-3 shadow-inner border border-emerald-400/30">
             <img src="/logo.png" alt="Cemara Logo" className="w-full h-full object-contain drop-shadow" />
           </div>
           <h1 className="text-2xl font-extrabold tracking-tight">Cemara</h1>
-          <p className="text-amber-100 text-xs mt-1">Pencatatan Keuangan Rumah Tangga yang Rapi & Harmonis</p>
+          <p className="text-emerald-100 text-xs mt-1">Pencatatan Keuangan Rumah Tangga yang Rapi & Harmonis</p>
         </div>
 
         {/* Tab Selector */}
@@ -233,7 +233,7 @@ export function AuthScreen() {
             onClick={() => { setMode("login"); setError(null); }}
             className={`flex-1 py-2.5 text-sm font-bold rounded-xl transition ${
               mode === "login"
-                ? "bg-white text-[#0F2C59] shadow-sm"
+                ? "bg-white text-[#1E4D2B] shadow-sm"
                 : "text-slate-500 hover:text-slate-800"
             }`}
           >
@@ -244,7 +244,7 @@ export function AuthScreen() {
             onClick={() => { setMode("register"); setError(null); }}
             className={`flex-1 py-2.5 text-sm font-bold rounded-xl transition ${
               mode === "register"
-                ? "bg-white text-[#0F2C59] shadow-sm"
+                ? "bg-white text-[#1E4D2B] shadow-sm"
                 : "text-slate-500 hover:text-slate-800"
             }`}
           >
@@ -309,7 +309,7 @@ export function AuthScreen() {
                     onChange={(e) => setDisplayName(e.target.value)}
                     placeholder="Misal: Ayah / Bunda"
                     required
-                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition"
+                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition"
                   />
                 </div>
               </div>
@@ -327,7 +327,7 @@ export function AuthScreen() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="nama@email.com"
                   required
-                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition"
+                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition"
                 />
               </div>
             </div>
@@ -345,7 +345,7 @@ export function AuthScreen() {
                   placeholder="••••••••"
                   required
                   minLength={6}
-                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition"
+                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition"
                 />
               </div>
             </div>
@@ -353,7 +353,7 @@ export function AuthScreen() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full py-3 mt-2 rounded-xl bg-gradient-to-r from-[#0F2C59] via-[#153464] to-[#1A365D] hover:from-[#0A1F3F] hover:to-[#0F2C59] text-white font-bold text-sm shadow-md shadow-[#0F2C59]/30 border border-amber-400/30 disabled:opacity-50 transition"
+              className="w-full py-3 mt-2 rounded-xl bg-gradient-to-r from-[#1E4D2B] via-[#166534] to-[#0F5132] hover:from-[#144222] hover:to-[#1E4D2B] text-white font-bold text-sm shadow-md shadow-[#1E4D2B]/30 border border-emerald-400/30 disabled:opacity-50 transition"
             >
               {submitting ? "Memproses..." : mode === "login" ? "Masuk ke Aplikasi" : "Daftar Akun"}
             </button>

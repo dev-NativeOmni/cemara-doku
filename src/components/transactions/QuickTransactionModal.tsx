@@ -228,7 +228,7 @@ export function QuickTransactionModal({
                   required
                   value={rawAmount}
                   onChange={handleAmountChange}
-                  className="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-xl font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition"
+                  className="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-xl font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition"
                 />
               </div>
 
@@ -260,13 +260,13 @@ export function QuickTransactionModal({
                     onClick={() => setWalletId(w.id)}
                     className={`p-2.5 rounded-2xl border text-left flex items-center gap-2.5 transition ${
                       walletId === w.id
-                        ? "border-[#0F2C59] dark:border-amber-400 bg-[#0F2C59]/10 dark:bg-amber-400/10 text-[#0F2C59] dark:text-amber-300 ring-2 ring-amber-400/20"
+                        ? "border-[#1E4D2B] dark:border-emerald-400 bg-[#1E4D2B]/10 dark:bg-emerald-400/10 text-[#1E4D2B] dark:text-emerald-300 ring-2 ring-emerald-400/20"
                         : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 text-slate-700 dark:text-slate-300"
                     }`}
                   >
                     <div
                       className="w-8 h-8 rounded-xl flex items-center justify-center text-white shrink-0 shadow-sm"
-                      style={{ backgroundColor: w.color || "#0F2C59" }}
+                      style={{ backgroundColor: w.color || "#1E4D2B" }}
                     >
                       <DynamicIcon name={w.icon} className="w-4 h-4" />
                     </div>
@@ -292,13 +292,13 @@ export function QuickTransactionModal({
                       onClick={() => setDestWalletId(w.id)}
                       className={`p-2.5 rounded-2xl border text-left flex items-center gap-2.5 transition disabled:opacity-30 ${
                         destWalletId === w.id
-                          ? "border-[#0F2C59] dark:border-amber-400 bg-[#0F2C59]/10 dark:bg-amber-400/10 text-[#0F2C59] dark:text-amber-300 ring-2 ring-amber-400/20"
+                          ? "border-[#1E4D2B] dark:border-emerald-400 bg-[#1E4D2B]/10 dark:bg-emerald-400/10 text-[#1E4D2B] dark:text-emerald-300 ring-2 ring-emerald-400/20"
                           : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 text-slate-700 dark:text-slate-300"
                       }`}
                     >
                       <div
                         className="w-8 h-8 rounded-xl flex items-center justify-center text-white shrink-0 shadow-sm"
-                        style={{ backgroundColor: w.color || "#0F2C59" }}
+                        style={{ backgroundColor: w.color || "#1E4D2B" }}
                       >
                         <DynamicIcon name={w.icon} className="w-4 h-4" />
                       </div>
@@ -320,7 +320,7 @@ export function QuickTransactionModal({
                   <button
                     type="button"
                     onClick={() => setIsCategoryModalOpen(true)}
-                    className="text-[11px] font-bold text-[#0F2C59] dark:text-amber-400 hover:underline flex items-center gap-1"
+                    className="text-[11px] font-bold text-[#1E4D2B] dark:text-emerald-400 hover:underline flex items-center gap-1"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>Kategori Kustom</span>
@@ -335,13 +335,13 @@ export function QuickTransactionModal({
                       onClick={() => setCategoryId(c.id)}
                       className={`p-2.5 rounded-2xl border flex flex-col items-center justify-center text-center gap-1.5 transition ${
                         categoryId === c.id
-                          ? "border-[#0F2C59] dark:border-amber-400 bg-[#0F2C59]/10 dark:bg-amber-400/10 text-[#0F2C59] dark:text-amber-300 shadow-sm ring-2 ring-amber-400/20"
+                          ? "border-[#1E4D2B] dark:border-emerald-400 bg-[#1E4D2B]/10 dark:bg-emerald-400/10 text-[#1E4D2B] dark:text-emerald-300 shadow-sm ring-2 ring-emerald-400/20"
                           : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 text-slate-700 dark:text-slate-300"
                       }`}
                     >
                       <div
                         className="w-8 h-8 rounded-xl flex items-center justify-center text-white shrink-0 shadow-sm"
-                        style={{ backgroundColor: c.color || "#0F2C59" }}
+                        style={{ backgroundColor: c.color || "#1E4D2B" }}
                       >
                         <DynamicIcon name={c.icon} className="w-4 h-4" />
                       </div>
@@ -363,7 +363,7 @@ export function QuickTransactionModal({
                   type="date"
                   value={dateStr}
                   onChange={(e) => setDateStr(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500/30"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
                 />
               </div>
 
@@ -377,7 +377,7 @@ export function QuickTransactionModal({
                   placeholder="Contoh: Makan siang bareng anak"
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500/30"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
                 />
               </div>
             </div>
@@ -395,9 +395,9 @@ export function QuickTransactionModal({
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 py-3 bg-gradient-to-r from-[#0F2C59] via-[#153464] to-[#1A365D] hover:from-[#0A1F3F] hover:to-[#0F2C59] active:scale-[0.98] text-white font-bold text-xs rounded-2xl shadow-lg shadow-[#0F2C59]/30 border border-amber-400/25 flex items-center justify-center gap-1.5 transition disabled:opacity-50"
+                className="flex-1 py-3 bg-gradient-to-r from-[#1E4D2B] via-[#166534] to-[#0F5132] hover:from-[#144222] hover:to-[#1E4D2B] active:scale-[0.98] text-white font-bold text-xs rounded-2xl shadow-lg shadow-emerald-950/30 border border-emerald-400/25 flex items-center justify-center gap-1.5 transition disabled:opacity-50"
               >
-                <CheckCircle2 className="w-4 h-4 text-amber-300" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-300" />
                 <span>{loading ? "Menyimpan..." : "Simpan Transaksi"}</span>
               </button>
             </div>

@@ -89,12 +89,12 @@ export default function HomePage() {
 
   if (authLoading || (dataLoading && !household)) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-[#07101E] flex flex-col items-center justify-center p-4">
-        <div className="w-16 h-16 rounded-3xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-amber-400/20 p-2.5 flex items-center justify-center mb-3 shadow-xl shadow-slate-200/50 dark:shadow-none animate-bounce">
+      <div className="min-h-screen bg-slate-50 dark:bg-[#061A10] flex flex-col items-center justify-center p-4">
+        <div className="w-16 h-16 rounded-3xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-emerald-500/20 p-2.5 flex items-center justify-center mb-3 shadow-xl shadow-slate-200/50 dark:shadow-none animate-bounce">
           <img src="/logo.png" alt="Cemara" className="w-full h-full object-contain drop-shadow" />
         </div>
         <p className="text-sm font-semibold text-slate-600 dark:text-slate-300 flex items-center gap-2">
-          <Loader2 className="w-4 h-4 animate-spin text-amber-500" />
+          <Loader2 className="w-4 h-4 animate-spin text-emerald-500" />
           Memuat Cemara...
         </p>
       </div>
@@ -191,7 +191,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#07101E] flex text-slate-900 dark:text-slate-100 selection:bg-amber-200 dark:selection:bg-amber-900/40 selection:text-[#0F2C59]">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#061A10] flex text-slate-900 dark:text-slate-100 selection:bg-emerald-200 dark:selection:bg-emerald-900/40 selection:text-[#1E4D2B]">
       {/* Offline Indicator & PWA prompt */}
       <OfflineIndicator />
       <PwaInstallPrompt />

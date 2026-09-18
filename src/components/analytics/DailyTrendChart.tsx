@@ -77,8 +77,8 @@ export function DailyTrendChart({
         </div>
 
         {peakAmount > 0 && (
-          <div className="flex items-center gap-1.5 text-[11px] font-bold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/50 px-2 py-0.5 rounded-lg border border-amber-200 dark:border-amber-800">
-            <TrendingUp className="w-3 h-3" />
+          <div className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded-lg border border-emerald-200 dark:border-emerald-800">
+            <TrendingUp className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
             <span>Puncak: Tgl {peakDay} ({formatRupiah(peakAmount)})</span>
           </div>
         )}
@@ -113,9 +113,9 @@ export function DailyTrendChart({
                   isHovered
                     ? "bg-rose-600 dark:bg-rose-500 shadow-md shadow-rose-600/30"
                     : isPeak
-                    ? "bg-amber-500 dark:bg-amber-400"
+                    ? "bg-emerald-500 dark:bg-emerald-400"
                     : amount > 0
-                    ? "bg-[#0F2C59]/80 hover:bg-[#0F2C59] dark:bg-amber-500/70 dark:hover:bg-amber-500"
+                    ? "bg-[#1E4D2B]/80 hover:bg-[#1E4D2B] dark:bg-emerald-600/70 dark:hover:bg-emerald-500"
                     : "bg-slate-100 dark:bg-slate-800"
                 }`}
               />

@@ -155,7 +155,7 @@ export function CategoryBudgetModal({
                   setAmountStr(raw ? Number(raw).toLocaleString("id-ID") : "");
                 }}
                 placeholder="0"
-                className="w-full pl-11 pr-10 py-3 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-white font-bold text-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition"
+                className="w-full pl-11 pr-10 py-3 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-white font-bold text-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition"
               />
               {amountStr && (
                 <button
@@ -182,8 +182,8 @@ export function CategoryBudgetModal({
                   onClick={() => handleQuickSelect(val)}
                   className={`text-xs px-2.5 py-1.5 rounded-xl font-semibold border transition ${
                     numericAmount === val
-                      ? "bg-[#0F2C59] dark:bg-amber-400 text-white dark:text-slate-900 border-[#0F2C59] dark:border-amber-400 shadow-sm"
-                      : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-amber-300"
+                      ? "bg-[#1E4D2B] dark:bg-emerald-500 text-white dark:text-slate-900 border-[#1E4D2B] dark:border-emerald-500 shadow-sm"
+                      : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-emerald-400"
                   }`}
                 >
                   {formatRupiah(val)}
@@ -221,7 +221,7 @@ export function CategoryBudgetModal({
             <div
               className={`rounded-2xl p-3.5 border transition-all ${
                 remaining >= 0
-                  ? "bg-[#0F2C59]/10 dark:bg-amber-400/10 border-[#0F2C59]/20 dark:border-amber-400/20 text-[#0F2C59] dark:text-amber-300"
+                  ? "bg-[#1E4D2B]/10 dark:bg-emerald-500/15 border-[#1E4D2B]/20 dark:border-emerald-500/25 text-[#1E4D2B] dark:text-emerald-300"
                   : "bg-rose-50/70 dark:bg-rose-950/40 border-rose-200/80 dark:border-rose-800 text-rose-900 dark:text-rose-300"
               }`}
             >
@@ -230,7 +230,7 @@ export function CategoryBudgetModal({
                   {remaining < 0 ? (
                     <AlertTriangle className="w-4 h-4 text-rose-600 dark:text-rose-400" />
                   ) : (
-                    <Sparkles className="w-4 h-4 text-amber-500" />
+                    <Sparkles className="w-4 h-4 text-emerald-500" />
                   )}
                   {remaining >= 0 ? "Status Anggaran: Aman" : "Status: Melebihi Batas"}
                 </span>
@@ -244,7 +244,7 @@ export function CategoryBudgetModal({
                       ? "bg-rose-600 dark:bg-rose-500"
                       : percentage >= 80
                       ? "bg-amber-500 dark:bg-amber-400"
-                      : "bg-gradient-to-r from-[#0F2C59] to-[#254B8C] dark:from-amber-500 dark:to-amber-300"
+                      : "bg-[#1E4D2B] dark:bg-emerald-500"
                   }`}
                   style={{ width: `${Math.min(percentage, 100)}%` }}
                 />
@@ -288,9 +288,9 @@ export function CategoryBudgetModal({
             <button
               type="submit"
               disabled={loading || numericAmount < 0}
-              className="flex-1 py-3 bg-gradient-to-r from-[#0F2C59] via-[#153464] to-[#1A365D] hover:from-[#0A1F3F] hover:to-[#0F2C59] active:scale-[0.98] text-white font-bold text-xs rounded-2xl shadow-lg shadow-[#0F2C59]/25 border border-amber-400/25 flex items-center justify-center gap-1.5 transition disabled:opacity-50"
+              className="flex-1 py-3 bg-gradient-to-r from-[#1E4D2B] via-[#166534] to-[#0F5132] hover:from-[#144222] hover:to-[#1E4D2B] active:scale-[0.98] text-white font-bold text-xs rounded-2xl shadow-lg shadow-emerald-950/25 border border-emerald-400/25 flex items-center justify-center gap-1.5 transition disabled:opacity-50"
             >
-              <Check className="w-4 h-4 text-amber-300" />
+              <Check className="w-4 h-4 text-emerald-300" />
               {loading ? "Menyimpan..." : "Simpan Anggaran"}
             </button>
           </div>

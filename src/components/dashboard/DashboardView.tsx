@@ -173,17 +173,17 @@ export function DashboardView({
         </div>
 
         {/* Net Cashflow Banner (Full width on mobile, 3rd column on desktop) */}
-        <div className="col-span-2 md:col-span-1 bg-gradient-to-br from-[#0F2C59] via-[#153464] to-[#1A365D] text-white rounded-2xl p-4 shadow-sm border border-amber-400/20 flex flex-col justify-between">
+        <div className="col-span-2 md:col-span-1 bg-gradient-to-br from-[#1E4D2B] via-[#166534] to-[#0F5132] text-white rounded-2xl p-4 shadow-sm border border-emerald-400/20 flex flex-col justify-between">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center text-amber-300">
+              <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center text-emerald-300">
                 <Scale className="w-4 h-4" />
               </div>
-              <span className="text-xs text-amber-100/90 font-semibold">Arus Kas (Net)</span>
+              <span className="text-xs text-emerald-100/90 font-semibold">Arus Kas (Net)</span>
             </div>
             <span
               className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
-                netCashflow >= 0 ? "bg-amber-400/20 text-amber-300 border border-amber-400/30" : "bg-rose-500/20 text-rose-300 border border-rose-500/30"
+                netCashflow >= 0 ? "bg-emerald-400/20 text-emerald-300 border border-emerald-400/30" : "bg-rose-500/20 text-rose-300 border border-rose-500/30"
               }`}
             >
               {netCashflow >= 0 ? "Surplus" : "Defisit"}
@@ -192,7 +192,7 @@ export function DashboardView({
           <div>
             <p
               className={`text-lg md:text-xl font-bold tracking-tight ${
-                netCashflow >= 0 ? "text-amber-300" : "text-rose-300"
+                netCashflow >= 0 ? "text-emerald-300" : "text-rose-300"
               }`}
             >
               {netCashflow >= 0 ? `+${formatRupiah(netCashflow)}` : formatRupiah(netCashflow)}
@@ -209,7 +209,7 @@ export function DashboardView({
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-100 dark:border-slate-800 shadow-sm space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-[#0F2C59]/10 dark:bg-amber-400/10 text-[#0F2C59] dark:text-amber-400 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-xl bg-[#1E4D2B]/10 dark:bg-emerald-500/10 text-[#1E4D2B] dark:text-emerald-400 flex items-center justify-center">
                   <PieChart className="w-4 h-4" />
                 </div>
                 <h3 className="font-bold text-slate-800 dark:text-white text-sm">
@@ -223,7 +223,7 @@ export function DashboardView({
                   onClick={() => setChartViewTab("donut")}
                   className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold transition ${
                     chartViewTab === "donut"
-                      ? "bg-white dark:bg-slate-700 text-[#0F2C59] dark:text-amber-300 shadow-sm"
+                      ? "bg-white dark:bg-slate-700 text-[#1E4D2B] dark:text-emerald-300 shadow-sm"
                       : "text-slate-500 hover:text-slate-800 dark:text-slate-400"
                   }`}
                 >
@@ -234,7 +234,7 @@ export function DashboardView({
                   onClick={() => setChartViewTab("trend")}
                   className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold transition ${
                     chartViewTab === "trend"
-                      ? "bg-white dark:bg-slate-700 text-[#0F2C59] dark:text-amber-300 shadow-sm"
+                      ? "bg-white dark:bg-slate-700 text-[#1E4D2B] dark:text-emerald-300 shadow-sm"
                       : "text-slate-500 hover:text-slate-800 dark:text-slate-400"
                   }`}
                 >
@@ -265,14 +265,14 @@ export function DashboardView({
               <div className="flex items-center gap-3">
                 <button
                   onClick={onOpenQuickModal}
-                  className="hidden sm:flex items-center gap-1 text-xs text-[#0F2C59] dark:text-amber-400 font-bold hover:underline"
+                  className="hidden sm:flex items-center gap-1 text-xs text-[#1E4D2B] dark:text-emerald-400 font-bold hover:underline"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>Catat Cepat</span>
                 </button>
                 <button
                   onClick={onNavigateToTransactions}
-                  className="text-xs text-[#0F2C59] dark:text-amber-400 font-semibold hover:underline flex items-center gap-1"
+                  className="text-xs text-[#1E4D2B] dark:text-emerald-400 font-semibold hover:underline flex items-center gap-1"
                 >
                   <span>Lihat Semua</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -285,7 +285,7 @@ export function DashboardView({
                 <p className="text-sm text-slate-400">Belum ada transaksi di bulan ini</p>
                 <button
                   onClick={onOpenQuickModal}
-                  className="px-4 py-2 bg-gradient-to-r from-[#0F2C59] via-[#153464] to-[#1A365D] hover:from-[#0A1F3F] hover:to-[#0F2C59] text-white border border-amber-400/25 rounded-xl text-xs font-semibold shadow-md shadow-[#0F2C59]/20 transition"
+                  className="px-4 py-2 bg-gradient-to-r from-[#1E4D2B] via-[#166534] to-[#0F5132] hover:from-[#144222] hover:to-[#1E4D2B] text-white border border-emerald-400/25 rounded-xl text-xs font-semibold shadow-md shadow-emerald-950/20 transition"
                 >
                   + Catat Transaksi Pertama
                 </button>
@@ -308,7 +308,7 @@ export function DashboardView({
                           style={{
                             backgroundColor:
                               tx.type === "transfer"
-                                ? "#0F2C59"
+                                ? "#1E4D2B"
                                 : category?.color || (tx.type === "income" ? "#10B981" : "#EF4444"),
                           }}
                         >
@@ -342,7 +342,7 @@ export function DashboardView({
                               ? "text-emerald-600 dark:text-emerald-400"
                               : tx.type === "expense"
                               ? "text-rose-600 dark:text-rose-400"
-                              : "text-[#0F2C59] dark:text-amber-400"
+                              : "text-[#1E4D2B] dark:text-emerald-400"
                           }`}
                         >
                           {tx.type === "income" ? "+" : tx.type === "expense" ? "-" : ""}
@@ -371,12 +371,12 @@ export function DashboardView({
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-slate-800 dark:text-white text-sm flex items-center gap-2">
-                <WalletIcon className="w-4 h-4 text-[#0F2C59] dark:text-amber-400" />
+                <WalletIcon className="w-4 h-4 text-[#1E4D2B] dark:text-emerald-400" />
                 <span>Dompet & Sumber Dana</span>
               </h3>
               <button
                 onClick={onNavigateToWallets}
-                className="text-xs text-[#0F2C59] dark:text-amber-400 font-semibold hover:underline flex items-center gap-1"
+                className="text-xs text-[#1E4D2B] dark:text-emerald-400 font-semibold hover:underline flex items-center gap-1"
               >
                 <span>Kelola</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -391,7 +391,7 @@ export function DashboardView({
                 >
                   <div
                     className="w-10 h-10 rounded-xl flex items-center justify-center text-white shrink-0 shadow-sm"
-                    style={{ backgroundColor: w.color || "#0F2C59" }}
+                    style={{ backgroundColor: w.color || "#1E4D2B" }}
                   >
                     <DynamicIcon name={w.icon} className="w-5 h-5" />
                   </div>
@@ -413,7 +413,7 @@ export function DashboardView({
             <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-100 dark:border-slate-800 shadow-sm space-y-4">
               <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-xl bg-[#0F2C59]/10 dark:bg-amber-400/10 text-[#0F2C59] dark:text-amber-400 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-xl bg-[#1E4D2B]/10 dark:bg-emerald-500/10 text-[#1E4D2B] dark:text-emerald-400 flex items-center justify-center">
                     <Users className="w-4 h-4" />
                   </div>
                   <div>
@@ -437,7 +437,7 @@ export function DashboardView({
                             className="w-6 h-6 rounded-full object-cover border border-slate-200 shrink-0"
                           />
                         ) : (
-                          <div className="w-6 h-6 rounded-full bg-amber-100 dark:bg-amber-900/60 text-[#0F2C59] dark:text-amber-300 flex items-center justify-center text-[10px] font-bold shrink-0">
+                          <div className="w-6 h-6 rounded-full bg-emerald-100 dark:bg-emerald-900/60 text-[#1E4D2B] dark:text-emerald-300 flex items-center justify-center text-[10px] font-bold shrink-0">
                             {m.avatar || m.name.charAt(0)}
                           </div>
                         )}
@@ -450,7 +450,7 @@ export function DashboardView({
                         <span className="font-extrabold text-slate-900 dark:text-white">
                           {formatRupiah(m.amount)}
                         </span>
-                        <span className="text-[11px] font-bold text-[#0F2C59] dark:text-amber-400 w-10 text-right">
+                        <span className="text-[11px] font-bold text-[#1E4D2B] dark:text-emerald-400 w-10 text-right">
                           {m.percentage.toFixed(0)}%
                         </span>
                       </div>
@@ -458,8 +458,8 @@ export function DashboardView({
 
                     <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
                       <div
-                        className="h-full rounded-full bg-gradient-to-r from-[#0F2C59] to-[#254B8C] dark:from-amber-500 dark:to-amber-300 transition-all duration-500"
-                        style={{ width: `${Math.min(m.percentage, 100)}%` }}
+                        className="bg-[#1E4D2B] dark:bg-emerald-500 h-full rounded-full transition-all duration-500"
+                        style={{ width: `${m.percentage}%` }}
                       />
                     </div>
                   </div>
