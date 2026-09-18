@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Category, Transaction, TransactionType, Wallet } from "@/types";
+import { Category, Transaction, TransactionType, Wallet, UserProfile } from "@/types";
 import { formatRupiah, formatDateTime, formatDate } from "@/lib/formatters";
 import { DynamicIcon } from "../ui/DynamicIcon";
 import {
@@ -13,6 +13,8 @@ import {
   Layers,
   Wallet as WalletIcon,
   X,
+  FileText,
+  Users,
 } from "lucide-react";
 
 interface TransactionsViewProps {
@@ -21,6 +23,8 @@ interface TransactionsViewProps {
   categories: Category[];
   onDeleteTransaction: (tx: Transaction) => void;
   onOpenQuickModal: () => void;
+  householdMembers?: UserProfile[];
+  onOpenReportModal?: () => void;
 }
 
 export function TransactionsView({
@@ -29,11 +33,14 @@ export function TransactionsView({
   categories,
   onDeleteTransaction,
   onOpenQuickModal,
+  householdMembers = [],
+  onOpenReportModal,
 }: TransactionsViewProps) {
   const [search, setSearch] = useState("");
   const [selectedType, setSelectedType] = useState<string>("all");
   const [selectedWallet, setSelectedWallet] = useState<string>("all");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [selectedMember, setSelectedMember] = useState<string>("all");
   const [showFilters, setShowFilters] = useState(false);
 
   // Filter transactions
@@ -49,6 +56,8 @@ export function TransactionsView({
       return false;
     // Category
     if (selectedCategory !== "all" && t.categoryId !== selectedCategory) return false;
+    // Member (Poin 5)
+    if (selectedMember !== "all" && t.createdById !== selectedMember) return false;
     // Search
     if (search.trim()) {
       const q = search.toLowerCase();
@@ -57,7 +66,8 @@ export function TransactionsView({
       const catMatch = cat?.name.toLowerCase().includes(q);
       const w = wallets.find((w) => w.id === t.walletId);
       const walletMatch = w?.name.toLowerCase().includes(q);
-      if (!notesMatch && !catMatch && !walletMatch) return false;
+      const creatorMatch = t.creatorName?.toLowerCase().includes(q);
+      if (!notesMatch && !catMatch && !walletMatch && !creatorMatch) return false;
     }
     return true;
   });
@@ -105,45 +115,64 @@ export function TransactionsView({
     document.body.removeChild(link);
   };
 
+  const hasActiveFilters =
+    selectedType !== "all" ||
+    selectedWallet !== "all" ||
+    selectedCategory !== "all" ||
+    selectedMember !== "all";
+
   return (
-    <div className="space-y-4 pb-28 max-w-5xl mx-auto px-4 pt-2">
+    <div className="space-y-4 pb-28 max-w-5xl lg:max-w-7xl mx-auto px-4 lg:px-0 pt-2 lg:pt-0">
       {/* Search & Actions Bar */}
       <div className="flex items-center gap-2">
         <div className="relative flex-1">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Cari transaksi atau catatan..."
-            className="w-full pl-9 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm"
+            placeholder="Cari transaksi, kategori, atau catatan..."
+            className="w-full pl-10 pr-9 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-xs text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 shadow-sm"
           />
           {search && (
             <button
               onClick={() => setSearch("")}
-              className="absolute right-3 top-3 text-slate-400 hover:text-slate-600"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
             >
               <X className="w-3.5 h-3.5" />
             </button>
           )}
         </div>
 
+        {/* Filter Toggle */}
         <button
           onClick={() => setShowFilters(!showFilters)}
-          className={`p-2.5 rounded-xl border flex items-center justify-center transition shadow-sm ${
-            showFilters || selectedType !== "all" || selectedWallet !== "all" || selectedCategory !== "all"
-              ? "bg-emerald-600 text-white border-emerald-600"
-              : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+          className={`p-2.5 rounded-2xl border flex items-center justify-center transition shadow-sm ${
+            showFilters || hasActiveFilters
+              ? "bg-emerald-600 text-white border-emerald-600 shadow-md shadow-emerald-600/20"
+              : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800"
           }`}
           title="Filter Transaksi"
         >
           <Filter className="w-4 h-4" />
         </button>
 
+        {/* Print / PDF Report Button (Poin 4) */}
+        {onOpenReportModal && (
+          <button
+            onClick={onOpenReportModal}
+            className="p-2.5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-emerald-700 dark:text-emerald-400 transition shadow-sm"
+            title="Cetak Laporan Bulanan / PDF"
+          >
+            <FileText className="w-4 h-4" />
+          </button>
+        )}
+
+        {/* Export CSV Button */}
         <button
           onClick={handleExportCSV}
           disabled={filtered.length === 0}
-          className="p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 disabled:opacity-40 transition shadow-sm"
+          className="p-2.5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 disabled:opacity-40 transition shadow-sm"
           title="Unduh CSV"
         >
           <Download className="w-4 h-4" />
@@ -152,15 +181,18 @@ export function TransactionsView({
 
       {/* Expandable Filter Panel */}
       {showFilters && (
-        <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm space-y-3 animate-fade-in">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-            <span className="text-xs font-bold text-slate-700">Filter Transaksi</span>
-            {(selectedType !== "all" || selectedWallet !== "all" || selectedCategory !== "all") && (
+        <div className="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm space-y-3 animate-fade-in">
+          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+            <span className="text-xs font-bold text-slate-700 dark:text-slate-200">
+              Filter Transaksi
+            </span>
+            {hasActiveFilters && (
               <button
                 onClick={() => {
                   setSelectedType("all");
                   setSelectedWallet("all");
                   setSelectedCategory("all");
+                  setSelectedMember("all");
                 }}
                 className="text-[11px] text-rose-500 font-semibold hover:underline"
               >
@@ -169,14 +201,16 @@ export function TransactionsView({
             )}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2.5">
             {/* Type */}
             <div>
-              <label className="block text-[11px] font-semibold text-slate-500 mb-1">Jenis</label>
+              <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">
+                Jenis
+              </label>
               <select
                 value={selectedType}
                 onChange={(e) => setSelectedType(e.target.value)}
-                className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-700 focus:outline-none"
+                className="w-full px-2.5 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-700 dark:text-white focus:outline-none"
               >
                 <option value="all">Semua Jenis</option>
                 <option value="expense">Pengeluaran</option>
@@ -187,11 +221,13 @@ export function TransactionsView({
 
             {/* Wallet */}
             <div>
-              <label className="block text-[11px] font-semibold text-slate-500 mb-1">Dompet</label>
+              <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">
+                Dompet
+              </label>
               <select
                 value={selectedWallet}
                 onChange={(e) => setSelectedWallet(e.target.value)}
-                className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-700 focus:outline-none"
+                className="w-full px-2.5 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-700 dark:text-white focus:outline-none"
               >
                 <option value="all">Semua Dompet</option>
                 {wallets.map((w) => (
@@ -204,11 +240,13 @@ export function TransactionsView({
 
             {/* Category */}
             <div>
-              <label className="block text-[11px] font-semibold text-slate-500 mb-1">Kategori</label>
+              <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">
+                Kategori
+              </label>
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-700 focus:outline-none"
+                className="w-full px-2.5 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-700 dark:text-white focus:outline-none"
               >
                 <option value="all">Semua Kategori</option>
                 {categories.map((c) => (
@@ -218,22 +256,41 @@ export function TransactionsView({
                 ))}
               </select>
             </div>
+
+            {/* Member Filter (Poin 5) */}
+            <div>
+              <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">
+                Anggota Keluarga
+              </label>
+              <select
+                value={selectedMember}
+                onChange={(e) => setSelectedMember(e.target.value)}
+                className="w-full px-2.5 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-700 dark:text-white focus:outline-none"
+              >
+                <option value="all">Semua Anggota</option>
+                {householdMembers.map((m) => (
+                  <option key={m.uid} value={m.uid}>
+                    {m.displayName || m.email}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
       )}
 
       {/* Filter Summary Banner */}
-      <div className="bg-slate-50 px-4 py-2 rounded-xl border border-slate-200/60 flex items-center justify-between text-xs text-slate-500">
+      <div className="bg-slate-100/70 dark:bg-slate-900/60 px-4 py-2.5 rounded-2xl border border-slate-200/60 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
         <span>Menampilkan <b>{filtered.length}</b> transaksi</span>
         <div className="flex items-center gap-3 font-semibold">
-          <span className="text-emerald-600">+{formatRupiah(filteredIncome)}</span>
-          <span className="text-rose-600">-{formatRupiah(filteredExpense)}</span>
+          <span className="text-emerald-600 dark:text-emerald-400">+{formatRupiah(filteredIncome)}</span>
+          <span className="text-rose-600 dark:text-rose-400">-{formatRupiah(filteredExpense)}</span>
         </div>
       </div>
 
       {/* Transactions List */}
       {filtered.length === 0 ? (
-        <div className="bg-white rounded-2xl p-10 text-center border border-slate-100 shadow-sm space-y-3">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-10 text-center border border-slate-100 dark:border-slate-800 shadow-sm space-y-3">
           <p className="text-sm text-slate-400">Tidak ada transaksi yang cocok dengan filter</p>
           <button
             onClick={onOpenQuickModal}
@@ -243,7 +300,7 @@ export function TransactionsView({
           </button>
         </div>
       ) : (
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm divide-y divide-slate-100 overflow-hidden">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm divide-y divide-slate-100 dark:divide-slate-800 overflow-hidden">
           {filtered.map((tx) => {
             const category = categories.find((c) => c.id === tx.categoryId);
             const sourceWallet = wallets.find((w) => w.id === tx.walletId);
@@ -252,7 +309,7 @@ export function TransactionsView({
             return (
               <div
                 key={tx.id}
-                className="p-3.5 flex items-center justify-between gap-3 hover:bg-slate-50/60 transition group"
+                className="p-3.5 flex items-center justify-between gap-3 hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition group"
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <div
@@ -275,26 +332,27 @@ export function TransactionsView({
                   </div>
 
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs font-bold text-slate-800 truncate">
+                    <p className="text-xs font-bold text-slate-800 dark:text-slate-100 truncate">
                       {tx.type === "transfer"
                         ? `Mutasi: ${sourceWallet?.name || "Dompet"} → ${destWallet?.name || "Dompet"}`
                         : category?.name || tx.notes || "Transaksi"}
                     </p>
-                    <p className="text-[11px] text-slate-400 truncate mt-0.5">
-                      {tx.notes ? <span className="text-slate-600 font-medium">{tx.notes} • </span> : null}
+                    <p className="text-[11px] text-slate-400 dark:text-slate-500 truncate mt-0.5">
+                      {tx.notes ? <span className="text-slate-600 dark:text-slate-300 font-medium">{tx.notes} • </span> : null}
                       {sourceWallet?.name} • {formatDateTime(tx.transactionDate)}
+                      {tx.creatorName ? ` • Oleh ${tx.creatorName}` : ""}
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0">
                   <span
-                    className={`text-xs font-bold ${
+                    className={`text-xs md:text-sm font-bold ${
                       tx.type === "income"
-                        ? "text-emerald-600"
+                        ? "text-emerald-600 dark:text-emerald-400"
                         : tx.type === "expense"
-                        ? "text-rose-600"
-                        : "text-indigo-600"
+                        ? "text-rose-600 dark:text-rose-400"
+                        : "text-indigo-600 dark:text-indigo-400"
                     }`}
                   >
                     {tx.type === "income" ? "+" : tx.type === "expense" ? "-" : ""}
@@ -317,4 +375,3 @@ export function TransactionsView({
     </div>
   );
 }
-

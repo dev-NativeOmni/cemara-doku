@@ -8,22 +8,36 @@ import { BottomNav } from "@/components/layout/BottomNav";
 import { DashboardView } from "@/components/dashboard/DashboardView";
 import { TransactionsView } from "@/components/transactions/TransactionsView";
 import { BudgetsView } from "@/components/budgets/BudgetsView";
+import { SavingsView } from "@/components/savings/SavingsView";
 import { WalletsView } from "@/components/wallets/WalletsView";
 import { SettingsView } from "@/components/settings/SettingsView";
 import { QuickTransactionModal } from "@/components/transactions/QuickTransactionModal";
+import { MonthlyReportModal } from "@/components/reports/MonthlyReportModal";
 import { DesktopSidebar } from "@/components/layout/DesktopSidebar";
+import { OfflineIndicator } from "@/components/ui/OfflineIndicator";
+import { PwaInstallPrompt } from "@/components/ui/PwaInstallPrompt";
+
 import { getWallets, createWallet, updateWallet } from "@/services/walletService";
 import { getCategories } from "@/services/categoryService";
 import { getMonthTransactions, deleteTransaction } from "@/services/transactionService";
 import { getBudgets, setBudget, deleteBudget, copyPreviousMonthBudgets } from "@/services/budgetService";
-import { Budget, Category, NavigationTab, Transaction, Wallet } from "@/types";
+import {
+  getSavingsGoals,
+  createSavingsGoal,
+  updateSavingsGoal,
+  deleteSavingsGoal,
+  depositToSavingsGoal,
+} from "@/services/savingsService";
+import { getHouseholdMembers } from "@/services/authService";
+import { Budget, Category, NavigationTab, SavingsGoal, Transaction, UserProfile, Wallet } from "@/types";
 import { Loader2 } from "lucide-react";
 
 export default function HomePage() {
-  const { user, household, loading: authLoading } = useAuth();
+  const { user, userProfile, household, loading: authLoading } = useAuth();
 
   const [activeTab, setActiveTab] = useState<NavigationTab>("home");
   const [quickModalOpen, setQuickModalOpen] = useState<boolean>(false);
+  const [reportModalOpen, setReportModalOpen] = useState<boolean>(false);
 
   // Date selection state
   const now = new Date();
@@ -35,22 +49,31 @@ export default function HomePage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [budgets, setBudgets] = useState<Budget[]>([]);
+  const [savingsGoals, setSavingsGoals] = useState<SavingsGoal[]>([]);
+  const [householdMembers, setHouseholdMembers] = useState<UserProfile[]>([]);
   const [dataLoading, setDataLoading] = useState<boolean>(false);
 
   const loadAllData = useCallback(async () => {
     if (!household) return;
     setDataLoading(true);
     try {
-      const [w, c, txs, b] = await Promise.all([
+      const [w, c, txs, b, g] = await Promise.all([
         getWallets(household.id),
         getCategories(household.id),
         getMonthTransactions(household.id, currentYear, currentMonth),
         getBudgets(household.id, currentMonth, currentYear),
+        getSavingsGoals(household.id),
       ]);
       setWallets(w);
       setCategories(c);
       setTransactions(txs);
       setBudgets(b);
+      setSavingsGoals(g);
+
+      if (household.memberUids && household.memberUids.length > 0) {
+        const members = await getHouseholdMembers(household.memberUids);
+        setHouseholdMembers(members);
+      }
     } catch (err) {
       console.error("Error loading household data:", err);
     } finally {
@@ -64,13 +87,13 @@ export default function HomePage() {
     }
   }, [household, loadAllData]);
 
-  if (authLoading || dataLoading && !household) {
+  if (authLoading || (dataLoading && !household)) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
-        <div className="w-16 h-16 rounded-3xl bg-white border border-slate-100 p-2.5 flex items-center justify-center mb-3 shadow-xl shadow-slate-200/50 animate-bounce">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center p-4">
+        <div className="w-16 h-16 rounded-3xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-2.5 flex items-center justify-center mb-3 shadow-xl shadow-slate-200/50 dark:shadow-none animate-bounce">
           <img src="/logo.png" alt="Cemara" className="w-full h-full object-contain drop-shadow" />
         </div>
-        <p className="text-sm font-semibold text-slate-600 flex items-center gap-2">
+        <p className="text-sm font-semibold text-slate-600 dark:text-slate-300 flex items-center gap-2">
           <Loader2 className="w-4 h-4 animate-spin text-emerald-600" />
           Memuat Cemara...
         </p>
@@ -135,8 +158,44 @@ export default function HomePage() {
     await loadAllData();
   };
 
+  // Savings Goals Handlers
+  const handleCreateSavingsGoal = async (data: Omit<SavingsGoal, "id" | "createdAt" | "updatedAt">) => {
+    if (!household) return;
+    await createSavingsGoal(household.id, data);
+    await loadAllData();
+  };
+
+  const handleUpdateSavingsGoal = async (id: string, data: Partial<SavingsGoal>) => {
+    if (!household) return;
+    await updateSavingsGoal(household.id, id, data);
+    await loadAllData();
+  };
+
+  const handleDeleteSavingsGoal = async (id: string) => {
+    if (!household) return;
+    await deleteSavingsGoal(household.id, id);
+    await loadAllData();
+  };
+
+  const handleDepositSavingsGoal = async (goalId: string, amount: number, walletId?: string) => {
+    if (!household) return;
+    await depositToSavingsGoal(
+      household.id,
+      goalId,
+      amount,
+      walletId,
+      user.uid,
+      userProfile?.displayName || user.email?.split("@")[0]
+    );
+    await loadAllData();
+  };
+
   return (
-    <div className="min-h-screen bg-slate-50 flex text-slate-900 selection:bg-emerald-200">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex text-slate-900 dark:text-slate-100 selection:bg-emerald-200">
+      {/* Offline Indicator & PWA prompt */}
+      <OfflineIndicator />
+      <PwaInstallPrompt />
+
       {/* Desktop Left Sidebar (Only visible on lg: screens) */}
       <DesktopSidebar
         activeTab={activeTab}
@@ -156,6 +215,7 @@ export default function HomePage() {
           onOpenSettings={() => setActiveTab("settings")}
           activeTab={activeTab}
           onOpenQuickModal={() => setQuickModalOpen(true)}
+          onOpenReportModal={() => setReportModalOpen(true)}
         />
 
         {/* Main Content Area */}
@@ -165,10 +225,13 @@ export default function HomePage() {
               wallets={wallets}
               categories={categories}
               transactions={transactions}
+              currentMonth={currentMonth}
+              currentYear={currentYear}
               onOpenQuickModal={() => setQuickModalOpen(true)}
               onNavigateToTransactions={() => setActiveTab("transactions")}
               onNavigateToWallets={() => setActiveTab("wallets")}
               onDeleteTransaction={handleDeleteTransaction}
+              householdMembers={householdMembers}
             />
           )}
 
@@ -179,6 +242,8 @@ export default function HomePage() {
               categories={categories}
               onDeleteTransaction={handleDeleteTransaction}
               onOpenQuickModal={() => setQuickModalOpen(true)}
+              householdMembers={householdMembers}
+              onOpenReportModal={() => setReportModalOpen(true)}
             />
           )}
 
@@ -192,6 +257,17 @@ export default function HomePage() {
               onSaveBudget={handleSaveBudget}
               onDeleteBudget={handleDeleteBudget}
               onCopyPreviousMonth={handleCopyPreviousMonthBudgets}
+            />
+          )}
+
+          {activeTab === "savings" && (
+            <SavingsView
+              savingsGoals={savingsGoals}
+              wallets={wallets}
+              onCreateGoal={handleCreateSavingsGoal}
+              onUpdateGoal={handleUpdateSavingsGoal}
+              onDeleteGoal={handleDeleteSavingsGoal}
+              onDeposit={handleDepositSavingsGoal}
             />
           )}
 
@@ -226,6 +302,19 @@ export default function HomePage() {
         wallets={wallets}
         categories={categories}
         onSuccess={loadAllData}
+      />
+
+      {/* Monthly Printable Report Modal */}
+      <MonthlyReportModal
+        isOpen={reportModalOpen}
+        onClose={() => setReportModalOpen(false)}
+        household={household}
+        currentMonth={currentMonth}
+        currentYear={currentYear}
+        transactions={transactions}
+        wallets={wallets}
+        categories={categories}
+        budgets={budgets}
       />
     </div>
   );

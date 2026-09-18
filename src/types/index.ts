@@ -68,5 +68,19 @@ export interface Budget {
   updatedAt?: Timestamp | Date;
 }
 
-export type NavigationTab = "home" | "transactions" | "budgets" | "wallets" | "settings";
+export interface SavingsGoal {
+  id: string;
+  title: string;
+  targetAmount: number;
+  currentAmount: number;
+  targetDate?: string; // YYYY-MM-DD
+  icon: string;
+  color: string;
+  walletId?: string; // Associated funding wallet
+  notes?: string;
+  isCompleted?: boolean;
+  createdAt?: Timestamp | Date;
+  updatedAt?: Timestamp | Date;
+}
 
+export type NavigationTab = "home" | "transactions" | "budgets" | "wallets" | "savings" | "settings";

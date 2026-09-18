@@ -62,37 +62,42 @@ export function QuickTransactionModal({
         setCategoryId(availableCategories[0].id);
       }
     }
-  }, [isOpen, type, wallets, categories]);
+  }, [isOpen, wallets, categories, type]);
 
   if (!isOpen) return null;
 
-  const filteredCategories = categories.filter((c) => c.type === type);
-  const parsedAmount = parseInt(rawAmount.replace(/\D/g, "") || "0", 10);
+  const currentCategories = categories.filter((c) => c.type === (type === "transfer" ? "expense" : type));
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const numericOnly = e.target.value.replace(/\D/g, "");
-    setRawAmount(numericOnly);
+    const val = e.target.value.replace(/\D/g, "");
+    setRawAmount(val ? Number(val).toLocaleString("id-ID") : "");
   };
 
-  const handleSaveCustomCategory = async (newCatData: Omit<Category, "id">): Promise<string> => {
-    if (!household) throw new Error("Rumah tangga tidak ditemukan");
-    const newId = await createCategory(household.id, newCatData);
-    await onSuccess(); // Refresh data
+  const handleQuickAmount = (val: number) => {
+    const current = parseInt(rawAmount.replace(/\D/g, "") || "0", 10);
+    const updated = current + val;
+    setRawAmount(updated.toLocaleString("id-ID"));
+  };
+
+  const handleSaveNewCategory = async (catData: Omit<Category, "id">) => {
+    if (!household) throw new Error("No household");
+    const newId = await createCategory(household.id, catData);
     setCategoryId(newId);
     return newId;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!household) return;
+    setError(null);
 
-    if (parsedAmount <= 0) {
+    const amount = parseInt(rawAmount.replace(/\D/g, "") || "0", 10);
+    if (isNaN(amount) || amount <= 0) {
       setError("Masukkan nominal transaksi yang valid");
       return;
     }
 
     if (!walletId) {
-      setError("Pilih dompet sumber transaksi");
+      setError("Pilih dompet sumber dana");
       return;
     }
 
@@ -112,18 +117,18 @@ export function QuickTransactionModal({
       }
     }
 
-    setError(null);
-    setLoading(true);
+    if (!household) {
+      setError("Gagal memproses: Buku kas tidak ditemukan");
+      return;
+    }
 
+    setLoading(true);
     try {
-      const selectedDate = new Date(dateStr);
-      // keep current hours & minutes for precise chronological sorting
-      const now = new Date();
-      selectedDate.setHours(now.getHours(), now.getMinutes(), now.getSeconds());
+      const selectedDate = dateStr ? new Date(dateStr) : new Date();
 
       await recordTransaction(household.id, {
         type,
-        amount: parsedAmount,
+        amount,
         walletId,
         destinationWalletId: type === "transfer" ? destWalletId : undefined,
         categoryId: type !== "transfer" ? categoryId : undefined,
@@ -146,15 +151,15 @@ export function QuickTransactionModal({
   return (
     <>
       <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-        <div className="w-full max-w-lg bg-white rounded-t-[2rem] sm:rounded-3xl shadow-2xl max-h-[90vh] flex flex-col overflow-hidden animate-slide-up">
+        <div className="w-full max-w-lg bg-white dark:bg-slate-900 rounded-t-[2rem] sm:rounded-3xl shadow-2xl max-h-[90vh] flex flex-col overflow-hidden animate-slide-up border border-slate-100 dark:border-slate-800">
           {/* Modal Header & Tabs */}
-          <div className="p-4 sm:p-5 border-b border-slate-100 bg-slate-50/60 shrink-0">
+          <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-850 shrink-0">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-bold text-slate-800 text-base">Catat Transaksi</h3>
+              <h3 className="font-bold text-slate-800 dark:text-white text-base">Catat Transaksi</h3>
               <button
                 type="button"
                 onClick={onClose}
-                className="p-1.5 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-200/50 transition"
+                className="p-1.5 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition"
                 aria-label="Tutup"
               >
                 <X className="w-5 h-5" />
@@ -162,14 +167,14 @@ export function QuickTransactionModal({
             </div>
 
             {/* Type Segment Control */}
-            <div className="grid grid-cols-3 gap-1 bg-slate-200/70 p-1 rounded-2xl">
+            <div className="grid grid-cols-3 gap-1 bg-slate-200/70 dark:bg-slate-800 p-1 rounded-2xl">
               <button
                 type="button"
                 onClick={() => { setType("expense"); setError(null); }}
                 className={`py-2 rounded-xl text-xs font-bold transition ${
                   type === "expense"
                     ? "bg-rose-600 text-white shadow-md shadow-rose-600/20"
-                    : "text-slate-600 hover:text-slate-900"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
                 Pengeluaran
@@ -180,7 +185,7 @@ export function QuickTransactionModal({
                 className={`py-2 rounded-xl text-xs font-bold transition ${
                   type === "income"
                     ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/20"
-                    : "text-slate-600 hover:text-slate-900"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
                 Pemasukan
@@ -191,7 +196,7 @@ export function QuickTransactionModal({
                 className={`py-2 rounded-xl text-xs font-bold transition ${
                   type === "transfer"
                     ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/20"
-                    : "text-slate-600 hover:text-slate-900"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
                 Transfer
@@ -199,105 +204,107 @@ export function QuickTransactionModal({
             </div>
           </div>
 
-          {/* Scrollable Form Body */}
-          <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5">
+          {/* Form Content */}
+          <form onSubmit={handleSubmit} className="p-4 sm:p-6 overflow-y-auto flex-1 space-y-4">
             {error && (
-              <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl flex items-center gap-2">
+              <div className="p-3 bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs rounded-xl flex items-center gap-2 animate-fade-in">
                 <AlertCircle className="w-4 h-4 shrink-0" />
                 <span>{error}</span>
               </div>
             )}
 
-            {/* Big Amount Input */}
-            <div className="text-center py-2 bg-slate-50/80 rounded-2xl border border-slate-100 p-4">
-              <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">
-                Nominal ({type === "expense" ? "Keluar" : type === "income" ? "Masuk" : "Mutasi"})
-              </span>
-              <div className="flex items-center justify-center">
-                <span className="text-2xl font-bold text-slate-400 mr-2">Rp</span>
+            {/* Amount Field */}
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Nominal Transaksi</label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-lg">
+                  Rp
+                </span>
                 <input
                   type="text"
                   inputMode="numeric"
-                  value={rawAmount ? Number(rawAmount).toLocaleString("id-ID") : ""}
-                  onChange={handleAmountChange}
                   placeholder="0"
                   autoFocus
                   required
-                  className="text-3xl font-extrabold text-slate-800 bg-transparent text-center focus:outline-none w-full max-w-[240px]"
+                  value={rawAmount}
+                  onChange={handleAmountChange}
+                  className="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-xl font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition"
                 />
               </div>
-              {parsedAmount > 0 && (
-                <p className="text-xs text-emerald-600 font-medium mt-1">
-                  {formatRupiah(parsedAmount)}
-                </p>
-              )}
+
+              {/* Quick Nominal Chips */}
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {[10000, 20000, 50000, 100000, 250000, 500000].map((val) => (
+                  <button
+                    key={val}
+                    type="button"
+                    onClick={() => handleQuickAmount(val)}
+                    className="text-[11px] px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold transition"
+                  >
+                    +{formatRupiah(val).replace(",00", "").replace("Rp", "").trim()}
+                  </button>
+                ))}
+              </div>
             </div>
 
-            {/* Wallets Selection */}
-            {type === "transfer" ? (
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1.5">
-                    Dari Dompet
-                  </label>
-                  <select
-                    value={walletId}
-                    onChange={(e) => setWalletId(e.target.value)}
-                    className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            {/* Wallet Selection (Source) */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                {type === "transfer" ? "Dari Dompet (Asal)" : "Sumber Dompet / Rekening"}
+              </label>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {wallets.map((w) => (
+                  <button
+                    key={w.id}
+                    type="button"
+                    onClick={() => setWalletId(w.id)}
+                    className={`p-2.5 rounded-2xl border text-left flex items-center gap-2.5 transition ${
+                      walletId === w.id
+                        ? "border-emerald-600 bg-emerald-50/70 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 ring-2 ring-emerald-500/20"
+                        : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 text-slate-700 dark:text-slate-300"
+                    }`}
                   >
-                    {wallets.map((w) => (
-                      <option key={w.id} value={w.id}>
-                        {w.name} ({formatRupiah(w.currentBalance)})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1.5">
-                    Ke Dompet
-                  </label>
-                  <select
-                    value={destWalletId}
-                    onChange={(e) => setDestWalletId(e.target.value)}
-                    className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  >
-                    {wallets.map((w) => (
-                      <option key={w.id} value={w.id}>
-                        {w.name} ({formatRupiah(w.currentBalance)})
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                    <div
+                      className="w-8 h-8 rounded-xl flex items-center justify-center text-white shrink-0 shadow-sm"
+                      style={{ backgroundColor: w.color || "#10B981" }}
+                    >
+                      <DynamicIcon name={w.icon} className="w-4 h-4" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs font-bold truncate">{w.name}</p>
+                      <p className="text-[10px] text-slate-400 truncate">{formatRupiah(w.currentBalance)}</p>
+                    </div>
+                  </button>
+                ))}
               </div>
-            ) : (
-              <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1.5">
-                  Sumber Dompet
-                </label>
+            </div>
+
+            {/* Destination Wallet for Transfer */}
+            {type === "transfer" && (
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Ke Dompet (Tujuan)</label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {wallets.map((w) => (
                     <button
-                      type="button"
                       key={w.id}
-                      onClick={() => setWalletId(w.id)}
-                      className={`p-2.5 rounded-xl border text-left flex items-center gap-2.5 transition ${
-                        walletId === w.id
-                          ? "border-emerald-600 bg-emerald-50/60 text-emerald-950 font-bold shadow-sm"
-                          : "border-slate-200 hover:border-slate-300 text-slate-600 bg-white"
+                      type="button"
+                      disabled={w.id === walletId}
+                      onClick={() => setDestWalletId(w.id)}
+                      className={`p-2.5 rounded-2xl border text-left flex items-center gap-2.5 transition disabled:opacity-30 ${
+                        destWalletId === w.id
+                          ? "border-indigo-600 bg-indigo-50/70 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-300 ring-2 ring-indigo-500/20"
+                          : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 text-slate-700 dark:text-slate-300"
                       }`}
                     >
                       <div
-                        className="w-7 h-7 rounded-lg flex items-center justify-center text-white shrink-0 text-xs shadow-sm"
-                        style={{ backgroundColor: w.color || "#10B981" }}
+                        className="w-8 h-8 rounded-xl flex items-center justify-center text-white shrink-0 shadow-sm"
+                        style={{ backgroundColor: w.color || "#4F46E5" }}
                       >
-                        <DynamicIcon name={w.icon} className="w-3.5 h-3.5" />
+                        <DynamicIcon name={w.icon} className="w-4 h-4" />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="text-xs truncate">{w.name}</p>
-                        <p className="text-[10px] text-slate-400 font-normal truncate">
-                          {formatRupiah(w.currentBalance)}
-                        </p>
+                        <p className="text-xs font-bold truncate">{w.name}</p>
+                        <p className="text-[10px] text-slate-400 truncate">{formatRupiah(w.currentBalance)}</p>
                       </div>
                     </button>
                   ))}
@@ -305,33 +312,31 @@ export function QuickTransactionModal({
               </div>
             )}
 
-            {/* Categories Grid (for Expense & Income) */}
+            {/* Category Grid (for income / expense) */}
             {type !== "transfer" && (
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="block text-xs font-semibold text-slate-600">
-                    Kategori {type === "expense" ? "Pengeluaran" : "Pemasukan"}
-                  </label>
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Pilih Kategori</label>
                   <button
                     type="button"
                     onClick={() => setIsCategoryModalOpen(true)}
-                    className="text-[11px] font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1 transition"
+                    className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1"
                   >
                     <Plus className="w-3.5 h-3.5" />
-                    <span>+ Kategori Baru</span>
+                    <span>Kategori Kustom</span>
                   </button>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  {filteredCategories.map((c) => (
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-44 overflow-y-auto p-1">
+                  {currentCategories.map((c) => (
                     <button
-                      type="button"
                       key={c.id}
+                      type="button"
                       onClick={() => setCategoryId(c.id)}
-                      className={`p-2 rounded-xl border flex flex-col items-center justify-center text-center transition gap-1.5 ${
+                      className={`p-2.5 rounded-2xl border flex flex-col items-center justify-center text-center gap-1.5 transition ${
                         categoryId === c.id
-                          ? "border-emerald-600 bg-emerald-50/80 text-emerald-950 font-bold shadow-sm ring-1 ring-emerald-500"
-                          : "border-slate-200 hover:border-slate-300 text-slate-600 bg-white"
+                          ? "border-emerald-600 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-900 dark:text-emerald-300 shadow-sm ring-2 ring-emerald-500/20"
+                          : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 text-slate-700 dark:text-slate-300"
                       }`}
                     >
                       <div
@@ -340,85 +345,76 @@ export function QuickTransactionModal({
                       >
                         <DynamicIcon name={c.icon} className="w-4 h-4" />
                       </div>
-                      <span className="text-[11px] leading-tight line-clamp-1">{c.name}</span>
+                      <span className="text-[11px] font-bold truncate w-full">{c.name}</span>
                     </button>
                   ))}
-
-                  {/* Add New Category Quick Pill */}
-                  <button
-                    type="button"
-                    onClick={() => setIsCategoryModalOpen(true)}
-                    className="p-2 rounded-xl border border-dashed border-slate-300 hover:border-emerald-500 bg-slate-50/60 hover:bg-emerald-50/40 text-slate-500 hover:text-emerald-700 flex flex-col items-center justify-center text-center transition gap-1.5 group"
-                  >
-                    <div className="w-8 h-8 rounded-xl bg-slate-200 group-hover:bg-emerald-100 flex items-center justify-center text-slate-600 group-hover:text-emerald-700 shrink-0 transition">
-                      <Plus className="w-4 h-4" />
-                    </div>
-                    <span className="text-[11px] font-medium leading-tight">Tambah Baru</span>
-                  </button>
                 </div>
               </div>
             )}
 
-            {/* Date and Notes Row */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-              <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1.5 flex items-center gap-1.5">
+            {/* Date & Note Row */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1">
                   <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                  <span>Tanggal Transaksi</span>
+                  <span>Tanggal</span>
                 </label>
                 <input
                   type="date"
                   value={dateStr}
                   onChange={(e) => setDateStr(e.target.value)}
-                  required
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1.5 flex items-center gap-1.5">
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1">
                   <FileText className="w-3.5 h-3.5 text-slate-400" />
                   <span>Catatan (Opsional)</span>
                 </label>
                 <input
                   type="text"
+                  placeholder="Contoh: Makan siang bareng anak"
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Misal: Belanja mingguan, Bensin"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                 />
               </div>
             </div>
 
-            {/* Submit Button */}
-            <div className="pt-2">
+            {/* Submit Buttons */}
+            <div className="pt-2 flex items-center gap-2">
+              <button
+                type="button"
+                onClick={onClose}
+                disabled={loading}
+                className="flex-1 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs rounded-2xl transition"
+              >
+                Batal
+              </button>
               <button
                 type="submit"
-                disabled={loading || parsedAmount <= 0}
-                className={`w-full py-3.5 rounded-2xl text-white font-bold text-sm shadow-lg transition flex items-center justify-center gap-2 disabled:opacity-50 ${
-                  type === "expense"
-                    ? "bg-rose-600 hover:bg-rose-700 shadow-rose-600/20"
-                    : type === "income"
-                    ? "bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/20"
-                    : "bg-indigo-600 hover:bg-indigo-700 shadow-indigo-600/20"
-                }`}
+                disabled={loading}
+                className="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-bold text-xs rounded-2xl shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-1.5 transition disabled:opacity-50"
               >
                 <CheckCircle2 className="w-4 h-4" />
-                <span>
-                  {loading ? "Menyimpan Transaksi..." : `Simpan ${type === "expense" ? "Pengeluaran" : type === "income" ? "Pemasukan" : "Transfer"}`}
-                </span>
+                <span>{loading ? "Menyimpan..." : "Simpan Transaksi"}</span>
               </button>
             </div>
           </form>
         </div>
       </div>
 
-      {/* Category Creation Modal */}
+      {/* Inline Create Custom Category Modal */}
       <CategoryModal
         isOpen={isCategoryModalOpen}
         onClose={() => setIsCategoryModalOpen(false)}
         defaultType={type === "income" ? "income" : "expense"}
-        onSave={handleSaveCustomCategory}
+        onSave={handleSaveNewCategory}
+        onCreated={(id) => {
+          setCategoryId(id);
+          setIsCategoryModalOpen(false);
+        }}
       />
     </>
   );

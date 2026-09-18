@@ -68,18 +68,13 @@ export function CategoryModal({
   const [icon, setIcon] = useState(AVAILABLE_ICONS[0]);
   const [color, setColor] = useState(AVAILABLE_COLORS[0]);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim()) {
-      setError("Nama kategori wajib diisi");
-      return;
-    }
+    if (!name.trim()) return;
 
-    setError(null);
     setSubmitting(true);
     try {
       const newId = await onSave({
@@ -89,122 +84,95 @@ export function CategoryModal({
         color,
         isDefault: false,
       });
+      setName("");
       if (onCreated) {
         onCreated(newId);
       }
-      setName("");
       onClose();
-    } catch (err: any) {
-      console.error(err);
-      setError(err.message || "Gagal menyimpan kategori");
+    } catch (err) {
+      console.error("Failed to create category:", err);
+      alert("Gagal menambahkan kategori baru");
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in">
-      <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl p-5 sm:p-6 space-y-4 animate-slide-up max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-          <h3 className="font-bold text-slate-800 text-base">Tambah Kategori Kustom</h3>
+    <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+      <div
+        className="w-full sm:max-w-md bg-white dark:bg-slate-900 rounded-t-[2rem] sm:rounded-3xl shadow-2xl max-h-[90vh] flex flex-col overflow-hidden animate-slide-up border border-slate-100 dark:border-slate-800"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 flex items-center justify-between">
+          <div>
+            <h3 className="font-bold text-slate-800 dark:text-white text-base">Tambah Kategori Kustom</h3>
+            <p className="text-xs text-slate-400">Buat kategori pengeluaran atau pemasukan baru</p>
+          </div>
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition"
+            className="p-1.5 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {error && (
-          <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl">
-            {error}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Segment Control for Type */}
-          <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1.5">
-              Jenis Kategori
-            </label>
-            <div className="grid grid-cols-2 gap-2 bg-slate-100 p-1 rounded-xl">
-              <button
-                type="button"
-                onClick={() => setType("expense")}
-                className={`py-2 rounded-lg text-xs font-bold transition ${
-                  type === "expense"
-                    ? "bg-rose-600 text-white shadow-sm"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                Pengeluaran
-              </button>
-              <button
-                type="button"
-                onClick={() => setType("income")}
-                className={`py-2 rounded-lg text-xs font-bold transition ${
-                  type === "income"
-                    ? "bg-emerald-600 text-white shadow-sm"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                Pemasukan
-              </button>
-            </div>
+        {/* Form Body */}
+        <form onSubmit={handleSubmit} className="p-5 space-y-4 overflow-y-auto flex-1">
+          {/* Type Selector */}
+          <div className="grid grid-cols-2 gap-2 bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl">
+            <button
+              type="button"
+              onClick={() => setType("expense")}
+              className={`py-2 text-xs font-bold rounded-xl transition ${
+                type === "expense"
+                  ? "bg-rose-600 text-white shadow-sm"
+                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+              }`}
+            >
+              Pengeluaran
+            </button>
+            <button
+              type="button"
+              onClick={() => setType("income")}
+              className={`py-2 text-xs font-bold rounded-xl transition ${
+                type === "income"
+                  ? "bg-emerald-600 text-white shadow-sm"
+                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+              }`}
+            >
+              Pemasukan
+            </button>
           </div>
 
           {/* Name Input */}
-          <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1.5">
-              Nama Kategori
-            </label>
+          <div className="space-y-1.5">
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">Nama Kategori</label>
             <input
               type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Misal: Skincare, Hewan Peliharaan, Freelance"
               required
               autoFocus
-              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              placeholder="Contoh: Skincare, Kursus Anak, Hobi"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
             />
           </div>
 
-          {/* Color Picker */}
-          <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1.5">
-              Pilihan Warna
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {AVAILABLE_COLORS.map((c) => (
-                <button
-                  type="button"
-                  key={c}
-                  onClick={() => setColor(c)}
-                  className={`w-7 h-7 rounded-full transition transform ${
-                    color === c ? "scale-110 ring-2 ring-offset-2 ring-emerald-500 shadow-md" : ""
-                  }`}
-                  style={{ backgroundColor: c }}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* Icon Picker */}
-          <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1.5">
-              Pilihan Ikon
-            </label>
-            <div className="grid grid-cols-6 gap-2 max-h-36 overflow-y-auto p-1 border border-slate-100 rounded-xl">
+          {/* Icon Selector */}
+          <div className="space-y-1.5">
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">Pilih Ikon</label>
+            <div className="grid grid-cols-6 gap-2 max-h-36 overflow-y-auto p-1 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200/60 dark:border-slate-700">
               {AVAILABLE_ICONS.map((ic) => (
                 <button
-                  type="button"
                   key={ic}
+                  type="button"
                   onClick={() => setIcon(ic)}
                   className={`p-2 rounded-xl flex items-center justify-center transition ${
                     icon === ic
-                      ? "bg-emerald-50 border-2 border-emerald-600 text-emerald-700 shadow-sm"
-                      : "border border-slate-200 hover:border-slate-300 text-slate-500 bg-white"
+                      ? "bg-emerald-600 text-white shadow-sm"
+                      : "text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800"
                   }`}
                 >
                   <DynamicIcon name={ic} className="w-4 h-4" />
@@ -213,33 +181,63 @@ export function CategoryModal({
             </div>
           </div>
 
-          {/* Preview Box */}
-          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/70 flex items-center gap-3">
-            <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center text-white shrink-0 shadow-sm"
-              style={{ backgroundColor: color }}
-            >
-              <DynamicIcon name={icon} className="w-5 h-5" />
-            </div>
-            <div>
-              <p className="text-xs font-bold text-slate-800">{name || "Nama Kategori"}</p>
-              <p className="text-[10px] text-slate-400 capitalize">
-                Kategori {type === "expense" ? "Pengeluaran" : "Pemasukan"}
-              </p>
+          {/* Color Selector */}
+          <div className="space-y-1.5">
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">Pilih Warna</label>
+            <div className="flex flex-wrap gap-2">
+              {AVAILABLE_COLORS.map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => setColor(c)}
+                  className={`w-7 h-7 rounded-full flex items-center justify-center transition ${
+                    color === c ? "ring-2 ring-offset-2 ring-emerald-600" : "hover:scale-110"
+                  }`}
+                  style={{ backgroundColor: c }}
+                >
+                  {color === c && <Check className="w-3.5 h-3.5 text-white" />}
+                </button>
+              ))}
             </div>
           </div>
 
-          <button
-            type="submit"
-            disabled={submitting || !name.trim()}
-            className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/20 disabled:opacity-50 transition flex items-center justify-center gap-2"
-          >
-            <Check className="w-4 h-4" />
-            <span>{submitting ? "Menyimpan..." : "Simpan Kategori Baru"}</span>
-          </button>
+          {/* Preview Badge */}
+          <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200/60 dark:border-slate-700 flex items-center justify-between">
+            <span className="text-xs text-slate-400 font-medium">Pratinjau Kategori:</span>
+            <div className="flex items-center gap-2">
+              <div
+                className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs shadow-sm"
+                style={{ backgroundColor: color }}
+              >
+                <DynamicIcon name={icon} className="w-3.5 h-3.5" />
+              </div>
+              <span className="text-xs font-bold text-slate-800 dark:text-white">
+                {name.trim() || "Nama Kategori"}
+              </span>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="pt-2 flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={submitting}
+              className="flex-1 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs rounded-2xl transition"
+            >
+              Batal
+            </button>
+            <button
+              type="submit"
+              disabled={submitting || !name.trim()}
+              className="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-bold text-xs rounded-2xl shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-1.5 transition disabled:opacity-50"
+            >
+              <Check className="w-4 h-4" />
+              <span>{submitting ? "Menyimpan..." : "Buat Kategori"}</span>
+            </button>
+          </div>
         </form>
       </div>
     </div>
   );
 }
-

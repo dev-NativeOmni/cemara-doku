@@ -81,16 +81,16 @@ export function WalletsView({ wallets, onCreateWallet, onUpdateWallet }: Wallets
   };
 
   return (
-    <div className="space-y-5 pb-28 max-w-5xl mx-auto px-4 pt-2">
+    <div className="space-y-5 pb-28 max-w-5xl lg:max-w-7xl mx-auto px-4 lg:px-0 pt-2 lg:pt-0">
       {/* Header Actions */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-sm md:text-base font-bold text-slate-800">Daftar Dompet</h3>
+          <h3 className="text-sm md:text-base font-bold text-slate-800 dark:text-white">Daftar Dompet</h3>
           <p className="text-xs text-slate-400">Total {wallets.length} sumber dana aktif</p>
         </div>
         <button
           onClick={handleOpenCreate}
-          className="flex items-center gap-1.5 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold shadow-md shadow-emerald-600/20 transition"
+          className="flex items-center gap-1.5 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-xs font-bold shadow-md shadow-emerald-600/20 transition"
         >
           <Plus className="w-4 h-4" />
           <span>Tambah Dompet</span>
@@ -98,148 +98,118 @@ export function WalletsView({ wallets, onCreateWallet, onUpdateWallet }: Wallets
       </div>
 
       {/* Wallets Grid Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
         {wallets.map((w) => (
           <div
             key={w.id}
-            className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm relative overflow-hidden flex flex-col justify-between space-y-4 group"
+            className="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md transition"
           >
-            {/* Top Row: Icon, Name, Edit */}
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
                 <div
-                  className="w-11 h-11 rounded-2xl flex items-center justify-center text-white shadow-sm shrink-0"
+                  className="w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-sm shrink-0"
                   style={{ backgroundColor: w.color || "#10B981" }}
                 >
                   <DynamicIcon name={w.icon} className="w-6 h-6" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-slate-800">{w.name}</h4>
-                  <span className="text-[10px] uppercase font-semibold px-2 py-0.5 rounded-md bg-slate-100 text-slate-500">
-                    {w.type}
-                  </span>
+                  <h4 className="font-bold text-slate-800 dark:text-white text-sm">{w.name}</h4>
+                  <span className="text-[11px] text-slate-400 capitalize">{w.type}</span>
                 </div>
               </div>
 
               <button
                 onClick={() => handleOpenEdit(w)}
-                className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition"
-                title="Edit Dompet"
+                className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition"
+                title="Edit Saldo & Info Dompet"
               >
                 <Edit2 className="w-4 h-4" />
               </button>
             </div>
 
-            {/* Bottom Row: Balance */}
-            <div>
-              <p className="text-[11px] text-slate-400">Saldo Saat Ini</p>
-              <p className="text-xl font-extrabold text-slate-800 tracking-tight">
+            <div className="pt-2 border-t border-slate-50 dark:border-slate-800 flex items-baseline justify-between">
+              <span className="text-xs text-slate-400 font-medium">Saldo Dompet</span>
+              <span className="text-lg font-extrabold text-slate-900 dark:text-white tracking-tight">
                 {formatRupiah(w.currentBalance)}
-              </p>
+              </span>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Modal Add/Edit Wallet */}
+      {/* Modal Create/Edit Wallet */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-          <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl p-6 space-y-5 animate-slide-up">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="font-bold text-slate-800 text-base">
-                {editingWallet ? "Edit Dompet" : "Tambah Dompet Baru"}
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div
+            className="bg-white dark:bg-slate-900 w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden animate-in slide-in-from-bottom duration-300 max-h-[90vh] flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/40">
+              <h3 className="font-bold text-slate-800 dark:text-white text-base">
+                {editingWallet ? "Edit Saldo & Dompet" : "Tambah Dompet Baru"}
               </h3>
               <button
                 onClick={() => setModalOpen(false)}
-                className="p-1.5 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition"
+                className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">
-                  Nama Dompet / Akun
-                </label>
+            <form onSubmit={handleSubmit} className="p-5 space-y-4 overflow-y-auto flex-1">
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">Nama Dompet / Rekening</label>
                 <input
                   type="text"
+                  required
+                  placeholder="Contoh: BCA, Dompet Tunai, GoPay"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Misal: BCA Utama, Kas Dapur, GoPay"
-                  required
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs font-bold text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">
-                    Jenis Dompet
-                  </label>
-                  <select
-                    value={type}
-                    onChange={(e) => setType(e.target.value as WalletType)}
-                    className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  >
-                    <option value="bank">Rekening Bank</option>
-                    <option value="cash">Kas Tunai</option>
-                    <option value="ewallet">E-Wallet</option>
-                    <option value="savings">Tabungan</option>
-                    <option value="investment">Investasi</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">
-                    {editingWallet ? "Penyesuaian Saldo (Rp)" : "Saldo Awal (Rp)"}
-                  </label>
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    value={initialBalance ? Number(initialBalance.replace(/\D/g, "")).toLocaleString("id-ID") : ""}
-                    onChange={(e) => setInitialBalance(e.target.value.replace(/\D/g, ""))}
-                    placeholder="0"
-                    className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  />
-                </div>
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">Jenis Sumber Dana</label>
+                <select
+                  value={type}
+                  onChange={(e) => setType(e.target.value as WalletType)}
+                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs font-bold text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                >
+                  <option value="bank">Bank / Rekening</option>
+                  <option value="cash">Tunai / Cash</option>
+                  <option value="ewallet">E-Wallet (GoPay, OVO, ShopeePay)</option>
+                  <option value="savings">Tabungan / Celengan</option>
+                  <option value="investment">Investasi</option>
+                </select>
               </div>
 
-              {/* Color Selector */}
-              <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1.5">
-                  Warna Kartu
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                  {editingWallet ? "Penyesuaian Saldo (Rp)" : "Saldo Awal (Rp)"}
                 </label>
-                <div className="flex items-center gap-2">
-                  {WALLET_COLORS.map((c) => (
-                    <button
-                      type="button"
-                      key={c}
-                      onClick={() => setColor(c)}
-                      className={`w-7 h-7 rounded-full transition transform ${
-                        color === c ? "scale-110 ring-2 ring-offset-2 ring-emerald-500 shadow-md" : ""
-                      }`}
-                      style={{ backgroundColor: c }}
-                    />
-                  ))}
-                </div>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  placeholder="0"
+                  value={initialBalance ? Number(initialBalance.replace(/\D/g, "")).toLocaleString("id-ID") : ""}
+                  onChange={(e) => setInitialBalance(e.target.value.replace(/\D/g, ""))}
+                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs font-bold text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                />
               </div>
 
-              {/* Icon Selector */}
-              <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1.5">
-                  Ikon
-                </label>
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">Ikon</label>
                 <div className="grid grid-cols-4 gap-2">
                   {WALLET_ICONS.map((ic) => (
                     <button
-                      type="button"
                       key={ic}
+                      type="button"
                       onClick={() => setIcon(ic)}
-                      className={`p-2 rounded-xl border flex items-center justify-center transition ${
+                      className={`p-2.5 rounded-xl border flex items-center justify-center transition ${
                         icon === ic
-                          ? "border-emerald-600 bg-emerald-50 text-emerald-700 font-bold"
-                          : "border-slate-200 hover:border-slate-300 text-slate-500 bg-white"
+                          ? "border-emerald-600 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400"
+                          : "border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
                       }`}
                     >
                       <DynamicIcon name={ic} className="w-5 h-5" />
@@ -248,13 +218,39 @@ export function WalletsView({ wallets, onCreateWallet, onUpdateWallet }: Wallets
                 </div>
               </div>
 
-              <div className="pt-2">
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">Warna</label>
+                <div className="flex flex-wrap gap-2">
+                  {WALLET_COLORS.map((c) => (
+                    <button
+                      key={c}
+                      type="button"
+                      onClick={() => setColor(c)}
+                      className={`w-7 h-7 rounded-full transition flex items-center justify-center ${
+                        color === c ? "ring-2 ring-offset-2 ring-emerald-600" : "hover:scale-110"
+                      }`}
+                      style={{ backgroundColor: c }}
+                    >
+                      {color === c && <CheckCircle2 className="w-4 h-4 text-white" />}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="pt-2 flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setModalOpen(false)}
+                  className="flex-1 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs rounded-2xl transition"
+                >
+                  Batal
+                </button>
                 <button
                   type="submit"
                   disabled={submitting || !name.trim()}
-                  className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/20 disabled:opacity-50 transition"
+                  className="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-2xl shadow-lg shadow-emerald-600/20 transition disabled:opacity-50"
                 >
-                  {submitting ? "Menyimpan..." : editingWallet ? "Simpan Perubahan" : "Buat Dompet"}
+                  {submitting ? "Menyimpan..." : "Simpan Dompet"}
                 </button>
               </div>
             </form>
@@ -264,4 +260,3 @@ export function WalletsView({ wallets, onCreateWallet, onUpdateWallet }: Wallets
     </div>
   );
 }
-

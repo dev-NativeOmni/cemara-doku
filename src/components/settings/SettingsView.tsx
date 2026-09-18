@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useAuth } from "@/context/AuthContext";
+import { useTheme } from "@/context/ThemeContext";
 import { Category, UserProfile } from "@/types";
 import { createCategory, deleteCategory } from "@/services/categoryService";
 import { getHouseholdMembers } from "@/services/authService";
@@ -23,6 +24,9 @@ import {
   Upload,
   RotateCcw,
   Sparkles,
+  Sun,
+  Moon,
+  Monitor,
 } from "lucide-react";
 
 interface SettingsViewProps {
@@ -39,6 +43,7 @@ const AVATAR_PRESETS = [
 
 export function SettingsView({ categories, onRefreshCategories }: SettingsViewProps) {
   const { user, userProfile, household, updateProfile, signOut } = useAuth();
+  const { theme, setTheme } = useTheme();
   const [copied, setCopied] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -321,20 +326,66 @@ export function SettingsView({ categories, onRefreshCategories }: SettingsViewPr
         </form>
       </div>
 
+          {/* Theme Settings Card (Poin 7) */}
+          <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-100 dark:border-slate-800 shadow-sm space-y-3">
+            <h4 className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+              <Sun className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+              <span>Tema Tampilan</span>
+            </h4>
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                type="button"
+                onClick={() => setTheme("light")}
+                className={`p-3 rounded-2xl border flex flex-col items-center gap-1.5 transition text-xs font-bold ${
+                  theme === "light"
+                    ? "bg-emerald-50 dark:bg-emerald-950/60 border-emerald-600 text-emerald-700 dark:text-emerald-300 shadow-sm"
+                    : "border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
+                }`}
+              >
+                <Sun className="w-4 h-4" />
+                <span>Terang</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setTheme("dark")}
+                className={`p-3 rounded-2xl border flex flex-col items-center gap-1.5 transition text-xs font-bold ${
+                  theme === "dark"
+                    ? "bg-emerald-50 dark:bg-emerald-950/60 border-emerald-600 text-emerald-700 dark:text-emerald-300 shadow-sm"
+                    : "border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
+                }`}
+              >
+                <Moon className="w-4 h-4" />
+                <span>Gelap</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setTheme("system")}
+                className={`p-3 rounded-2xl border flex flex-col items-center gap-1.5 transition text-xs font-bold ${
+                  theme === "system"
+                    ? "bg-emerald-50 dark:bg-emerald-950/60 border-emerald-600 text-emerald-700 dark:text-emerald-300 shadow-sm"
+                    : "border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
+                }`}
+              >
+                <Monitor className="w-4 h-4" />
+                <span>Sistem</span>
+              </button>
+            </div>
+          </div>
+
           {/* Technical & Spark Plan Status Card */}
-          <div className="bg-white rounded-3xl p-5 border border-slate-100 shadow-sm space-y-3">
-            <h4 className="text-xs font-bold text-slate-700 flex items-center gap-2">
-              <Shield className="w-4 h-4 text-emerald-600" />
+          <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-100 dark:border-slate-800 shadow-sm space-y-3">
+            <h4 className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+              <Shield className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               <span>Status Infrastruktur</span>
             </h4>
             <div className="grid grid-cols-2 gap-2 text-xs">
-              <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+              <div className="bg-slate-50 dark:bg-slate-800 p-3 rounded-xl border border-slate-100 dark:border-slate-700">
                 <p className="text-slate-400 text-[11px]">Database</p>
-                <p className="font-bold text-slate-800 mt-0.5">Cloud Firestore</p>
+                <p className="font-bold text-slate-800 dark:text-white mt-0.5">Cloud Firestore</p>
               </div>
-              <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+              <div className="bg-slate-50 dark:bg-slate-800 p-3 rounded-xl border border-slate-100 dark:border-slate-700">
                 <p className="text-slate-400 text-[11px]">Biaya Langganan</p>
-                <p className="font-bold text-emerald-600 mt-0.5">Rp 0 (Spark Plan)</p>
+                <p className="font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">Rp 0 (Spark Plan)</p>
               </div>
             </div>
           </div>
