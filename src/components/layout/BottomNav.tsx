@@ -47,8 +47,11 @@ export function BottomNav({
 
   return (
     <>
-      {/* Floating Action Button (+) on Bottom-Right for Ergonomic One-Hand Reach */}
-      <div className="lg:hidden fixed bottom-20 right-4 sm:right-6 z-40">
+      {/* Floating Action Button (+) on Bottom-Right with Safe Spacing above Menu Bar */}
+      <div
+        className="lg:hidden fixed right-4 sm:right-6 z-40"
+        style={{ bottom: "calc(4.75rem + env(safe-area-inset-bottom, 12px))" }}
+      >
         <button
           onClick={onOpenQuickModal}
           className="w-13 h-13 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-600 text-white flex items-center justify-center shadow-xl shadow-emerald-600/35 active:scale-90 hover:scale-105 transition-all transform border-2 border-white/60 dark:border-slate-800"
