@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
 import { Category, UserProfile } from "@/types";
-import { createCategory, deleteCategory } from "@/services/categoryService";
+import { createCategory, updateCategory, deleteCategory } from "@/services/categoryService";
 import { getHouseholdMembers } from "@/services/authService";
 import { compressImageFile } from "@/lib/imageUtils";
 import { DynamicIcon } from "../ui/DynamicIcon";
@@ -17,6 +17,7 @@ import {
   Shield,
   Heart,
   Plus,
+  Pencil,
   Trash2,
   Tag,
   Camera,
@@ -65,6 +66,7 @@ export function SettingsView({ categories, onRefreshCategories }: SettingsViewPr
   // Category manager state
   const [categoryType, setCategoryType] = useState<"expense" | "income">("expense");
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [categoryToEdit, setCategoryToEdit] = useState<Category | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   // Load all household members
@@ -168,11 +170,28 @@ export function SettingsView({ categories, onRefreshCategories }: SettingsViewPr
     }
   };
 
+  const handleOpenCreateCategory = () => {
+    setCategoryToEdit(null);
+    setIsCategoryModalOpen(true);
+  };
+
+  const handleOpenEditCategory = (cat: Category) => {
+    setCategoryToEdit(cat);
+    setCategoryType(cat.type);
+    setIsCategoryModalOpen(true);
+  };
+
   const handleCreateCategory = async (newCat: Omit<Category, "id">): Promise<string> => {
     if (!household) throw new Error("Rumah tangga tidak ditemukan");
     const id = await createCategory(household.id, newCat);
     await onRefreshCategories();
     return id;
+  };
+
+  const handleUpdateCategory = async (id: string, data: Partial<Category>): Promise<void> => {
+    if (!household) throw new Error("Rumah tangga tidak ditemukan");
+    await updateCategory(household.id, id, data);
+    await onRefreshCategories();
   };
 
   const handleDeleteCategory = async (cat: Category) => {
@@ -587,7 +606,7 @@ export function SettingsView({ categories, onRefreshCategories }: SettingsViewPr
 
               <button
                 type="button"
-                onClick={() => setIsCategoryModalOpen(true)}
+                onClick={handleOpenCreateCategory}
                 className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-semibold shadow-sm transition"
               >
                 <Plus className="w-3.5 h-3.5" />
@@ -626,7 +645,7 @@ export function SettingsView({ categories, onRefreshCategories }: SettingsViewPr
               {filteredCategories.map((c) => (
                 <div
                   key={c.id}
-                  className="flex items-center justify-between p-2.5 bg-slate-50/80 dark:bg-slate-800/60 rounded-xl border border-slate-100 dark:border-slate-700"
+                  className="flex items-center justify-between p-2.5 bg-slate-50/80 dark:bg-slate-800/60 rounded-xl border border-slate-100 dark:border-slate-700 group hover:border-slate-200 dark:hover:border-slate-600 transition"
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
                     <div
@@ -643,17 +662,30 @@ export function SettingsView({ categories, onRefreshCategories }: SettingsViewPr
                     </div>
                   </div>
 
-                  {!c.isDefault && (
+                  <div className="flex items-center gap-1 shrink-0">
+                    {/* Edit Category Button */}
                     <button
                       type="button"
-                      onClick={() => handleDeleteCategory(c)}
-                      disabled={deletingId === c.id}
-                      className="p-1.5 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition"
-                      title="Hapus Kategori"
+                      onClick={() => handleOpenEditCategory(c)}
+                      className="p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 rounded-lg transition"
+                      title="Edit Kategori"
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
+                      <Pencil className="w-3.5 h-3.5" />
                     </button>
-                  )}
+
+                    {/* Delete Category Button (Custom only) */}
+                    {!c.isDefault && (
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteCategory(c)}
+                        disabled={deletingId === c.id}
+                        className="p-1.5 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition"
+                        title="Hapus Kategori"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -661,12 +693,17 @@ export function SettingsView({ categories, onRefreshCategories }: SettingsViewPr
         </div>
       </div>
 
-      {/* Category Creation Modal */}
+      {/* Category Creation & Edit Modal */}
       <CategoryModal
         isOpen={isCategoryModalOpen}
-        onClose={() => setIsCategoryModalOpen(false)}
+        onClose={() => {
+          setIsCategoryModalOpen(false);
+          setCategoryToEdit(null);
+        }}
         defaultType={categoryType}
+        categoryToEdit={categoryToEdit}
         onSave={handleCreateCategory}
+        onUpdate={handleUpdateCategory}
       />
     </div>
   );

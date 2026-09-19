@@ -9,7 +9,9 @@ interface CategoryModalProps {
   isOpen: boolean;
   onClose: () => void;
   defaultType?: "income" | "expense";
+  categoryToEdit?: Category | null;
   onSave: (category: Omit<Category, "id">) => Promise<string>;
+  onUpdate?: (id: string, data: Partial<Category>) => Promise<void>;
   onCreated?: (newCategoryId: string) => void;
 }
 
@@ -59,14 +61,30 @@ export function CategoryModal({
   isOpen,
   onClose,
   defaultType = "expense",
+  categoryToEdit,
   onSave,
+  onUpdate,
   onCreated,
 }: CategoryModalProps) {
-  const [name, setName] = useState("");
-  const [type, setType] = useState<"income" | "expense">(defaultType);
-  const [icon, setIcon] = useState(AVAILABLE_ICONS[0]);
-  const [color, setColor] = useState(AVAILABLE_COLORS[0]);
+  const [name, setName] = useState(categoryToEdit?.name || "");
+  const [type, setType] = useState<"income" | "expense">(categoryToEdit?.type || defaultType);
+  const [icon, setIcon] = useState(categoryToEdit?.icon || AVAILABLE_ICONS[0]);
+  const [color, setColor] = useState(categoryToEdit?.color || AVAILABLE_COLORS[0]);
   const [submitting, setSubmitting] = useState(false);
+
+  React.useEffect(() => {
+    if (categoryToEdit) {
+      setName(categoryToEdit.name || "");
+      setType(categoryToEdit.type || defaultType);
+      setIcon(categoryToEdit.icon || AVAILABLE_ICONS[0]);
+      setColor(categoryToEdit.color || AVAILABLE_COLORS[0]);
+    } else {
+      setName("");
+      setType(defaultType);
+      setIcon(AVAILABLE_ICONS[0]);
+      setColor(AVAILABLE_COLORS[0]);
+    }
+  }, [categoryToEdit, defaultType, isOpen]);
 
   if (!isOpen) return null;
 
@@ -76,21 +94,30 @@ export function CategoryModal({
 
     setSubmitting(true);
     try {
-      const newId = await onSave({
-        name: name.trim(),
-        type,
-        icon,
-        color,
-        isDefault: false,
-      });
-      setName("");
-      if (onCreated) {
-        onCreated(newId);
+      if (categoryToEdit && onUpdate) {
+        await onUpdate(categoryToEdit.id, {
+          name: name.trim(),
+          type,
+          icon,
+          color,
+        });
+      } else {
+        const newId = await onSave({
+          name: name.trim(),
+          type,
+          icon,
+          color,
+          isDefault: false,
+        });
+        if (onCreated) {
+          onCreated(newId);
+        }
       }
+      setName("");
       onClose();
     } catch (err) {
-      console.error("Failed to create category:", err);
-      alert("Gagal menambahkan kategori baru");
+      console.error("Failed to save category:", err);
+      alert(categoryToEdit ? "Gagal memperbarui kategori" : "Gagal menambahkan kategori baru");
     } finally {
       setSubmitting(false);
     }
@@ -105,8 +132,12 @@ export function CategoryModal({
         {/* Header */}
         <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 flex items-center justify-between">
           <div>
-            <h3 className="font-bold text-slate-800 dark:text-white text-base">Tambah Kategori Kustom</h3>
-            <p className="text-xs text-slate-400">Buat kategori pengeluaran atau pemasukan baru</p>
+            <h3 className="font-bold text-slate-800 dark:text-white text-base">
+              {categoryToEdit ? "Edit Kategori" : "Tambah Kategori Kustom"}
+            </h3>
+            <p className="text-xs text-slate-400">
+              {categoryToEdit ? "Perbarui nama, jenis, ikon, atau warna kategori" : "Buat kategori pengeluaran atau pemasukan baru"}
+            </p>
           </div>
           <button
             type="button"
@@ -232,7 +263,13 @@ export function CategoryModal({
               className="flex-1 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 active:scale-[0.98] text-white font-bold text-xs rounded-2xl shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-1.5 transition disabled:opacity-50"
             >
               <Check className="w-4 h-4" />
-              <span>{submitting ? "Menyimpan..." : "Buat Kategori"}</span>
+              <span>
+                {submitting
+                  ? "Menyimpan..."
+                  : categoryToEdit
+                  ? "Simpan Perubahan"
+                  : "Buat Kategori"}
+              </span>
             </button>
           </div>
         </form>
