@@ -181,7 +181,7 @@ export function QuickTransactionModal({
       <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
         <div className="w-full max-w-lg bg-white dark:bg-slate-900 rounded-t-[2rem] sm:rounded-3xl shadow-2xl max-h-[90vh] flex flex-col overflow-hidden animate-slide-up border border-slate-100 dark:border-slate-800">
           {/* Modal Header & Tabs */}
-          <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-850 shrink-0">
+          <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/80 shrink-0">
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-bold text-slate-800 dark:text-white text-base">Catat Transaksi</h3>
               

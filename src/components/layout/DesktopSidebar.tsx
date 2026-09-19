@@ -80,7 +80,7 @@ export function DesktopSidebar({
   ];
 
   return (
-    <aside className="hidden lg:flex fixed top-0 left-0 bottom-0 w-64 bg-white dark:bg-slate-900 border-r border-slate-200/80 dark:border-emerald-950/80 z-30 flex-col justify-between select-none">
+    <aside className="hidden lg:flex fixed top-0 left-0 bottom-0 w-64 bg-white dark:bg-slate-900 border-r border-slate-200/80 dark:border-slate-800 z-30 flex-col justify-between select-none">
       {/* Top Brand & Nav */}
       <div className="p-5 space-y-6">
         {/* Brand Header */}
@@ -145,17 +145,17 @@ export function DesktopSidebar({
       </div>
 
       {/* Bottom Household & Profile Info */}
-      <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-850 space-y-3">
+      <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-transparent space-y-3">
         {/* Invite Code Quick Box */}
         {household?.inviteCode && (
           <div
             onClick={handleCopyInviteCode}
-            className="p-2.5 bg-white dark:bg-slate-800 rounded-xl border border-slate-200/80 dark:border-slate-700 flex items-center justify-between cursor-pointer hover:border-emerald-300 dark:hover:border-emerald-500 transition group"
+            className="p-2.5 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200/80 dark:border-slate-750 flex items-center justify-between cursor-pointer hover:border-emerald-400 dark:hover:border-emerald-500 hover:bg-slate-100/70 dark:hover:bg-slate-800/80 transition group"
             title="Klik untuk menyalin kode undangan keluarga"
           >
             <div className="min-w-0">
               <span className="text-[10px] text-slate-400 font-medium block">Kode Undangan:</span>
-              <span className="text-xs font-mono font-bold text-emerald-800 dark:text-emerald-300 tracking-wider">
+              <span className="text-xs font-mono font-bold text-emerald-700 dark:text-emerald-400 tracking-wider">
                 {household.inviteCode}
               </span>
             </div>
@@ -166,7 +166,7 @@ export function DesktopSidebar({
         )}
 
         {/* User Card */}
-        <div className="flex items-center justify-between pt-1">
+        <div className="flex items-center justify-between pt-1 p-1 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/40 transition">
           <div
             onClick={() => onSelectTab("settings")}
             className="flex items-center gap-2.5 min-w-0 cursor-pointer group"
@@ -187,7 +187,7 @@ export function DesktopSidebar({
               </div>
             )}
             <div className="min-w-0">
-              <p className="text-xs font-bold text-slate-800 dark:text-white truncate group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition">
+              <p className="text-xs font-bold text-slate-800 dark:text-white truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition">
                 {userProfile?.displayName || user?.email?.split("@")[0] || "Pengguna"}
               </p>
               <p className="text-[10px] text-slate-400 truncate flex items-center gap-1">
@@ -199,7 +199,7 @@ export function DesktopSidebar({
 
           <button
             onClick={signOut}
-            className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-xl transition"
+            className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition"
             title="Keluar dari akun"
           >
             <LogOut className="w-4 h-4" />

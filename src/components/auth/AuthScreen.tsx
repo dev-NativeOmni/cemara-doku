@@ -157,7 +157,7 @@ export function AuthScreen() {
 
                 <button
                   onClick={() => setOnboardingMode("join")}
-                  className="w-full p-4 rounded-3xl border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-850 transition-all duration-300 flex items-center gap-4 text-left group hover:scale-[1.01]"
+                  className="w-full p-4 rounded-3xl border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-800 transition-all duration-300 flex items-center gap-4 text-left group hover:scale-[1.01]"
                 >
                   <div className="w-12 h-12 rounded-2xl bg-slate-800 text-white flex items-center justify-center shrink-0 shadow-md">
                     <Users className="w-6 h-6" />
