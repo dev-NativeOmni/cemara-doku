@@ -246,3 +246,4 @@ function extractNumbersFromText(text: string): number[] {
 
   return results;
 }
+

@@ -368,3 +368,4 @@ export function ShoppingView({
     </div>
   );
 }
+

@@ -24,6 +24,8 @@ import {
   Receipt,
   ShoppingCart,
   CheckCircle2,
+  PiggyBank,
+  Camera,
 } from "lucide-react";
 
 interface DashboardViewProps {
@@ -43,6 +45,8 @@ interface DashboardViewProps {
   shoppingItems?: ShoppingItem[];
   onNavigateToBills?: () => void;
   onNavigateToShopping?: () => void;
+  onNavigateToBudgets?: () => void;
+  onNavigateToSavings?: () => void;
 }
 
 export function DashboardView({
@@ -62,6 +66,8 @@ export function DashboardView({
   shoppingItems = [],
   onNavigateToBills,
   onNavigateToShopping,
+  onNavigateToBudgets,
+  onNavigateToSavings,
 }: DashboardViewProps) {
   const [chartViewTab, setChartViewTab] = useState<"donut" | "trend">("donut");
 
@@ -154,6 +160,71 @@ export function DashboardView({
         onOpenQuickModal={onOpenQuickModal}
         onNavigateToWallets={onNavigateToWallets}
       />
+
+      {/* Quick Action Shortcuts for All Devices / Mobile */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
+        <button
+          onClick={onNavigateToBills}
+          className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-sm text-xs font-bold text-slate-700 dark:text-slate-200 hover:border-emerald-500/60 shrink-0 transition"
+        >
+          <div className="w-6 h-6 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+            <Receipt className="w-3.5 h-3.5" />
+          </div>
+          <span>Tagihan</span>
+          {unpaidBills.length > 0 && (
+            <span className="bg-amber-500 text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded-full">
+              {unpaidBills.length}
+            </span>
+          )}
+        </button>
+
+        <button
+          onClick={onNavigateToShopping}
+          className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-sm text-xs font-bold text-slate-700 dark:text-slate-200 hover:border-emerald-500/60 shrink-0 transition"
+        >
+          <div className="w-6 h-6 rounded-lg bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 flex items-center justify-center">
+            <ShoppingCart className="w-3.5 h-3.5" />
+          </div>
+          <span>Belanja</span>
+          {pendingShopping.length > 0 && (
+            <span className="bg-emerald-600 text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded-full">
+              {pendingShopping.length}
+            </span>
+          )}
+        </button>
+
+        {onNavigateToBudgets && (
+          <button
+            onClick={onNavigateToBudgets}
+            className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-sm text-xs font-bold text-slate-700 dark:text-slate-200 hover:border-emerald-500/60 shrink-0 transition"
+          >
+            <div className="w-6 h-6 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+              <PieChart className="w-3.5 h-3.5" />
+            </div>
+            <span>Anggaran</span>
+          </button>
+        )}
+
+        {onNavigateToSavings && (
+          <button
+            onClick={onNavigateToSavings}
+            className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-sm text-xs font-bold text-slate-700 dark:text-slate-200 hover:border-emerald-500/60 shrink-0 transition"
+          >
+            <div className="w-6 h-6 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+              <PiggyBank className="w-3.5 h-3.5" />
+            </div>
+            <span>Tabungan</span>
+          </button>
+        )}
+
+        <button
+          onClick={onOpenQuickModal}
+          className="flex items-center gap-2 px-3 py-2 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800/80 rounded-2xl text-xs font-bold text-emerald-800 dark:text-emerald-300 shrink-0 transition hover:bg-emerald-100/70"
+        >
+          <Camera className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+          <span>Scan Struk</span>
+        </button>
+      </div>
 
       {/* Top Cashflow Summary Bento (3 cols on md/lg, 2 cols on mobile) */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">

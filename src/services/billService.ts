@@ -156,3 +156,4 @@ export async function deleteRecurringBill(
   const billRef = doc(db, `households/${householdId}/recurringBills/${billId}`);
   await deleteDoc(billRef);
 }
+

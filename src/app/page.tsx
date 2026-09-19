@@ -371,6 +371,8 @@ export default function HomePage() {
               shoppingItems={shoppingItems}
               onNavigateToBills={() => setActiveTab("bills")}
               onNavigateToShopping={() => setActiveTab("shopping")}
+              onNavigateToBudgets={() => setActiveTab("budgets")}
+              onNavigateToSavings={() => setActiveTab("savings")}
             />
           )}
 
@@ -468,6 +470,9 @@ export default function HomePage() {
         activeTab={activeTab}
         onSelectTab={setActiveTab}
         onOpenQuickModal={() => setQuickModalOpen(true)}
+        unpaidBillsCount={unpaidBillsCount}
+        shoppingPendingCount={shoppingPendingCount}
+        onOpenReportModal={() => setReportModalOpen(true)}
       />
 
       {/* Quick Transaction Modal */}
