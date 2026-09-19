@@ -72,6 +72,14 @@ body {
   }
 }
 
+.animate-liquid-spin {
+  animation: liquidSpin 3.5s linear infinite;
+}
+
+.animate-liquid-pulse {
+  animation: liquidPulseGlow 2.5s ease-in-out infinite;
+}
+
 .liquid-prism-ring {
   background: conic-gradient(
     from 0deg,
@@ -87,11 +95,11 @@ body {
     #ec4899 88%,
     #ff0055 100%
   );
-  animation: liquidSpin 4s linear infinite;
+  animation: liquidSpin 3.5s linear infinite;
 }
 
 .liquid-glow-aura {
-  animation: liquidPulseGlow 3s ease-in-out infinite, liquidSpin 4s linear infinite;
+  animation: liquidPulseGlow 2.5s ease-in-out infinite, liquidSpin 3.5s linear infinite;
 }
 
 /* Print Styles for PDF / Physical Printing */

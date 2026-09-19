@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { NavigationTab } from "@/types";
+import { LiquidHomeButton } from "./LiquidHomeButton";
 import {
   Home,
   ArrowLeftRight,
@@ -96,61 +97,10 @@ export function BottomNav({
 
           {/* 3. Beranda / Home (Liquid UI Web3 Chromatic Glowing Button) */}
           <div className="flex-1 flex justify-center -mt-7">
-            <button
+            <LiquidHomeButton
+              isActive={activeTab === "home"}
               onClick={() => onSelectTab("home")}
-              className="group relative flex items-center justify-center p-1 focus:outline-none"
-              aria-label="Beranda"
-            >
-              {/* Outer Frosted Glass Pod Rim */}
-              <div
-                className={`relative w-14 h-14 rounded-full p-[2px] transition-all duration-300 flex items-center justify-center ${
-                  activeTab === "home"
-                    ? "scale-105"
-                    : "hover:scale-102 opacity-85 hover:opacity-100"
-                }`}
-              >
-                {/* 1. Liquid Rainbow Prism Glowing Ambient Aura (Underneath) */}
-                <div
-                  className={`absolute -inset-1 rounded-full liquid-prism-ring liquid-glow-aura blur-md transition-opacity duration-500 pointer-events-none ${
-                    activeTab === "home" ? "opacity-95" : "opacity-45 group-hover:opacity-80"
-                  }`}
-                />
-
-                {/* 2. Liquid Rotating Chromatic Aberration Ring (Sharp 2.5px Perimeter) */}
-                <div className="absolute inset-0 rounded-full liquid-prism-ring p-[2.5px] pointer-events-none">
-                  {/* Dark Inner Disc Mask */}
-                  <div className="w-full h-full rounded-full bg-slate-950/90 dark:bg-black" />
-                </div>
-
-                {/* 3. Specular Flare Highlight Bead (Top Glowing Lens Flare) */}
-                <div
-                  className={`absolute -top-0.5 left-1/2 -translate-x-1/2 w-4 h-1.5 bg-white rounded-full blur-[0.8px] shadow-[0_0_8px_#ffffff,0_0_16px_#fde047] transition-all duration-500 pointer-events-none ${
-                    activeTab === "home" ? "opacity-100 scale-110" : "opacity-75"
-                  }`}
-                />
-
-                {/* 4. Central Embossed Dark Glass Disc */}
-                <div
-                  className={`relative z-10 w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 shadow-inner ${
-                    activeTab === "home"
-                      ? "bg-gradient-to-b from-slate-800 via-slate-900 to-black text-white shadow-[inset_0_1px_1px_rgba(255,255,255,0.35)]"
-                      : "bg-gradient-to-b from-slate-800/90 via-slate-900/90 to-black/95 text-slate-300 group-hover:text-white"
-                  }`}
-                >
-                  {/* Subtle Inner Glass Ring Reflection */}
-                  <div className="absolute inset-0 rounded-full border border-white/15 pointer-events-none" />
-
-                  {/* 3D Tactile House Icon with Drop Shadow */}
-                  <Home
-                    className={`w-5 h-5 transition-transform duration-300 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] ${
-                      activeTab === "home"
-                        ? "text-white scale-110 stroke-[2.5]"
-                        : "text-slate-200 group-hover:scale-105"
-                    }`}
-                  />
-                </div>
-              </div>
-            </button>
+            />
           </div>
 
           {/* 4. Daftar Belanja (Kanan 1) */}
