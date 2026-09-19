@@ -382,3 +382,4 @@ export function ThemeToggle({ size = "md", className = "" }: ThemeToggleProps) {
     </button>
   );
 }
+
