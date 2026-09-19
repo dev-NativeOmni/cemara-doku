@@ -8,7 +8,8 @@ import { Category, TransactionType, Wallet } from "@/types";
 import { DynamicIcon } from "../ui/DynamicIcon";
 import { CategoryModal } from "../categories/CategoryModal";
 import { formatRupiah } from "@/lib/formatters";
-import { X, Calendar, FileText, CheckCircle2, AlertCircle, Plus } from "lucide-react";
+import { X, Calendar, FileText, CheckCircle2, AlertCircle, Plus, Camera, Sparkles } from "lucide-react";
+import { ReceiptScannerModal } from "./ReceiptScannerModal";
 
 interface QuickTransactionModalProps {
   isOpen: boolean;
@@ -38,6 +39,7 @@ export function QuickTransactionModal({
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [isReceiptScannerOpen, setIsReceiptScannerOpen] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -77,6 +79,32 @@ export function QuickTransactionModal({
     const current = parseInt(rawAmount.replace(/\D/g, "") || "0", 10);
     const updated = current + val;
     setRawAmount(updated.toLocaleString("id-ID"));
+  };
+
+  const handleApplyReceiptResult = (result: {
+    amount: number;
+    merchantName?: string;
+    date?: string;
+    categoryKeyword?: string;
+  }) => {
+    if (result.amount > 0) {
+      setRawAmount(result.amount.toLocaleString("id-ID"));
+    }
+    if (result.merchantName) {
+      setNotes(result.merchantName);
+    }
+    if (result.date) {
+      setDateStr(result.date);
+    }
+    if (result.categoryKeyword) {
+      const match = currentCategories.find((c) =>
+        c.name.toLowerCase().includes(result.categoryKeyword!.toLowerCase())
+      );
+      if (match) {
+        setCategoryId(match.id);
+      }
+    }
+    setType("expense");
   };
 
   const handleSaveNewCategory = async (catData: Omit<Category, "id">) => {
@@ -154,16 +182,29 @@ export function QuickTransactionModal({
         <div className="w-full max-w-lg bg-white dark:bg-slate-900 rounded-t-[2rem] sm:rounded-3xl shadow-2xl max-h-[90vh] flex flex-col overflow-hidden animate-slide-up border border-slate-100 dark:border-slate-800">
           {/* Modal Header & Tabs */}
           <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-850 shrink-0">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-3">
               <h3 className="font-bold text-slate-800 dark:text-white text-base">Catat Transaksi</h3>
-              <button
-                type="button"
-                onClick={onClose}
-                className="p-1.5 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition"
-                aria-label="Tutup"
-              >
-                <X className="w-5 h-5" />
-              </button>
+              
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsReceiptScannerOpen(true)}
+                  className="px-2.5 py-1 bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm"
+                  title="Pindai struk belanja otomatis"
+                >
+                  <Camera className="w-3.5 h-3.5" />
+                  <span>Scan Struk</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="p-1.5 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition"
+                  aria-label="Tutup"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
             {/* Type Segment Control */}
@@ -215,7 +256,18 @@ export function QuickTransactionModal({
 
             {/* Amount Field */}
             <div className="space-y-1">
-              <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Nominal Transaksi</label>
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Nominal Transaksi</label>
+                <button
+                  type="button"
+                  onClick={() => setIsReceiptScannerOpen(true)}
+                  className="text-[11px] text-emerald-600 dark:text-emerald-400 font-bold hover:underline flex items-center gap-1"
+                >
+                  <Sparkles className="w-3 h-3" />
+                  <span>Foto Struk Belanja</span>
+                </button>
+              </div>
+
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-lg">
                   Rp
@@ -416,6 +468,14 @@ export function QuickTransactionModal({
           setIsCategoryModalOpen(false);
         }}
       />
+
+      {/* OCR Receipt Scanner Modal */}
+      <ReceiptScannerModal
+        isOpen={isReceiptScannerOpen}
+        onClose={() => setIsReceiptScannerOpen(false)}
+        onApplyResult={handleApplyReceiptResult}
+      />
     </>
   );
 }
+

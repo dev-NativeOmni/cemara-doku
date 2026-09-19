@@ -28,8 +28,37 @@ import {
   deleteSavingsGoal,
   depositToSavingsGoal,
 } from "@/services/savingsService";
+import {
+  getRecurringBills,
+  createRecurringBill,
+  updateRecurringBill,
+  deleteRecurringBill,
+  payRecurringBill,
+  unpayRecurringBill,
+} from "@/services/billService";
+import {
+  getShoppingItems,
+  createShoppingItem,
+  updateShoppingItem,
+  toggleShoppingItem,
+  deleteShoppingItem,
+  checkoutShoppingList,
+  clearAllCompletedShoppingItems,
+} from "@/services/shoppingService";
 import { getHouseholdMembers } from "@/services/authService";
-import { Budget, Category, NavigationTab, SavingsGoal, Transaction, UserProfile, Wallet } from "@/types";
+import {
+  Budget,
+  Category,
+  NavigationTab,
+  RecurringBill,
+  SavingsGoal,
+  ShoppingItem,
+  Transaction,
+  UserProfile,
+  Wallet,
+} from "@/types";
+import { BillsView } from "@/components/bills/BillsView";
+import { ShoppingView } from "@/components/shopping/ShoppingView";
 import { Loader2 } from "lucide-react";
 
 export default function HomePage() {
@@ -50,6 +79,8 @@ export default function HomePage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [savingsGoals, setSavingsGoals] = useState<SavingsGoal[]>([]);
+  const [recurringBills, setRecurringBills] = useState<RecurringBill[]>([]);
+  const [shoppingItems, setShoppingItems] = useState<ShoppingItem[]>([]);
   const [householdMembers, setHouseholdMembers] = useState<UserProfile[]>([]);
   const [dataLoading, setDataLoading] = useState<boolean>(false);
 
@@ -57,18 +88,22 @@ export default function HomePage() {
     if (!household) return;
     setDataLoading(true);
     try {
-      const [w, c, txs, b, g] = await Promise.all([
+      const [w, c, txs, b, g, bills, shop] = await Promise.all([
         getWallets(household.id),
         getCategories(household.id),
         getMonthTransactions(household.id, currentYear, currentMonth),
         getBudgets(household.id, currentMonth, currentYear),
         getSavingsGoals(household.id),
+        getRecurringBills(household.id),
+        getShoppingItems(household.id),
       ]);
       setWallets(w);
       setCategories(c);
       setTransactions(txs);
       setBudgets(b);
       setSavingsGoals(g);
+      setRecurringBills(bills);
+      setShoppingItems(shop);
 
       if (household.memberUids && household.memberUids.length > 0) {
         const members = await getHouseholdMembers(household.memberUids);
@@ -190,6 +225,102 @@ export default function HomePage() {
     await loadAllData();
   };
 
+  // Recurring Bills Handlers
+  const handleCreateBill = async (data: Omit<RecurringBill, "id" | "createdAt" | "updatedAt">) => {
+    if (!household) return;
+    await createRecurringBill(household.id, data);
+    await loadAllData();
+  };
+
+  const handleUpdateBill = async (id: string, data: Partial<RecurringBill>) => {
+    if (!household) return;
+    await updateRecurringBill(household.id, id, data);
+    await loadAllData();
+  };
+
+  const handleDeleteBill = async (id: string) => {
+    if (!household) return;
+    await deleteRecurringBill(household.id, id);
+    await loadAllData();
+  };
+
+  const handlePayBill = async (billId: string, walletId: string, amount: number) => {
+    if (!household) return;
+    await payRecurringBill(
+      household.id,
+      billId,
+      currentYear,
+      currentMonth,
+      walletId,
+      amount,
+      user.uid,
+      userProfile?.displayName || user.email?.split("@")[0]
+    );
+    await loadAllData();
+  };
+
+  const handleUnpayBill = async (billId: string, year: number, month: number) => {
+    if (!household) return;
+    await unpayRecurringBill(household.id, billId, year, month);
+    await loadAllData();
+  };
+
+  // Shopping List Handlers
+  const handleCreateShoppingItem = async (data: Omit<ShoppingItem, "id" | "createdAt" | "updatedAt">) => {
+    if (!household) return;
+    await createShoppingItem(household.id, data);
+    await loadAllData();
+  };
+
+  const handleUpdateShoppingItem = async (id: string, data: Partial<ShoppingItem>) => {
+    if (!household) return;
+    await updateShoppingItem(household.id, id, data);
+    await loadAllData();
+  };
+
+  const handleToggleShoppingItem = async (itemId: string, isCompleted: boolean) => {
+    if (!household) return;
+    await toggleShoppingItem(household.id, itemId, isCompleted);
+    await loadAllData();
+  };
+
+  const handleDeleteShoppingItem = async (id: string) => {
+    if (!household) return;
+    await deleteShoppingItem(household.id, id);
+    await loadAllData();
+  };
+
+  const handleCheckoutShopping = async (
+    itemIds: string[],
+    totalAmount: number,
+    walletId: string,
+    categoryId?: string,
+    notes?: string
+  ) => {
+    if (!household) return;
+    await checkoutShoppingList(
+      household.id,
+      itemIds,
+      totalAmount,
+      walletId,
+      categoryId,
+      notes,
+      user.uid,
+      userProfile?.displayName || user.email?.split("@")[0]
+    );
+    await loadAllData();
+  };
+
+  const handleClearCompletedShopping = async () => {
+    if (!household) return;
+    await clearAllCompletedShoppingItems(household.id, shoppingItems);
+    await loadAllData();
+  };
+
+  const currentMonthKey = `${currentYear}-${String(currentMonth).padStart(2, "0")}`;
+  const unpaidBillsCount = recurringBills.filter((b) => !b.paidMonths?.[currentMonthKey]).length;
+  const shoppingPendingCount = shoppingItems.filter((i) => !i.isCompleted).length;
+
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-[#090D16] flex text-slate-900 dark:text-slate-100 selection:bg-emerald-200 dark:selection:bg-emerald-900/40 selection:text-emerald-900">
       {/* Offline Indicator & PWA prompt */}
@@ -202,6 +333,8 @@ export default function HomePage() {
         onSelectTab={setActiveTab}
         onOpenQuickModal={() => setQuickModalOpen(true)}
         transactionCount={transactions.length}
+        unpaidBillsCount={unpaidBillsCount}
+        shoppingPendingCount={shoppingPendingCount}
       />
 
       {/* Main App Container */}
@@ -234,6 +367,10 @@ export default function HomePage() {
               onNavigateToWallets={() => setActiveTab("wallets")}
               onDeleteTransaction={handleDeleteTransaction}
               householdMembers={householdMembers}
+              recurringBills={recurringBills}
+              shoppingItems={shoppingItems}
+              onNavigateToBills={() => setActiveTab("bills")}
+              onNavigateToShopping={() => setActiveTab("shopping")}
             />
           )}
 
@@ -263,6 +400,38 @@ export default function HomePage() {
               onSaveBudget={handleSaveBudget}
               onDeleteBudget={handleDeleteBudget}
               onCopyPreviousMonth={handleCopyPreviousMonthBudgets}
+            />
+          )}
+
+          {activeTab === "bills" && (
+            <BillsView
+              bills={recurringBills}
+              wallets={wallets}
+              categories={categories}
+              currentMonth={currentMonth}
+              currentYear={currentYear}
+              onMonthChange={handleMonthChange}
+              onCreateBill={handleCreateBill}
+              onUpdateBill={handleUpdateBill}
+              onDeleteBill={handleDeleteBill}
+              onPayBill={handlePayBill}
+              onUnpayBill={handleUnpayBill}
+            />
+          )}
+
+          {activeTab === "shopping" && (
+            <ShoppingView
+              items={shoppingItems}
+              wallets={wallets}
+              categories={categories}
+              currentUserId={user.uid}
+              currentUserName={userProfile?.displayName || user.email?.split("@")[0] || "Saya"}
+              onCreateItem={handleCreateShoppingItem}
+              onUpdateItem={handleUpdateShoppingItem}
+              onToggleItem={handleToggleShoppingItem}
+              onDeleteItem={handleDeleteShoppingItem}
+              onCheckout={handleCheckoutShopping}
+              onClearCompleted={handleClearCompletedShopping}
             />
           )}
 

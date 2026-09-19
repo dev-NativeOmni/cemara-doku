@@ -83,4 +83,50 @@ export interface SavingsGoal {
   updatedAt?: Timestamp | Date;
 }
 
-export type NavigationTab = "home" | "transactions" | "budgets" | "wallets" | "savings" | "settings";
+export interface RecurringBill {
+  id: string;
+  title: string;
+  amount: number;
+  categoryId?: string;
+  walletId?: string;
+  dueDay: number; // 1 - 31
+  frequency: "monthly" | "yearly";
+  icon?: string;
+  color?: string;
+  notes?: string;
+  paidMonths?: {
+    [yearMonth: string]: {
+      paidAt: Timestamp | Date;
+      transactionId?: string;
+      paidAmount: number;
+    };
+  };
+  createdAt?: Timestamp | Date;
+  updatedAt?: Timestamp | Date;
+}
+
+export interface ShoppingItem {
+  id: string;
+  name: string;
+  quantity?: string;
+  estimatedPrice?: number;
+  actualPrice?: number;
+  categoryId?: string;
+  isCompleted: boolean;
+  addedById: string;
+  addedByName?: string;
+  completedAt?: Timestamp | Date;
+  createdAt?: Timestamp | Date;
+  updatedAt?: Timestamp | Date;
+}
+
+export type NavigationTab =
+  | "home"
+  | "transactions"
+  | "budgets"
+  | "bills"
+  | "shopping"
+  | "savings"
+  | "wallets"
+  | "settings";
+

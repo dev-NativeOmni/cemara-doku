@@ -19,6 +19,8 @@ import {
   PiggyBank,
   Moon,
   Sun,
+  Receipt,
+  ShoppingCart,
 } from "lucide-react";
 
 interface DesktopSidebarProps {
@@ -26,6 +28,8 @@ interface DesktopSidebarProps {
   onSelectTab: (tab: NavigationTab) => void;
   onOpenQuickModal: () => void;
   transactionCount?: number;
+  unpaidBillsCount?: number;
+  shoppingPendingCount?: number;
 }
 
 export function DesktopSidebar({
@@ -33,6 +37,8 @@ export function DesktopSidebar({
   onSelectTab,
   onOpenQuickModal,
   transactionCount,
+  unpaidBillsCount,
+  shoppingPendingCount,
 }: DesktopSidebarProps) {
   const { user, userProfile, household, signOut } = useAuth();
   const { isDark, toggleTheme } = useTheme();
@@ -56,6 +62,18 @@ export function DesktopSidebar({
       badge: transactionCount,
     },
     { id: "budgets" as NavigationTab, label: "Anggaran", icon: PieChart },
+    {
+      id: "bills" as NavigationTab,
+      label: "Tagihan Rutin",
+      icon: Receipt,
+      badge: unpaidBillsCount,
+    },
+    {
+      id: "shopping" as NavigationTab,
+      label: "Daftar Belanja",
+      icon: ShoppingCart,
+      badge: shoppingPendingCount,
+    },
     { id: "savings" as NavigationTab, label: "Tabungan Impian", icon: PiggyBank },
     { id: "wallets" as NavigationTab, label: "Dompet & Akun", icon: Wallet },
     { id: "settings" as NavigationTab, label: "Pengaturan", icon: Settings },

@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { Category, Transaction, Wallet, UserProfile } from "@/types";
+import { useState } from "react";
+import { RecurringBill, ShoppingItem, Category, Transaction, Wallet, UserProfile } from "@/types";
 import { formatRupiah, formatDateTime } from "@/lib/formatters";
 import { DynamicIcon } from "../ui/DynamicIcon";
 import { ExpenseDonutChart, CategoryBreakdownItem } from "../analytics/ExpenseDonutChart";
@@ -21,6 +21,9 @@ import {
   BarChart3,
   Users,
   Calendar,
+  Receipt,
+  ShoppingCart,
+  CheckCircle2,
 } from "lucide-react";
 
 interface DashboardViewProps {
@@ -36,6 +39,10 @@ interface DashboardViewProps {
   onNavigateToWallets: () => void;
   onDeleteTransaction: (tx: Transaction) => void;
   householdMembers?: UserProfile[];
+  recurringBills?: RecurringBill[];
+  shoppingItems?: ShoppingItem[];
+  onNavigateToBills?: () => void;
+  onNavigateToShopping?: () => void;
 }
 
 export function DashboardView({
@@ -51,8 +58,16 @@ export function DashboardView({
   onNavigateToWallets,
   onDeleteTransaction,
   householdMembers = [],
+  recurringBills = [],
+  shoppingItems = [],
+  onNavigateToBills,
+  onNavigateToShopping,
 }: DashboardViewProps) {
   const [chartViewTab, setChartViewTab] = useState<"donut" | "trend">("donut");
+
+  const monthKey = `${currentYear}-${String(currentMonth).padStart(2, "0")}`;
+  const unpaidBills = recurringBills.filter((b) => !b.paidMonths?.[monthKey]);
+  const pendingShopping = shoppingItems.filter((i) => !i.isCompleted);
 
   // Calculate month income & expense
   const totalIncome = transactions
@@ -407,6 +422,156 @@ export function DashboardView({
               ))}
             </div>
           </div>
+
+          {/* Recurring Bills Widget */}
+          {recurringBills.length > 0 && (
+            <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-100 dark:border-slate-800 shadow-sm space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                    <Receipt className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-slate-800 dark:text-white text-sm">
+                      Tagihan Rutin
+                    </h3>
+                    <p className="text-[10px] text-slate-400">
+                      {unpaidBills.length > 0 ? `${unpaidBills.length} tagihan belum dibayar` : "Semua tagihan lunas"}
+                    </p>
+                  </div>
+                </div>
+
+                {onNavigateToBills && (
+                  <button
+                    onClick={onNavigateToBills}
+                    className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold hover:underline flex items-center gap-1"
+                  >
+                    <span>Lihat Semua</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                {recurringBills.slice(0, 3).map((bill) => {
+                  const isPaid = !!bill.paidMonths?.[monthKey];
+                  return (
+                    <div
+                      key={bill.id}
+                      className="p-2.5 rounded-xl bg-slate-50/70 dark:bg-slate-800/50 flex items-center justify-between gap-2"
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div
+                          className="w-8 h-8 rounded-lg flex items-center justify-center text-white shrink-0 text-xs shadow-sm"
+                          style={{ backgroundColor: bill.color || "#10B981" }}
+                        >
+                          <DynamicIcon name={bill.icon || "Receipt"} className="w-4 h-4" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-xs font-bold text-slate-800 dark:text-slate-100 truncate">
+                            {bill.title}
+                          </p>
+                          <p className="text-[10px] text-slate-400 flex items-center gap-1">
+                            <Calendar className="w-3 h-3" />
+                            <span>Tgl {bill.dueDay}</span>
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="text-right shrink-0">
+                        <p className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                          {formatRupiah(bill.amount)}
+                        </p>
+                        <span
+                          className={`text-[9px] px-1.5 py-0.5 rounded-full font-semibold ${
+                            isPaid
+                              ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400"
+                              : "bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-400"
+                          }`}
+                        >
+                          {isPaid ? "Lunas" : "Belum Bayar"}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Collaborative Shopping List Widget */}
+          {shoppingItems.length > 0 && (
+            <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-100 dark:border-slate-800 shadow-sm space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-xl bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 flex items-center justify-center">
+                    <ShoppingCart className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-slate-800 dark:text-white text-sm">
+                      Daftar Belanja
+                    </h3>
+                    <p className="text-[10px] text-slate-400">
+                      {pendingShopping.length} item perlu dibeli
+                    </p>
+                  </div>
+                </div>
+
+                {onNavigateToShopping && (
+                  <button
+                    onClick={onNavigateToShopping}
+                    className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold hover:underline flex items-center gap-1"
+                  >
+                    <span>Lihat Semua</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+
+              <div className="space-y-1.5">
+                {shoppingItems.slice(0, 4).map((item) => (
+                  <div
+                    key={item.id}
+                    className="p-2 rounded-xl flex items-center justify-between gap-2 hover:bg-slate-50 dark:hover:bg-slate-800/40 transition"
+                  >
+                    <div className="flex items-center gap-2 min-w-0">
+                      <div
+                        className={`w-4 h-4 rounded-md border flex items-center justify-center text-white ${
+                          item.isCompleted
+                            ? "bg-emerald-600 border-emerald-600"
+                            : "border-slate-300 dark:border-slate-600"
+                        }`}
+                      >
+                        {item.isCompleted && <CheckCircle2 className="w-3 h-3" />}
+                      </div>
+                      <span
+                        className={`text-xs truncate ${
+                          item.isCompleted
+                            ? "line-through text-slate-400"
+                            : "font-medium text-slate-700 dark:text-slate-200"
+                        }`}
+                      >
+                        {item.name}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-1.5 shrink-0 text-[11px] text-slate-500">
+                      {item.quantity && (
+                        <span className="font-semibold text-slate-700 dark:text-slate-300">
+                          {item.quantity}
+                        </span>
+                      )}
+                      {item.estimatedPrice ? (
+                        <span className="text-[10px] text-slate-400">
+                          ({formatRupiah(item.estimatedPrice)})
+                        </span>
+                      ) : null}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Member Spending Contribution */}
           {memberContributions.length > 0 && (

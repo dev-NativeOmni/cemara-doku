@@ -34,6 +34,8 @@ const TAB_TITLES: Record<NavigationTab, { title: string; subtitle: string }> = {
   home: { title: "Beranda", subtitle: "Ringkasan & arus kas keuangan" },
   transactions: { title: "Transaksi", subtitle: "Daftar pencatatan pemasukan, pengeluaran & transfer" },
   budgets: { title: "Anggaran", subtitle: "Target & pagu pengeluaran per kategori" },
+  bills: { title: "Tagihan Rutin", subtitle: "Pengingat jatuh tempo & langganan berkala" },
+  shopping: { title: "Daftar Belanja", subtitle: "Kebutuhan belanja rumah tangga bersama pasangan" },
   savings: { title: "Tabungan Impian", subtitle: "Target tabungan terencana & celengan masa depan" },
   wallets: { title: "Dompet & Akun", subtitle: "Kelola rekening bank, e-wallet, dan saldo tunai" },
   settings: { title: "Pengaturan", subtitle: "Kelola profil, anggota keluarga, dan kategori" },
@@ -70,7 +72,7 @@ export function Header({
   };
 
   const currentTabMeta = TAB_TITLES[activeTab] || TAB_TITLES.home;
-  const isMonthSensitiveTab = ["home", "transactions", "budgets"].includes(activeTab);
+  const isMonthSensitiveTab = ["home", "transactions", "budgets", "bills"].includes(activeTab);
 
   return (
     <header className="sticky top-0 z-30 w-full bg-white/95 dark:bg-[#090D16]/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 transition-colors duration-200">
