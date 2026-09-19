@@ -5,106 +5,191 @@ import React from "react";
 interface LiquidHomeButtonProps {
   isActive: boolean;
   onClick: () => void;
-  showLabel?: boolean;
 }
 
-export function LiquidHomeButton({ isActive, onClick, showLabel = false }: LiquidHomeButtonProps) {
+export function LiquidHomeButton({ isActive, onClick }: LiquidHomeButtonProps) {
   return (
     <button
       onClick={onClick}
-      className="group relative flex items-center justify-center focus:outline-none select-none transition-transform duration-300 active:scale-95"
+      className="group relative flex items-center justify-center focus:outline-none select-none transition-all duration-300 active:scale-95"
       aria-label="Beranda"
     >
-      {/* Outer Dark Glass Capsule Pill Container (matching the source image) */}
+      {/* Outer Dark Frosted Glass Capsule Pill (Matching Pinterest Reference) */}
       <div
-        className={`relative flex items-center gap-2.5 px-1.5 py-1 rounded-full transition-all duration-500 backdrop-blur-xl ${
+        className={`relative flex items-center gap-3 pl-1 pr-4 py-1 rounded-full transition-all duration-500 backdrop-blur-2xl ${
           isActive
-            ? "bg-[#16181d]/90 dark:bg-[#0e1015]/95 shadow-[0_8px_32px_rgba(0,0,0,0.6),inset_0_1px_1px_rgba(255,255,255,0.18),inset_0_-1px_1px_rgba(0,0,0,0.8)] border border-white/10"
-            : "bg-[#1a1d24]/70 dark:bg-[#12141a]/80 shadow-[0_4px_20px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.1)] border border-white/5 opacity-85 hover:opacity-100"
+            ? "bg-[#181a20]/90 dark:bg-[#121318]/95 shadow-[0_10px_30px_rgba(0,0,0,0.6),inset_0_1px_1.5px_rgba(255,255,255,0.2),inset_0_-1px_1px_rgba(0,0,0,0.8)] border border-white/15 scale-100"
+            : "bg-[#1e2129]/75 dark:bg-[#15171e]/80 shadow-[0_6px_20px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.12)] border border-white/10 opacity-90 hover:opacity-100"
         }`}
       >
-        {/* The Circular Button Area with the Chromatic Prism Ring */}
-        <div className="relative w-[52px] h-[52px] flex items-center justify-center shrink-0">
-          {/* 1. Ambient Caustic Glow Aura (underneath diffusion) */}
+        {/* Circular Button Container with Chromatic Caustic Prism Ring */}
+        <div className="relative w-[48px] h-[48px] flex items-center justify-center shrink-0">
+          {/* Ambient Diffuse Glow Aura */}
           <div
-            className={`absolute -inset-1.5 rounded-full blur-md transition-all duration-700 pointer-events-none ${
-              isActive
-                ? "opacity-100 animate-liquid-pulse"
-                : "opacity-40 group-hover:opacity-75"
+            className={`absolute -inset-1.5 rounded-full blur-md transition-opacity duration-500 pointer-events-none ${
+              isActive ? "opacity-90 animate-liquid-pulse" : "opacity-40 group-hover:opacity-75"
             }`}
             style={{
               background:
-                "radial-gradient(circle, rgba(255, 184, 0, 0.45) 0%, rgba(0, 229, 255, 0.35) 40%, rgba(236, 72, 153, 0.25) 70%, transparent 85%)",
+                "radial-gradient(circle, rgba(255, 200, 80, 0.45) 0%, rgba(0, 229, 255, 0.35) 45%, rgba(236, 72, 153, 0.25) 75%, transparent 90%)",
             }}
           />
 
-          {/* 2. Outer Beveled Track Rim (Machined dark metallic bezel) */}
-          <div className="absolute inset-0 rounded-full bg-gradient-to-b from-[#3a3f4b] via-[#1e2128] to-[#0d0e12] p-[2.5px] shadow-[0_4px_12px_rgba(0,0,0,0.7)]">
-            {/* 3. The Rotating Liquid Chromatic Rainbow Prism Ring */}
-            <div className="relative w-full h-full rounded-full overflow-hidden">
-              <div
-                className={`absolute -inset-[50%] w-[200%] h-[200%] animate-liquid-spin ${
-                  isActive ? "opacity-100" : "opacity-80 group-hover:opacity-100"
-                }`}
-                style={{
-                  background:
-                    "conic-gradient(from 0deg, #ff0055 0%, #ff3b00 8%, #ffaa00 16%, #ffffff 22%, #fff677 27%, #ff9900 32%, #00ff88 44%, #00e1ff 55%, #0066ff 68%, #7e22ce 78%, #ec4899 88%, #ff0055 100%)",
-                }}
+          {/* SVG Canvas for Pixel-Exact Chromatic Dispersion & Bevels */}
+          <svg viewBox="0 0 100 100" className="w-full h-full relative z-10 overflow-visible">
+            <defs>
+              {/* Outer Bevel Gradient */}
+              <linearGradient id="bezelGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#4a505d" />
+                <stop offset="40%" stopColor="#22252c" />
+                <stop offset="100%" stopColor="#111317" />
+              </linearGradient>
+
+              {/* Inner Disc Gradient */}
+              <linearGradient id="discGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#323640" />
+                <stop offset="45%" stopColor="#1e2026" />
+                <stop offset="100%" stopColor="#131418" />
+              </linearGradient>
+
+              {/* 3D Metallic House Gradient */}
+              <linearGradient id="houseMetalGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#FFFFFF" />
+                <stop offset="50%" stopColor="#E4E7EE" />
+                <stop offset="100%" stopColor="#B2B8C4" />
+              </linearGradient>
+
+              {/* Rotating Conic Rainbow Dispersion */}
+              <linearGradient id="causticTop" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#00E5FF" />
+                <stop offset="15%" stopColor="#7B00FF" />
+                <stop offset="30%" stopColor="#FF0055" />
+                <stop offset="42%" stopColor="#FF8800" />
+                <stop offset="50%" stopColor="#FFFFFF" />
+                <stop offset="58%" stopColor="#FFEA00" />
+                <stop offset="70%" stopColor="#FF4400" />
+                <stop offset="85%" stopColor="#00FF88" />
+                <stop offset="100%" stopColor="#00CCFF" />
+              </linearGradient>
+
+              <linearGradient id="causticBottom" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#FF0077" />
+                <stop offset="25%" stopColor="#FF9900" />
+                <stop offset="45%" stopColor="#00FFFF" />
+                <stop offset="50%" stopColor="#FFFFFF" />
+                <stop offset="55%" stopColor="#0077FF" />
+                <stop offset="75%" stopColor="#7700FF" />
+                <stop offset="100%" stopColor="#FF0077" />
+              </linearGradient>
+
+              {/* Shadow filter for 3D embossed house */}
+              <filter id="houseShadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="2" stdDeviation="1.5" floodColor="#000000" floodOpacity="0.8" />
+              </filter>
+            </defs>
+
+            {/* 1. Outer Dark Bevel Track */}
+            <circle cx="50" cy="50" r="48" fill="url(#bezelGrad)" stroke="rgba(255,255,255,0.12)" strokeWidth="1" />
+
+            {/* 2. Rotating Chromatic Dispersion Caustic Ring */}
+            <g className="animate-liquid-spin origin-center">
+              {/* Outer Rainbow Spectrum Track */}
+              <circle
+                cx="50"
+                cy="50"
+                r="43"
+                fill="none"
+                stroke="url(#causticTop)"
+                strokeWidth="5"
+                strokeDasharray="270"
+                strokeDashoffset="0"
+                strokeLinecap="round"
+                className="opacity-95"
               />
-
-              {/* High-intensity Specular Hotspot Beam Overlay */}
-              <div
-                className="absolute -inset-[50%] w-[200%] h-[200%] animate-liquid-spin pointer-events-none"
-                style={{
-                  background:
-                    "radial-gradient(ellipse at 50% 15%, rgba(255,255,255,0.95) 0%, rgba(255,230,100,0.8) 12%, rgba(255,80,0,0.5) 25%, transparent 50%)",
-                }}
+              <circle
+                cx="50"
+                cy="50"
+                r="43"
+                fill="none"
+                stroke="url(#causticBottom)"
+                strokeWidth="4"
+                strokeDasharray="120"
+                strokeDashoffset="180"
+                strokeLinecap="round"
+                className="opacity-90"
               />
-            </div>
-          </div>
+            </g>
 
-          {/* 4. Top Glint / Hot Flare Highlight (The fiery white-yellow star at top of ring) */}
-          <div className="absolute top-[1px] left-1/2 -translate-x-1/2 w-4 h-2 bg-gradient-to-r from-amber-300 via-white to-amber-200 rounded-full blur-[0.6px] shadow-[0_0_8px_#ffffff,0_0_16px_#ffb800,0_0_24px_#ff4500] pointer-events-none z-20" />
+            {/* 3. Static Fiery Hot White-Gold Flare at Top (12 o'clock) */}
+            <path
+              d="M 28 20 A 43 43 0 0 1 72 20"
+              fill="none"
+              stroke="#FFF8C0"
+              strokeWidth="4"
+              strokeLinecap="round"
+              className="drop-shadow-[0_0_8px_#ffffff] drop-shadow-[0_0_16px_#ffb800]"
+            />
+            {/* Pure White Hot Core */}
+            <ellipse
+              cx="50"
+              cy="7.5"
+              rx="9"
+              ry="3"
+              fill="#FFFFFF"
+              className="drop-shadow-[0_0_6px_#ffffff] drop-shadow-[0_0_12px_#ffea79]"
+            />
 
-          {/* 5. Bottom Secondary Prism Glint */}
-          <div className="absolute bottom-[2px] left-1/2 -translate-x-1/2 w-3.5 h-1.5 bg-gradient-to-r from-cyan-400 via-blue-200 to-purple-400 rounded-full blur-[0.8px] opacity-80 pointer-events-none z-20" />
+            {/* 4. Bottom Specular Cyan-Blue Glint (6 o'clock) */}
+            <path
+              d="M 35 88 A 43 43 0 0 0 65 88"
+              fill="none"
+              stroke="#00E5FF"
+              strokeWidth="3"
+              strokeLinecap="round"
+              className="drop-shadow-[0_0_6px_#00E5FF] opacity-90"
+            />
+            <ellipse
+              cx="50"
+              cy="92.5"
+              rx="7"
+              ry="2"
+              fill="#E0FFFF"
+              className="drop-shadow-[0_0_4px_#00E5FF] opacity-95"
+            />
 
-          {/* 6. Central Elevated Inset Matte Button Disc */}
-          <div
-            className={`relative z-10 w-[41px] h-[41px] rounded-full flex items-center justify-center transition-all duration-300 ${
-              isActive
-                ? "bg-gradient-to-b from-[#2d313a] via-[#1c1e25] to-[#111317] shadow-[inset_0_2px_3px_rgba(255,255,255,0.2),inset_0_-2px_4px_rgba(0,0,0,0.85),0_2px_8px_rgba(0,0,0,0.6)]"
-                : "bg-gradient-to-b from-[#262a32] via-[#181a20] to-[#0e1014] shadow-[inset_0_1.5px_2px_rgba(255,255,255,0.12),inset_0_-2px_4px_rgba(0,0,0,0.8)]"
-            }`}
-          >
-            {/* Inner Glass Bevel Ring */}
-            <div className="absolute inset-[1px] rounded-full border border-white/10 pointer-events-none" />
+            {/* 5. Inset Matte Dark Center Disc */}
+            <circle
+              cx="50"
+              cy="50"
+              r="38"
+              fill="url(#discGrad)"
+              stroke="rgba(255,255,255,0.18)"
+              strokeWidth="1.2"
+              className="shadow-inner"
+            />
 
-            {/* 3D Tactile Silver-White House Icon */}
-            <svg
-              className={`w-[21px] h-[21px] transition-transform duration-300 ${
-                isActive
-                  ? "scale-105 drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] text-white"
-                  : "text-slate-300 group-hover:text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]"
-              }`}
-              viewBox="0 0 24 24"
-              fill="currentColor"
-            >
-              <path d="M12 2.5L2 11.5H5.5V20.5C5.5 21.05 5.95 21.5 6.5 21.5H10.5V15.5C10.5 14.95 10.95 14.5 11.5 14.5H12.5C13.05 14.5 13.5 14.95 13.5 15.5V21.5H17.5C18.05 21.5 18.5 21.05 18.5 20.5V11.5H22L12 2.5Z" />
-            </svg>
-          </div>
+            {/* Inner Glass Bevel Stroke */}
+            <circle cx="50" cy="50" r="36" fill="none" stroke="rgba(0,0,0,0.6)" strokeWidth="1" />
+
+            {/* 6. 3D Metallic Silver House Icon (Exact geometry from image) */}
+            <path
+              d="M 50 27 L 27 46 L 33 46 L 33 69 C 33 70.5 34.2 71.5 35.5 71.5 L 45 71.5 L 45 58.5 C 45 57 46.2 56 47.5 56 L 52.5 56 C 53.8 56 55 57 55 58.5 L 55 71.5 L 64.5 71.5 C 65.8 71.5 67 70.5 67 69 L 67 46 L 73 46 Z"
+              fill="url(#houseMetalGrad)"
+              filter="url(#houseShadow)"
+            />
+          </svg>
         </div>
 
-        {/* Optional "Home" Text Label (if capsule style expanded) */}
-        {showLabel && (
-          <span
-            className={`text-xs font-extrabold pr-2.5 tracking-wide transition-colors ${
-              isActive ? "text-white" : "text-slate-400 group-hover:text-slate-200"
-            }`}
-          >
-            Home
-          </span>
-        )}
+        {/* The Bold "Home" Text Label (Exact typography from Pinterest image) */}
+        <span
+          className={`text-[15px] font-bold tracking-tight transition-colors duration-300 select-none ${
+            isActive
+              ? "text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]"
+              : "text-slate-300 group-hover:text-white"
+          }`}
+        >
+          Home
+        </span>
       </div>
     </button>
   );
