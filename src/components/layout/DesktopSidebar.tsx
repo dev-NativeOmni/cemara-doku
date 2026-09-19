@@ -22,7 +22,6 @@ import {
   Receipt,
   ShoppingCart,
 } from "lucide-react";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 interface DesktopSidebarProps {
   activeTab: NavigationTab;
@@ -85,23 +84,18 @@ export function DesktopSidebar({
       {/* Top Brand & Nav */}
       <div className="p-5 space-y-6">
         {/* Brand Header */}
-        <div className="flex items-center justify-between px-1">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-9 h-9 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-100/80 dark:border-emerald-800 p-1.5 flex items-center justify-center shrink-0 shadow-sm">
-              <img src="/logo.png" alt="Cemara" className="w-full h-full object-contain drop-shadow" />
-            </div>
-            <div className="min-w-0">
-              <h1 className="font-extrabold text-slate-900 dark:text-white text-sm leading-tight tracking-tight">
-                Cemara
-              </h1>
-              <p className="text-[11px] text-slate-400 font-medium truncate">
-                {household?.name || "Buku Kas Keluarga"}
-              </p>
-            </div>
+        <div className="flex items-center gap-3 px-1">
+          <div className="w-10 h-10 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-100/80 dark:border-emerald-800 p-1.5 flex items-center justify-center shrink-0 shadow-sm">
+            <img src="/logo.png" alt="Cemara" className="w-full h-full object-contain drop-shadow" />
           </div>
-
-          {/* 3D Theme Toggle */}
-          <ThemeToggle size="sm" />
+          <div className="min-w-0 flex-1">
+            <h1 className="font-extrabold text-slate-900 dark:text-white text-base leading-tight tracking-tight">
+              Cemara
+            </h1>
+            <p className="text-xs text-slate-400 font-medium truncate">
+              {household?.name || "Buku Kas Keluarga"}
+            </p>
+          </div>
         </div>
 
         {/* Primary CTA Button */}

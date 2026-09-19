@@ -184,3 +184,4 @@ export function PapercutPineArt({ className = "" }: PapercutPineArtProps) {
     </div>
   );
 }
+
