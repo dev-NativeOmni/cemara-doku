@@ -46,22 +46,22 @@ export function BottomNav({
 
   return (
     <>
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-slate-200/80 dark:border-slate-800 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] safe-bottom">
-        <div className="max-w-lg mx-auto px-2 h-16 flex items-center justify-between relative">
-          {/* Beranda */}
-          <button
-            onClick={() => onSelectTab("home")}
-            className={`flex flex-col items-center justify-center flex-1 py-1 transition ${
-              activeTab === "home"
-                ? "text-emerald-700 dark:text-emerald-400 font-bold"
-                : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
-            }`}
-          >
-            <Home className="w-5 h-5" />
-            <span className="text-[10px] mt-1">Beranda</span>
-          </button>
+      {/* Floating Action Button (+) on Bottom-Right for Ergonomic One-Hand Reach */}
+      <div className="lg:hidden fixed bottom-20 right-4 sm:right-6 z-40">
+        <button
+          onClick={onOpenQuickModal}
+          className="w-13 h-13 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-600 text-white flex items-center justify-center shadow-xl shadow-emerald-600/35 active:scale-90 hover:scale-105 transition-all transform border-2 border-white/60 dark:border-slate-800"
+          aria-label="Catat Transaksi Baru & Scan Struk"
+          title="Catat Transaksi Cepat"
+        >
+          <Plus className="w-6 h-6 stroke-[2.5]" />
+        </button>
+      </div>
 
-          {/* Transaksi */}
+      {/* Bottom Navigation Bar */}
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-white/95 dark:bg-[#090D16]/95 backdrop-blur-lg border-t border-slate-200/80 dark:border-slate-800 shadow-[0_-4px_20px_rgba(0,0,0,0.04)] safe-bottom">
+        <div className="max-w-md mx-auto px-2 h-16 flex items-center justify-between relative">
+          {/* 1. Transaksi (Kiri 1) */}
           <button
             onClick={() => onSelectTab("transactions")}
             className={`flex flex-col items-center justify-center flex-1 py-1 transition ${
@@ -74,18 +74,7 @@ export function BottomNav({
             <span className="text-[10px] mt-1">Transaksi</span>
           </button>
 
-          {/* Floating Center (+) Catat Button */}
-          <div className="flex-1 flex justify-center -mt-6">
-            <button
-              onClick={onOpenQuickModal}
-              className="w-13 h-13 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-600 text-white flex items-center justify-center shadow-lg shadow-emerald-600/40 active:scale-95 hover:scale-105 transition transform border-4 border-white dark:border-slate-900"
-              aria-label="Catat Transaksi Baru & Scan Struk"
-            >
-              <Plus className="w-7 h-7 stroke-[2.5]" />
-            </button>
-          </div>
-
-          {/* Tagihan Rutin */}
+          {/* 2. Tagihan Rutin (Kiri 2) */}
           <button
             onClick={() => onSelectTab("bills")}
             className={`flex flex-col items-center justify-center flex-1 py-1 relative transition ${
@@ -105,7 +94,22 @@ export function BottomNav({
             <span className="text-[10px] mt-1">Tagihan</span>
           </button>
 
-          {/* Daftar Belanja */}
+          {/* 3. Beranda / Home (Tengah - Elevated / Naik ke Atas) */}
+          <div className="flex-1 flex justify-center -mt-6">
+            <button
+              onClick={() => onSelectTab("home")}
+              className={`w-13 h-13 rounded-full flex flex-col items-center justify-center transition-all transform active:scale-95 shadow-lg border-4 border-slate-50 dark:border-[#090D16] ${
+                activeTab === "home"
+                  ? "bg-emerald-700 dark:bg-emerald-600 text-white shadow-emerald-700/30 scale-105"
+                  : "bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-300 hover:text-emerald-600 shadow-slate-200/50 dark:shadow-none"
+              }`}
+              aria-label="Beranda"
+            >
+              <Home className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* 4. Daftar Belanja (Kanan 1) */}
           <button
             onClick={() => onSelectTab("shopping")}
             className={`flex flex-col items-center justify-center flex-1 py-1 relative transition ${
@@ -125,7 +129,7 @@ export function BottomNav({
             <span className="text-[10px] mt-1">Belanja</span>
           </button>
 
-          {/* Menu Lainnya */}
+          {/* 5. Menu Lainnya (Kanan 2) */}
           <button
             onClick={() => setIsMoreMenuOpen(true)}
             className={`flex flex-col items-center justify-center flex-1 py-1 transition ${
