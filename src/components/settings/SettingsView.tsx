@@ -27,6 +27,7 @@ import {
   Sun,
   Moon,
   Monitor,
+  Crown,
 } from "lucide-react";
 
 interface SettingsViewProps {
@@ -42,7 +43,7 @@ const AVATAR_PRESETS = [
 ];
 
 export function SettingsView({ categories, onRefreshCategories }: SettingsViewProps) {
-  const { user, userProfile, household, updateProfile, signOut } = useAuth();
+  const { user, userProfile, household, updateProfile, changeMemberRole, signOut } = useAuth();
   const { theme, setTheme } = useTheme();
   const [copied, setCopied] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -50,6 +51,7 @@ export function SettingsView({ categories, onRefreshCategories }: SettingsViewPr
   // Members state
   const [members, setMembers] = useState<UserProfile[]>([]);
   const [loadingMembers, setLoadingMembers] = useState(false);
+  const [updatingRoleUid, setUpdatingRoleUid] = useState<string | null>(null);
 
   // Profile Edit State
   const [displayName, setDisplayName] = useState(userProfile?.displayName || "");
@@ -142,6 +144,26 @@ export function SettingsView({ categories, onRefreshCategories }: SettingsViewPr
       console.error("Failed to update profile:", err);
     } finally {
       setSavingProfile(false);
+    }
+  };
+
+  const handleToggleRole = async (targetUid: string, currentRole: "owner" | "member") => {
+    const newRole = currentRole === "owner" ? "member" : "owner";
+    const confirmMsg =
+      newRole === "owner"
+        ? "Jadikan anggota ini sebagai Kepala Keluarga?"
+        : "Ubah peran Kepala Keluarga ini menjadi Anggota?";
+    if (!confirm(confirmMsg)) return;
+
+    setUpdatingRoleUid(targetUid);
+    try {
+      await changeMemberRole(targetUid, newRole);
+      await fetchMembers();
+    } catch (err) {
+      console.error("Gagal mengubah peran:", err);
+      alert("Gagal mengubah peran anggota");
+    } finally {
+      setUpdatingRoleUid(null);
     }
   };
 
@@ -444,6 +466,28 @@ export function SettingsView({ categories, onRefreshCategories }: SettingsViewPr
               </div>
             </div>
 
+            {/* Missing Owner Alert */}
+            {members.length > 0 && !members.some((m) => m.role === "owner") && (
+              <div className="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 rounded-2xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-xl bg-amber-100 dark:bg-amber-900/60 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+                    <Crown className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-amber-900 dark:text-amber-200">Belum ada Kepala Keluarga</p>
+                    <p className="text-[11px] text-amber-700 dark:text-amber-400">Pulihkan status Kepala Keluarga untuk mengelola rumah tangga</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => user && handleToggleRole(user.uid, "member")}
+                  className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 active:scale-95 text-white rounded-xl text-xs font-bold shrink-0 shadow-sm transition"
+                >
+                  Jadikan Saya Kepala
+                </button>
+              </div>
+            )}
+
             {/* Members List */}
             <div className="space-y-2.5 pt-2">
               <div className="flex items-center justify-between">
@@ -455,43 +499,69 @@ export function SettingsView({ categories, onRefreshCategories }: SettingsViewPr
               </div>
 
               <div className="space-y-2">
-                {(members.length > 0 ? members : userProfile ? [userProfile] : []).map((m) => (
-                  <div
-                    key={m.uid}
-                    className="bg-slate-50 dark:bg-slate-800/60 rounded-2xl p-3.5 flex items-center justify-between border border-slate-100 dark:border-slate-700"
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 flex items-center justify-center text-xl shadow-inner shrink-0 overflow-hidden">
-                        {m.photoURL ? (
-                          <img src={m.photoURL} alt={m.displayName} className="w-full h-full object-cover" />
+                {(members.length > 0 ? members : userProfile ? [userProfile] : []).map((m) => {
+                  const isCurrentUserOwner = userProfile?.role === "owner";
+                  const noOwnerInHousehold = !members.some((item) => item.role === "owner");
+                  const canManageThisUser = isCurrentUserOwner || noOwnerInHousehold || m.uid === user?.uid;
+
+                  return (
+                    <div
+                      key={m.uid}
+                      className="bg-slate-50 dark:bg-slate-800/60 rounded-2xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border border-slate-100 dark:border-slate-700"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 flex items-center justify-center text-xl shadow-inner shrink-0 overflow-hidden">
+                          {m.photoURL ? (
+                            <img src={m.photoURL} alt={m.displayName} className="w-full h-full object-cover" />
+                          ) : (
+                            <span>{m.avatar || "👤"}</span>
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-xs font-bold text-slate-800 dark:text-white truncate flex items-center gap-1.5">
+                            <span>{m.displayName || "Pengguna"}</span>
+                            {m.uid === user?.uid && (
+                              <span className="text-[10px] font-medium text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-900/40 px-1.5 py-0.2 rounded">
+                                (Saya)
+                              </span>
+                            )}
+                          </p>
+                          <p className="text-[11px] text-slate-400 truncate">{m.email}</p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                        {updatingRoleUid === m.uid ? (
+                          <span className="text-[10px] text-slate-400 font-medium">Menyimpan...</span>
                         ) : (
-                          <span>{m.avatar || "👤"}</span>
+                          <>
+                            <span
+                              className={`text-[10px] px-2.5 py-1 rounded-full font-bold flex items-center gap-1 shrink-0 ${
+                                m.role === "owner"
+                                  ? "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800"
+                                  : "bg-indigo-100 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-300"
+                              }`}
+                            >
+                              {m.role === "owner" && <Crown className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />}
+                              {m.role === "owner" ? "Kepala Keluarga" : "Anggota"}
+                            </span>
+
+                            {canManageThisUser && (
+                              <button
+                                type="button"
+                                onClick={() => handleToggleRole(m.uid, m.role)}
+                                title={m.role === "owner" ? "Ubah jadi Anggota" : "Jadikan Kepala Keluarga"}
+                                className="text-[10px] px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold transition"
+                              >
+                                {m.role === "owner" ? "Jadikan Anggota" : "Jadikan Kepala"}
+                              </button>
+                            )}
+                          </>
                         )}
                       </div>
-                      <div className="min-w-0">
-                        <p className="text-xs font-bold text-slate-800 dark:text-white truncate flex items-center gap-1.5">
-                          <span>{m.displayName || "Pengguna"}</span>
-                          {m.uid === user?.uid && (
-                            <span className="text-[10px] font-medium text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-900/40 px-1.5 py-0.2 rounded">
-                              (Saya)
-                            </span>
-                          )}
-                        </p>
-                        <p className="text-[11px] text-slate-400 truncate">{m.email}</p>
-                      </div>
                     </div>
-
-                    <span
-                      className={`text-[10px] px-2.5 py-1 rounded-full font-bold shrink-0 ${
-                        m.role === "owner"
-                          ? "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800"
-                          : "bg-indigo-100 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-300"
-                      }`}
-                    >
-                      {m.role === "owner" ? "Kepala Keluarga" : "Anggota"}
-                    </span>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>

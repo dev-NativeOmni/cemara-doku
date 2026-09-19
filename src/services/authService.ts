@@ -50,11 +50,76 @@ export async function logout(): Promise<void> {
   await signOut(auth);
 }
 
+export async function findHouseholdByMemberUid(uid: string): Promise<Household | null> {
+  try {
+    const q = query(
+      collection(db, "households"),
+      where("memberUids", "array-contains", uid)
+    );
+    const snap = await getDocs(q);
+    if (snap.empty) return null;
+    const docSnap = snap.docs[0];
+    return { id: docSnap.id, ...docSnap.data() } as Household;
+  } catch (e) {
+    console.warn("findHouseholdByMemberUid query failed:", e);
+    return null;
+  }
+}
+
 export async function getUserProfile(uid: string): Promise<UserProfile | null> {
   const userRef = doc(db, `users/${uid}`);
   const snap = await getDoc(userRef);
-  if (!snap.exists()) return null;
-  return snap.data() as UserProfile;
+  
+  if (snap.exists()) {
+    const data = snap.data() as UserProfile;
+    // If householdId is missing or empty, attempt auto-recovery from households collection
+    if (!data.householdId) {
+      const recoveredHh = await findHouseholdByMemberUid(uid);
+      if (recoveredHh) {
+        const isFirstMember = recoveredHh.memberUids?.[0] === uid;
+        const role = data.role || (isFirstMember ? "owner" : "member");
+        const updatedProfile: UserProfile = {
+          ...data,
+          householdId: recoveredHh.id,
+          role: role,
+        };
+        try {
+          await updateDoc(userRef, { householdId: recoveredHh.id, role: role });
+        } catch (e) {
+          console.warn("Failed to update recovered householdId:", e);
+        }
+        return updatedProfile;
+      }
+    }
+    return data;
+  }
+
+  // If user document does not exist at all, check if user is in any household memberUids
+  const hh = await findHouseholdByMemberUid(uid);
+  if (hh) {
+    const isFirstMember = hh.memberUids?.[0] === uid;
+    const authUser = auth.currentUser;
+    const newProfile: UserProfile = {
+      uid,
+      email: authUser?.email || "",
+      displayName: authUser?.displayName || "Pengguna",
+      photoURL: authUser?.photoURL || "",
+      householdId: hh.id,
+      role: isFirstMember ? "owner" : "member",
+      createdAt: new Date(),
+    };
+    try {
+      await setDoc(userRef, {
+        ...newProfile,
+        createdAt: serverTimestamp(),
+      });
+    } catch (e) {
+      console.warn("Failed to set recovered user profile doc:", e);
+    }
+    return newProfile;
+  }
+
+  return null;
 }
 
 export async function getHousehold(householdId: string): Promise<Household | null> {
@@ -136,20 +201,42 @@ export async function joinHouseholdViaCode(
 
   const hhDoc = snapshot.docs[0];
   const hhId = hhDoc.id;
+  const hhData = hhDoc.data() as Household;
 
-  // Add UID to household memberUids
-  await updateDoc(doc(db, `households/${hhId}`), {
-    memberUids: arrayUnion(uid),
-    updatedAt: serverTimestamp(),
-  });
+  // Add UID to household memberUids if not present
+  if (!hhData.memberUids?.includes(uid)) {
+    await updateDoc(doc(db, `households/${hhId}`), {
+      memberUids: arrayUnion(uid),
+      updatedAt: serverTimestamp(),
+    });
+  }
+
+  // Check role preservation or owner assignment
+  let role: "owner" | "member" = "member";
+  const isFirstMember = hhData.memberUids?.[0] === uid;
+  
+  const existingUserRef = doc(db, `users/${uid}`);
+  const existingSnap = await getDoc(existingUserRef);
+  const existingRole = existingSnap.exists() ? (existingSnap.data() as UserProfile).role : null;
+
+  if (isFirstMember || existingRole === "owner") {
+    role = "owner";
+  } else {
+    // Check if there is any active owner in this household
+    const existingMembers = await getHouseholdMembers(hhData.memberUids || []);
+    const hasOwner = existingMembers.some((m) => m.role === "owner" && m.uid !== uid);
+    if (!hasOwner) {
+      role = "owner";
+    }
+  }
 
   const userProfile: UserProfile = {
     uid,
     email: email || "",
-    displayName: displayName || "Anggota Keluarga",
+    displayName: displayName || (role === "owner" ? "Kepala Keluarga" : "Anggota Keluarga"),
     photoURL: photoURL || "",
     householdId: hhId,
-    role: "member",
+    role,
     createdAt: new Date(),
   };
 
@@ -167,6 +254,14 @@ export async function updateUserProfile(
 ): Promise<void> {
   const userRef = doc(db, `users/${uid}`);
   await updateDoc(userRef, data);
+}
+
+export async function updateMemberRole(
+  targetUid: string,
+  role: "owner" | "member"
+): Promise<void> {
+  const userRef = doc(db, `users/${targetUid}`);
+  await updateDoc(userRef, { role });
 }
 
 export async function getHouseholdMembers(memberUids: string[]): Promise<UserProfile[]> {

@@ -13,6 +13,8 @@ import {
   createHouseholdForUser,
   joinHouseholdViaCode,
   updateUserProfile,
+  updateMemberRole,
+  getHouseholdMembers,
 } from "@/services/authService";
 import { Household, UserProfile } from "@/types";
 
@@ -28,6 +30,7 @@ interface AuthContextType {
   joinHousehold: (code: string) => Promise<void>;
   refreshHousehold: () => Promise<void>;
   updateProfile: (data: Partial<UserProfile>) => Promise<void>;
+  changeMemberRole: (targetUid: string, role: "owner" | "member") => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -52,17 +55,42 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             console.warn("Could not sync photoURL:", e);
           }
         }
-        setUserProfile(profile);
-      } else {
-        setUserProfile(null);
       }
 
       if (profile?.householdId) {
         const hh = await getHousehold(profile.householdId);
-        setHousehold(hh);
+        if (hh) {
+          // Auto-heal check: if current user is first member in household or if household has no owner
+          const isFirstMember = hh.memberUids?.[0] === currentUser.uid;
+          if (isFirstMember && profile.role !== "owner") {
+            try {
+              await updateMemberRole(currentUser.uid, "owner");
+              profile = { ...profile, role: "owner" };
+            } catch (e) {
+              console.warn("Could not auto-promote creator to owner:", e);
+            }
+          } else if (profile.role !== "owner" && hh.memberUids) {
+            // Check if there are any owners in the household at all
+            const members = await getHouseholdMembers(hh.memberUids);
+            const hasAnyOwner = members.some((m) => m.role === "owner");
+            if (!hasAnyOwner) {
+              try {
+                await updateMemberRole(currentUser.uid, "owner");
+                profile = { ...profile, role: "owner" };
+              } catch (e) {
+                console.warn("Could not auto-promote member to owner when no owner existed:", e);
+              }
+            }
+          }
+          setHousehold(hh);
+        } else {
+          setHousehold(null);
+        }
       } else {
         setHousehold(null);
       }
+
+      setUserProfile(profile);
     } catch (err) {
       console.error("Error loading user profile or household:", err);
     }
@@ -165,6 +193,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUserProfile(updated);
   };
 
+  const changeMemberRole = async (targetUid: string, role: "owner" | "member") => {
+    await updateMemberRole(targetUid, role);
+    if (user && targetUid === user.uid) {
+      const updated = await getUserProfile(user.uid);
+      setUserProfile(updated);
+    }
+  };
+
   const signOut = async () => {
     setLoading(true);
     try {
@@ -191,6 +227,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         joinHousehold,
         refreshHousehold,
         updateProfile,
+        changeMemberRole,
         signOut,
       }}
     >
