@@ -18,6 +18,7 @@ import {
   Moon,
   FileText,
 } from "lucide-react";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 interface HeaderProps {
   currentMonth: number; // 1-12
@@ -151,14 +152,8 @@ export function Header({
             </button>
           )}
 
-          {/* Dark Mode Toggle */}
-          <button
-            onClick={toggleTheme}
-            className="p-2.5 bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-2xl border border-slate-200 dark:border-slate-800 transition"
-            title={isDark ? "Mode Terang" : "Mode Gelap"}
-          >
-            {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-700" />}
-          </button>
+          {/* 3D Skeuomorphic Theme Toggle */}
+          <ThemeToggle size="md" />
 
           {/* Quick Transaction Button */}
           {onOpenQuickModal && (
@@ -205,14 +200,8 @@ export function Header({
             </button>
           )}
 
-          {/* Theme Toggle */}
-          <button
-            onClick={toggleTheme}
-            className="p-2 bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 transition"
-            title={isDark ? "Mode Terang" : "Mode Gelap"}
-          >
-            {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-700" />}
-          </button>
+          {/* 3D Skeuomorphic Theme Toggle on mobile */}
+          <ThemeToggle size="sm" />
 
           {/* Profile Badge (Tap to go to Settings) */}
           <button

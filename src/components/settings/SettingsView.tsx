@@ -29,6 +29,7 @@ import {
   Monitor,
   Crown,
 } from "lucide-react";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 interface SettingsViewProps {
   categories: Category[];
@@ -348,13 +349,18 @@ export function SettingsView({ categories, onRefreshCategories }: SettingsViewPr
             </form>
           </div>
 
-          {/* Theme Settings Card (Poin 7) */}
-          <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-100 dark:border-slate-800 shadow-sm space-y-3">
-            <h4 className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-              <Sun className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-              <span>Tema Tampilan</span>
-            </h4>
-            <div className="grid grid-cols-3 gap-2">
+          {/* Theme Settings Card */}
+          <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-100 dark:border-slate-800 shadow-sm space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Sun className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                <span className="text-xs font-bold text-slate-700 dark:text-slate-300">Tema Tampilan</span>
+              </div>
+              {/* 3D Skeuomorphic Interactive Toggle */}
+              <ThemeToggle size="md" />
+            </div>
+
+            <div className="grid grid-cols-3 gap-2 pt-1">
               <button
                 type="button"
                 onClick={() => setTheme("light")}
