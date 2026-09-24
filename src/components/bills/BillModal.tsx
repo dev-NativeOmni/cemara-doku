@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { RecurringBill, Category, Wallet } from "@/types";
 import { DynamicIcon } from "../ui/DynamicIcon";
 import { X, Check, Calendar, AlertCircle } from "lucide-react";
@@ -52,7 +52,10 @@ export function BillModal({
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const expenseCategories = categories.filter((c) => c.type === "expense");
+  const expenseCategories = useMemo(
+    () => categories.filter((c) => c.type === "expense"),
+    [categories]
+  );
 
   useEffect(() => {
     if (isOpen) {

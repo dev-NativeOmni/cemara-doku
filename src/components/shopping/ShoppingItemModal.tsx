@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { ShoppingItem, Category } from "@/types";
 import { X, Check, ShoppingBag, Plus } from "lucide-react";
 
@@ -29,7 +29,10 @@ export function ShoppingItemModal({
   const [categoryId, setCategoryId] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const expenseCategories = categories.filter((c) => c.type === "expense");
+  const expenseCategories = useMemo(
+    () => categories.filter((c) => c.type === "expense"),
+    [categories]
+  );
 
   useEffect(() => {
     if (isOpen) {

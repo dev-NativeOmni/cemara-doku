@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { ShoppingItem, Wallet, Category } from "@/types";
 import { formatRupiah } from "@/lib/formatters";
 import { X, Check, ShoppingCart, ArrowRight } from "lucide-react";
@@ -34,7 +34,10 @@ export function ShoppingCheckoutModal({
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const expenseCategories = categories.filter((c) => c.type === "expense");
+  const expenseCategories = useMemo(
+    () => categories.filter((c) => c.type === "expense"),
+    [categories]
+  );
 
   // Calculate default total based on items
   useEffect(() => {

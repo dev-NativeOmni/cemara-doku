@@ -18,6 +18,7 @@ import {
   ChevronRight,
   TrendingDown,
   Filter,
+  Trash2,
 } from "lucide-react";
 
 interface BudgetsViewProps {
@@ -48,6 +49,7 @@ export function BudgetsView({
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [copying, setCopying] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   // Filter only expense categories
   const expenseCategories = categories.filter((c) => c.type === "expense");
@@ -90,6 +92,23 @@ export function BudgetsView({
   const handleOpenBudgetModal = (cat: Category) => {
     setSelectedCategory(cat);
     setIsModalOpen(true);
+  };
+
+  const handleDeleteBudget = async (cat: Category) => {
+    if (!confirm(`Hapus pagu anggaran untuk kategori "${cat.name}"?`)) return;
+    setDeletingId(cat.id);
+    try {
+      if (onDeleteBudget) {
+        await onDeleteBudget(cat.id);
+      } else {
+        await onSaveBudget(cat.id, 0);
+      }
+    } catch (err) {
+      console.error("Gagal menghapus pagu anggaran:", err);
+      alert("Gagal menghapus pagu anggaran.");
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   const handleCopyMonth = async () => {
@@ -350,6 +369,20 @@ export function BudgetsView({
                         >
                           <Plus className="w-3.5 h-3.5" />
                           <span>Atur Pagu</span>
+                        </button>
+                      )}
+                      {hasBudget && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteBudget(cat);
+                          }}
+                          disabled={deletingId === cat.id}
+                          className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/60 rounded-lg transition disabled:opacity-50"
+                          title="Hapus Pagu"
+                        >
+                          <Trash2 className="w-4 h-4" />
                         </button>
                       )}
                       <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-slate-500 transition group-hover:translate-x-0.5" />

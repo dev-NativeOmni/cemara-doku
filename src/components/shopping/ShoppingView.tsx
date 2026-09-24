@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { ShoppingItem, Wallet, Category } from "@/types";
 import { formatRupiah } from "@/lib/formatters";
 import { ShoppingItemModal } from "./ShoppingItemModal";
@@ -57,7 +57,7 @@ export function ShoppingView({
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
   const pendingItems = items.filter((i) => !i.isCompleted);
-  const completedItems = items.filter((i) => i.isCompleted);
+  const completedItems = useMemo(() => items.filter((i) => i.isCompleted), [items]);
 
   const totalEstimatedCost = pendingItems.reduce(
     (sum, i) => sum + (i.estimatedPrice || 0),
