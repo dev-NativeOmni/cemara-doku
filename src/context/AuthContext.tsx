@@ -15,6 +15,7 @@ import {
   updateUserProfile,
   updateMemberRole,
   getHouseholdMembers,
+  ensureInviteCodeIndex,
 } from "@/services/authService";
 import { Household, UserProfile } from "@/types";
 
@@ -60,6 +61,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (profile?.householdId) {
         const hh = await getHousehold(profile.householdId);
         if (hh) {
+          ensureInviteCodeIndex(hh).catch((e) =>
+            console.warn("Could not index invite code:", e)
+          );
           // Auto-heal check: if current user is first member in household or if household has no owner
           const isFirstMember = hh.memberUids?.[0] === currentUser.uid;
           if (isFirstMember && profile.role !== "owner") {

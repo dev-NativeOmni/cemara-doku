@@ -10,6 +10,7 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { subscribeQuery } from "@/lib/firestoreSubscribe";
 import { Wallet } from "@/types";
 
 export const DEFAULT_WALLETS: Omit<Wallet, "id">[] = [
@@ -63,12 +64,19 @@ export async function seedDefaultWallets(householdId: string): Promise<void> {
   await batch.commit();
 }
 
-export async function getWallets(householdId: string, includeArchived = false): Promise<Wallet[]> {
+function walletsQuery(householdId: string, includeArchived = false) {
   const walletsRef = collection(db, `households/${householdId}/wallets`);
-  const q = includeArchived
+  return includeArchived
     ? query(walletsRef)
     : query(walletsRef, where("isArchived", "==", false));
-  const snapshot = await getDocs(q);
+}
+
+export function subscribeWallets(householdId: string, onData: (wallets: Wallet[]) => void) {
+  return subscribeQuery<Wallet>(walletsQuery(householdId), onData, "dompet");
+}
+
+export async function getWallets(householdId: string, includeArchived = false): Promise<Wallet[]> {
+  const snapshot = await getDocs(walletsQuery(householdId, includeArchived));
   return snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Wallet));
 }
 

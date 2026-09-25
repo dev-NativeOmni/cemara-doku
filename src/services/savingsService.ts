@@ -12,12 +12,22 @@ import {
   runTransaction,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { subscribeQuery } from "@/lib/firestoreSubscribe";
 import { SavingsGoal } from "@/types";
 
+function savingsGoalsQuery(householdId: string) {
+  return query(
+    collection(db, `households/${householdId}/savingsGoals`),
+    orderBy("createdAt", "desc")
+  );
+}
+
+export function subscribeSavingsGoals(householdId: string, onData: (goals: SavingsGoal[]) => void) {
+  return subscribeQuery<SavingsGoal>(savingsGoalsQuery(householdId), onData, "target tabungan");
+}
+
 export async function getSavingsGoals(householdId: string): Promise<SavingsGoal[]> {
-  const goalsRef = collection(db, `households/${householdId}/savingsGoals`);
-  const q = query(goalsRef, orderBy("createdAt", "desc"));
-  const snapshot = await getDocs(q);
+  const snapshot = await getDocs(savingsGoalsQuery(householdId));
   return snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as SavingsGoal));
 }
 

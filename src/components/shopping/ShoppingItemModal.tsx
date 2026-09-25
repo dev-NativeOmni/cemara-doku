@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { ShoppingItem, Category } from "@/types";
 import { X, Check, ShoppingBag, Plus } from "lucide-react";
 
@@ -14,8 +14,14 @@ interface ShoppingItemModalProps {
   currentUserId: string;
 }
 
-export function ShoppingItemModal({
-  isOpen,
+// Content is mounted fresh on every open, so form state initializes from props
+// without effects (and live data updates never reset what the user is typing).
+export function ShoppingItemModal(props: ShoppingItemModalProps) {
+  if (!props.isOpen) return null;
+  return <ShoppingItemModalContent key={props.item?.id ?? "new"} {...props} />;
+}
+
+function ShoppingItemModalContent({
   onClose,
   item,
   categories,
@@ -23,34 +29,20 @@ export function ShoppingItemModal({
   currentUserName,
   currentUserId,
 }: ShoppingItemModalProps) {
-  const [name, setName] = useState("");
-  const [quantity, setQuantity] = useState("");
-  const [estimatedPriceStr, setEstimatedPriceStr] = useState("");
-  const [categoryId, setCategoryId] = useState("");
-  const [loading, setLoading] = useState(false);
-
   const expenseCategories = useMemo(
     () => categories.filter((c) => c.type === "expense"),
     [categories]
   );
 
-  useEffect(() => {
-    if (isOpen) {
-      if (item) {
-        setName(item.name);
-        setQuantity(item.quantity || "");
-        setEstimatedPriceStr(item.estimatedPrice ? item.estimatedPrice.toLocaleString("id-ID") : "");
-        setCategoryId(item.categoryId || "");
-      } else {
-        setName("");
-        setQuantity("");
-        setEstimatedPriceStr("");
-        setCategoryId(expenseCategories[0]?.id || "");
-      }
-    }
-  }, [isOpen, item, expenseCategories]);
-
-  if (!isOpen) return null;
+  const [name, setName] = useState(item?.name || "");
+  const [quantity, setQuantity] = useState(item?.quantity || "");
+  const [estimatedPriceStr, setEstimatedPriceStr] = useState(() =>
+    item?.estimatedPrice ? item.estimatedPrice.toLocaleString("id-ID") : ""
+  );
+  const [categoryId, setCategoryId] = useState(() =>
+    item ? item.categoryId || "" : expenseCategories[0]?.id || ""
+  );
+  const [loading, setLoading] = useState(false);
 
   const estimatedPrice = parseInt(estimatedPriceStr.replace(/\D/g, "") || "0", 10);
 

@@ -11,6 +11,7 @@ import {
   Timestamp,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { subscribeQuery } from "@/lib/firestoreSubscribe";
 import { Transaction } from "@/types";
 
 export interface CreateTransactionDTO {
@@ -124,19 +125,18 @@ export async function deleteTransaction(
     : null;
 
   await runTransaction(db, async (t) => {
-    // 1. Read source wallet
+    // Firestore transactions require all reads before any writes
     const sourceDoc = await t.get(sourceWalletRef);
+    const destDoc =
+      transaction.type === "transfer" && destWalletRef ? await t.get(destWalletRef) : null;
+
+    // 1. Revert source wallet
     if (sourceDoc.exists()) {
       const currentSourceBal = Number(sourceDoc.data().currentBalance || 0);
-      let revertedSourceBal = currentSourceBal;
-
-      if (transaction.type === "expense") {
-        revertedSourceBal = currentSourceBal + transaction.amount;
-      } else if (transaction.type === "income") {
-        revertedSourceBal = currentSourceBal - transaction.amount;
-      } else if (transaction.type === "transfer") {
-        revertedSourceBal = currentSourceBal + transaction.amount;
-      }
+      const revertedSourceBal =
+        transaction.type === "income"
+          ? currentSourceBal - transaction.amount
+          : currentSourceBal + transaction.amount;
 
       t.update(sourceWalletRef, {
         currentBalance: revertedSourceBal,
@@ -144,17 +144,13 @@ export async function deleteTransaction(
       });
     }
 
-    // 2. Read destination wallet if transfer
-    if (transaction.type === "transfer" && destWalletRef) {
-      const destDoc = await t.get(destWalletRef);
-      if (destDoc.exists()) {
-        const currentDestBal = Number(destDoc.data().currentBalance || 0);
-        const revertedDestBal = currentDestBal - transaction.amount;
-        t.update(destWalletRef, {
-          currentBalance: revertedDestBal,
-          updatedAt: serverTimestamp(),
-        });
-      }
+    // 2. Revert destination wallet if transfer
+    if (destWalletRef && destDoc?.exists()) {
+      const currentDestBal = Number(destDoc.data().currentBalance || 0);
+      t.update(destWalletRef, {
+        currentBalance: currentDestBal - transaction.amount,
+        updatedAt: serverTimestamp(),
+      });
     }
 
     // 3. Delete transaction
@@ -172,23 +168,37 @@ export async function getRecentTransactions(
   return snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Transaction));
 }
 
+function monthTransactionsQuery(householdId: string, year: number, month: number) {
+  const startDate = new Date(year, month - 1, 1, 0, 0, 0, 0);
+  const endDate = new Date(year, month, 0, 23, 59, 59, 999);
+
+  return query(
+    collection(db, `households/${householdId}/transactions`),
+    where("transactionDate", ">=", Timestamp.fromDate(startDate)),
+    where("transactionDate", "<=", Timestamp.fromDate(endDate)),
+    orderBy("transactionDate", "desc")
+  );
+}
+
+export function subscribeMonthTransactions(
+  householdId: string,
+  year: number,
+  month: number, // 1-12
+  onData: (transactions: Transaction[]) => void
+) {
+  return subscribeQuery<Transaction>(
+    monthTransactionsQuery(householdId, year, month),
+    onData,
+    "transaksi"
+  );
+}
+
 export async function getMonthTransactions(
   householdId: string,
   year: number,
   month: number // 1-12
 ): Promise<Transaction[]> {
-  const startDate = new Date(year, month - 1, 1, 0, 0, 0, 0);
-  const endDate = new Date(year, month, 0, 23, 59, 59, 999);
-
-  const txRef = collection(db, `households/${householdId}/transactions`);
-  const q = query(
-    txRef,
-    where("transactionDate", ">=", Timestamp.fromDate(startDate)),
-    where("transactionDate", "<=", Timestamp.fromDate(endDate)),
-    orderBy("transactionDate", "desc")
-  );
-
-  const snapshot = await getDocs(q);
+  const snapshot = await getDocs(monthTransactionsQuery(householdId, year, month));
   return snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Transaction));
 }
 

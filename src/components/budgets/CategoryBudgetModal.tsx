@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Category, Budget } from "@/types";
 import { formatRupiah, getMonthName } from "@/lib/formatters";
 import { DynamicIcon } from "../ui/DynamicIcon";
@@ -20,8 +20,16 @@ interface CategoryBudgetModalProps {
 
 const QUICK_AMOUNTS = [250000, 500000, 1000000, 2000000, 3000000, 5000000];
 
-export function CategoryBudgetModal({
-  isOpen,
+// Content is mounted fresh on every open, so form state initializes from props
+// without effects (and live data updates never reset what the user is typing).
+export function CategoryBudgetModal(props: CategoryBudgetModalProps) {
+  if (!props.isOpen || !props.category) return null;
+  return (
+    <CategoryBudgetModalContent key={props.category.id} {...props} category={props.category} />
+  );
+}
+
+function CategoryBudgetModalContent({
   onClose,
   category,
   budget,
@@ -30,18 +38,12 @@ export function CategoryBudgetModal({
   currentYear,
   onSave,
   onDelete,
-}: CategoryBudgetModalProps) {
-  const [amountStr, setAmountStr] = useState("");
+}: CategoryBudgetModalProps & { category: Category }) {
+  const [amountStr, setAmountStr] = useState(() => {
+    const currentLimit = budget?.limitAmount || 0;
+    return currentLimit > 0 ? currentLimit.toLocaleString("id-ID") : "";
+  });
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (isOpen && category) {
-      const currentLimit = budget?.limitAmount || 0;
-      setAmountStr(currentLimit > 0 ? currentLimit.toLocaleString("id-ID") : "");
-    }
-  }, [isOpen, category, budget]);
-
-  if (!isOpen || !category) return null;
 
   const numericAmount = parseInt(amountStr.replace(/\D/g, "") || "0", 10);
   const hasExistingBudget = (budget?.limitAmount || 0) > 0;

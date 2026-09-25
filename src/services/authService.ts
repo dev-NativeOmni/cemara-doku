@@ -129,6 +129,22 @@ export async function getHousehold(householdId: string): Promise<Household | nul
   return { id: snap.id, ...snap.data() } as Household;
 }
 
+// Invite codes are resolved through `inviteCodes/{code}` (readable by exact code
+// only) so household documents never have to be readable by non-members.
+async function createInviteCodeIndex(inviteCode: string, householdId: string): Promise<void> {
+  await setDoc(doc(db, `inviteCodes/${inviteCode}`), { householdId });
+}
+
+// Backfills the invite code index for households created before it existed.
+export async function ensureInviteCodeIndex(household: Household): Promise<void> {
+  if (!household.inviteCode) return;
+  const codeRef = doc(db, `inviteCodes/${household.inviteCode}`);
+  const snap = await getDoc(codeRef);
+  if (!snap.exists()) {
+    await createInviteCodeIndex(household.inviteCode, household.id);
+  }
+}
+
 export async function createHouseholdForUser(
   uid: string,
   householdName: string,
@@ -154,6 +170,7 @@ export async function createHouseholdForUser(
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });
+  await createInviteCodeIndex(inviteCode, hhDoc.id);
 
   const userProfile: UserProfile = {
     uid,
@@ -189,27 +206,24 @@ export async function joinHouseholdViaCode(
   photoURL?: string
 ): Promise<{ householdId: string; userProfile: UserProfile }> {
   const cleanCode = inviteCode.trim().toUpperCase();
-  const q = query(
-    collection(db, "households"),
-    where("inviteCode", "==", cleanCode)
-  );
-  const snapshot = await getDocs(q);
+  const codeSnap = cleanCode ? await getDoc(doc(db, `inviteCodes/${cleanCode}`)) : null;
 
-  if (snapshot.empty) {
+  if (!codeSnap?.exists()) {
     throw new Error("Kode undangan rumah tangga tidak valid atau tidak ditemukan");
   }
 
-  const hhDoc = snapshot.docs[0];
-  const hhId = hhDoc.id;
-  const hhData = hhDoc.data() as Household;
+  const hhId = codeSnap.data().householdId as string;
+  const hhRef = doc(db, `households/${hhId}`);
 
-  // Add UID to household memberUids if not present
-  if (!hhData.memberUids?.includes(uid)) {
-    await updateDoc(doc(db, `households/${hhId}`), {
-      memberUids: arrayUnion(uid),
-      updatedAt: serverTimestamp(),
-    });
-  }
+  // Join first: the household document is only readable by members.
+  // arrayUnion is a no-op when the user is already a member.
+  await updateDoc(hhRef, {
+    memberUids: arrayUnion(uid),
+    updatedAt: serverTimestamp(),
+  });
+
+  const hhSnap = await getDoc(hhRef);
+  const hhData = hhSnap.data() as Household;
 
   // Check role preservation or owner assignment
   let role: "owner" | "member" = "member";
@@ -266,17 +280,8 @@ export async function updateMemberRole(
 
 export async function getHouseholdMembers(memberUids: string[]): Promise<UserProfile[]> {
   if (!memberUids || memberUids.length === 0) return [];
-  const profiles: UserProfile[] = [];
-  
-  for (const uid of memberUids) {
-    const userRef = doc(db, `users/${uid}`);
-    const snap = await getDoc(userRef);
-    if (snap.exists()) {
-      profiles.push(snap.data() as UserProfile);
-    }
-  }
-  
-  return profiles;
+  const snaps = await Promise.all(memberUids.map((uid) => getDoc(doc(db, `users/${uid}`))));
+  return snaps.filter((snap) => snap.exists()).map((snap) => snap.data() as UserProfile);
 }
 
 

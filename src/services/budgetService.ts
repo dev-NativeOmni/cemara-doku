@@ -7,22 +7,35 @@ import {
   query,
   where,
   serverTimestamp,
+  writeBatch,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { subscribeQuery } from "@/lib/firestoreSubscribe";
 import { Budget } from "@/types";
+
+function budgetsQuery(householdId: string, month: number, year: number) {
+  return query(
+    collection(db, `households/${householdId}/budgets`),
+    where("month", "==", month),
+    where("year", "==", year)
+  );
+}
+
+export function subscribeBudgets(
+  householdId: string,
+  month: number,
+  year: number,
+  onData: (budgets: Budget[]) => void
+) {
+  return subscribeQuery<Budget>(budgetsQuery(householdId, month, year), onData, "anggaran");
+}
 
 export async function getBudgets(
   householdId: string,
   month: number,
   year: number
 ): Promise<Budget[]> {
-  const budgetsRef = collection(db, `households/${householdId}/budgets`);
-  const q = query(
-    budgetsRef,
-    where("month", "==", month),
-    where("year", "==", year)
-  );
-  const snapshot = await getDocs(q);
+  const snapshot = await getDocs(budgetsQuery(householdId, month, year));
   return snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Budget));
 }
 
@@ -78,16 +91,28 @@ export async function copyPreviousMonthBudgets(
     prevYear = currentYear - 1;
   }
 
-  const prevBudgets = await getBudgets(householdId, prevMonth, prevYear);
+  const prevBudgets = (await getBudgets(householdId, prevMonth, prevYear)).filter(
+    (b) => b.limitAmount > 0
+  );
   if (prevBudgets.length === 0) return 0;
 
+  const batch = writeBatch(db);
   for (const b of prevBudgets) {
-    if (b.limitAmount > 0) {
-      await setBudget(householdId, b.categoryId, currentMonth, currentYear, b.limitAmount);
-    }
+    const budgetDocId = `${currentYear}_${currentMonth}_${b.categoryId}`;
+    batch.set(
+      doc(db, `households/${householdId}/budgets/${budgetDocId}`),
+      {
+        id: budgetDocId,
+        categoryId: b.categoryId,
+        month: currentMonth,
+        year: currentYear,
+        limitAmount: b.limitAmount,
+        updatedAt: serverTimestamp(),
+      },
+      { merge: true }
+    );
   }
+  await batch.commit();
 
   return prevBudgets.length;
 }
-
-

@@ -10,14 +10,28 @@ import {
   serverTimestamp,
   runTransaction,
   Timestamp,
+  writeBatch,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { subscribeQuery } from "@/lib/firestoreSubscribe";
 import { ShoppingItem } from "@/types";
 
+function shoppingItemsQuery(householdId: string) {
+  return query(
+    collection(db, `households/${householdId}/shoppingItems`),
+    orderBy("createdAt", "desc")
+  );
+}
+
+export function subscribeShoppingItems(
+  householdId: string,
+  onData: (items: ShoppingItem[]) => void
+) {
+  return subscribeQuery<ShoppingItem>(shoppingItemsQuery(householdId), onData, "daftar belanja");
+}
+
 export async function getShoppingItems(householdId: string): Promise<ShoppingItem[]> {
-  const itemsRef = collection(db, `households/${householdId}/shoppingItems`);
-  const q = query(itemsRef, orderBy("createdAt", "desc"));
-  const snapshot = await getDocs(q);
+  const snapshot = await getDocs(shoppingItemsQuery(householdId));
   return snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as ShoppingItem));
 }
 
@@ -100,10 +114,15 @@ export async function checkoutShoppingList(
   createdById?: string,
   creatorName?: string
 ): Promise<void> {
+  const walletRef = doc(db, `households/${householdId}/wallets/${walletId}`);
+  const txRef = doc(collection(db, `households/${householdId}/transactions`));
+
   await runTransaction(db, async (t) => {
+    // Firestore transactions require all reads before any writes
+    const walletSnap = await t.get(walletRef);
+
     // 1. Create Transaction doc
-    const txRef = doc(collection(db, `households/${householdId}/transactions`));
-    const txData = {
+    t.set(txRef, {
       id: txRef.id,
       type: "expense",
       amount: totalAmount,
@@ -114,25 +133,19 @@ export async function checkoutShoppingList(
       createdById: createdById || "system",
       creatorName: creatorName || "Anggota",
       createdAt: serverTimestamp(),
-    };
-    t.set(txRef, txData);
+    });
 
     // 2. Deduct from wallet
-    const walletRef = doc(db, `households/${householdId}/wallets/${walletId}`);
-    const walletSnap = await t.get(walletRef);
     if (walletSnap.exists()) {
-      const walletData = walletSnap.data();
-      const newBal = (walletData.currentBalance || 0) - totalAmount;
       t.update(walletRef, {
-        currentBalance: newBal,
+        currentBalance: (walletSnap.data().currentBalance || 0) - totalAmount,
         updatedAt: serverTimestamp(),
       });
     }
 
     // 3. Delete / Clear checked items
     for (const itemId of itemIdsToClear) {
-      const itemRef = doc(db, `households/${householdId}/shoppingItems/${itemId}`);
-      t.delete(itemRef);
+      t.delete(doc(db, `households/${householdId}/shoppingItems/${itemId}`));
     }
   });
 }
@@ -142,11 +155,11 @@ export async function clearAllCompletedShoppingItems(
   items: ShoppingItem[]
 ): Promise<void> {
   const completed = items.filter((i) => i.isCompleted);
-  await Promise.all(
-    completed.map((item) => {
-      const itemRef = doc(db, `households/${householdId}/shoppingItems/${item.id}`);
-      return deleteDoc(itemRef);
-    })
-  );
-}
+  if (completed.length === 0) return;
 
+  const batch = writeBatch(db);
+  for (const item of completed) {
+    batch.delete(doc(db, `households/${householdId}/shoppingItems/${item.id}`));
+  }
+  await batch.commit();
+}

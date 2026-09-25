@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { ShoppingItem, Wallet, Category } from "@/types";
 import { formatRupiah } from "@/lib/formatters";
 import { X, Check, ShoppingCart, ArrowRight } from "lucide-react";
@@ -20,46 +20,46 @@ interface ShoppingCheckoutModalProps {
   ) => Promise<void>;
 }
 
-export function ShoppingCheckoutModal({
-  isOpen,
+// Content is mounted fresh on every open, so form state initializes from props
+// without effects (and live data updates never reset what the user is typing).
+export function ShoppingCheckoutModal(props: ShoppingCheckoutModalProps) {
+  if (!props.isOpen) return null;
+  return <ShoppingCheckoutModalContent {...props} />;
+}
+
+function ShoppingCheckoutModalContent({
   onClose,
   completedItems,
   wallets,
   categories,
   onCheckout,
 }: ShoppingCheckoutModalProps) {
-  const [selectedWalletId, setSelectedWalletId] = useState(wallets[0]?.id || "");
-  const [categoryId, setCategoryId] = useState("");
-  const [amountStr, setAmountStr] = useState("");
-  const [notes, setNotes] = useState("");
-  const [loading, setLoading] = useState(false);
-
   const expenseCategories = useMemo(
     () => categories.filter((c) => c.type === "expense"),
     [categories]
   );
 
-  // Calculate default total based on items
-  useEffect(() => {
-    if (isOpen) {
-      const calculatedTotal = completedItems.reduce((sum, item) => {
-        return sum + (item.actualPrice || item.estimatedPrice || 0);
-      }, 0);
+  // Default total based on items
+  const [amountStr, setAmountStr] = useState(() => {
+    const calculatedTotal = completedItems.reduce(
+      (sum, item) => sum + (item.actualPrice || item.estimatedPrice || 0),
+      0
+    );
+    return calculatedTotal > 0 ? calculatedTotal.toLocaleString("id-ID") : "";
+  });
+  const [selectedWalletId, setSelectedWalletId] = useState(() => wallets[0]?.id || "");
+  const [categoryId, setCategoryId] = useState(() => {
+    const defaultCategory =
+      expenseCategories.find((c) => c.name.toLowerCase().includes("belanja")) ||
+      expenseCategories[0];
+    return defaultCategory?.id || "";
+  });
+  const [notes, setNotes] = useState(() => {
+    const itemNames = completedItems.map((i) => i.name).join(", ");
+    return `Belanja: ${itemNames.slice(0, 80)}${itemNames.length > 80 ? "..." : ""}`;
+  });
+  const [loading, setLoading] = useState(false);
 
-      setAmountStr(calculatedTotal > 0 ? calculatedTotal.toLocaleString("id-ID") : "");
-      setSelectedWalletId(wallets[0]?.id || "");
-
-      const defaultCategory =
-        expenseCategories.find((c) => c.name.toLowerCase().includes("belanja")) ||
-        expenseCategories[0];
-      setCategoryId(defaultCategory?.id || "");
-
-      const itemNames = completedItems.map((i) => i.name).join(", ");
-      setNotes(`Belanja: ${itemNames.slice(0, 80)}${itemNames.length > 80 ? "..." : ""}`);
-    }
-  }, [isOpen, completedItems, wallets, expenseCategories]);
-
-  if (!isOpen) return null;
 
   const numericAmount = parseInt(amountStr.replace(/\D/g, "") || "0", 10);
   const selectedWallet = wallets.find((w) => w.id === selectedWalletId);

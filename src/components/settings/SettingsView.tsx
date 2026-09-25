@@ -34,7 +34,7 @@ import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 interface SettingsViewProps {
   categories: Category[];
-  onRefreshCategories: () => Promise<void>;
+  onRefreshCategories?: () => Promise<void>;
 }
 
 const AVATAR_PRESETS = [
@@ -184,14 +184,14 @@ export function SettingsView({ categories, onRefreshCategories }: SettingsViewPr
   const handleCreateCategory = async (newCat: Omit<Category, "id">): Promise<string> => {
     if (!household) throw new Error("Rumah tangga tidak ditemukan");
     const id = await createCategory(household.id, newCat);
-    await onRefreshCategories();
+    await onRefreshCategories?.();
     return id;
   };
 
   const handleUpdateCategory = async (id: string, data: Partial<Category>): Promise<void> => {
     if (!household) throw new Error("Rumah tangga tidak ditemukan");
     await updateCategory(household.id, id, data);
-    await onRefreshCategories();
+    await onRefreshCategories?.();
   };
 
   const handleDeleteCategory = async (cat: Category) => {
@@ -200,7 +200,7 @@ export function SettingsView({ categories, onRefreshCategories }: SettingsViewPr
     setDeletingId(cat.id);
     try {
       await deleteCategory(household.id, cat.id);
-      await onRefreshCategories();
+      await onRefreshCategories?.();
     } finally {
       setDeletingId(null);
     }

@@ -8,6 +8,7 @@ import {
   writeBatch,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { subscribeQuery } from "@/lib/firestoreSubscribe";
 import { Category } from "@/types";
 
 export const DEFAULT_CATEGORIES: Omit<Category, "id">[] = [
@@ -40,6 +41,14 @@ export async function seedDefaultCategories(householdId: string): Promise<void> 
   }
   
   await batch.commit();
+}
+
+export function subscribeCategories(householdId: string, onData: (categories: Category[]) => void) {
+  return subscribeQuery<Category>(
+    collection(db, `households/${householdId}/categories`),
+    onData,
+    "kategori"
+  );
 }
 
 export async function getCategories(householdId: string): Promise<Category[]> {

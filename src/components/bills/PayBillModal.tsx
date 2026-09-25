@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { RecurringBill, Wallet } from "@/types";
 import { formatRupiah, getMonthName } from "@/lib/formatters";
 import { DynamicIcon } from "../ui/DynamicIcon";
@@ -16,27 +16,26 @@ interface PayBillModalProps {
   onPay: (billId: string, walletId: string, amount: number) => Promise<void>;
 }
 
-export function PayBillModal({
-  isOpen,
+// Content is mounted fresh on every open, so form state initializes from props
+// without effects (and live data updates never reset what the user is typing).
+export function PayBillModal(props: PayBillModalProps) {
+  if (!props.isOpen || !props.bill) return null;
+  return <PayBillModalContent key={props.bill.id} {...props} bill={props.bill} />;
+}
+
+function PayBillModalContent({
   onClose,
   bill,
   wallets,
   currentMonth,
   currentYear,
   onPay,
-}: PayBillModalProps) {
-  const [selectedWalletId, setSelectedWalletId] = useState(wallets[0]?.id || "");
-  const [amountStr, setAmountStr] = useState("");
+}: PayBillModalProps & { bill: RecurringBill }) {
+  const [selectedWalletId, setSelectedWalletId] = useState(
+    () => bill.walletId || wallets[0]?.id || ""
+  );
+  const [amountStr, setAmountStr] = useState(() => bill.amount.toLocaleString("id-ID"));
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (isOpen && bill) {
-      setSelectedWalletId(bill.walletId || wallets[0]?.id || "");
-      setAmountStr(bill.amount.toLocaleString("id-ID"));
-    }
-  }, [isOpen, bill, wallets]);
-
-  if (!isOpen || !bill) return null;
 
   const numericAmount = parseInt(amountStr.replace(/\D/g, "") || "0", 10);
   const selectedWallet = wallets.find((w) => w.id === selectedWalletId);

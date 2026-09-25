@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { AuthScreen } from "@/components/auth/AuthScreen";
 import { Header } from "@/components/layout/Header";
@@ -17,19 +17,16 @@ import { DesktopSidebar } from "@/components/layout/DesktopSidebar";
 import { OfflineIndicator } from "@/components/ui/OfflineIndicator";
 import { PwaInstallPrompt } from "@/components/ui/PwaInstallPrompt";
 
-import { getWallets, createWallet, updateWallet } from "@/services/walletService";
-import { getCategories } from "@/services/categoryService";
-import { getMonthTransactions, deleteTransaction } from "@/services/transactionService";
-import { getBudgets, setBudget, deleteBudget, copyPreviousMonthBudgets } from "@/services/budgetService";
+import { createWallet, updateWallet } from "@/services/walletService";
+import { deleteTransaction } from "@/services/transactionService";
+import { setBudget, deleteBudget, copyPreviousMonthBudgets } from "@/services/budgetService";
 import {
-  getSavingsGoals,
   createSavingsGoal,
   updateSavingsGoal,
   deleteSavingsGoal,
   depositToSavingsGoal,
 } from "@/services/savingsService";
 import {
-  getRecurringBills,
   createRecurringBill,
   updateRecurringBill,
   deleteRecurringBill,
@@ -37,7 +34,6 @@ import {
   unpayRecurringBill,
 } from "@/services/billService";
 import {
-  getShoppingItems,
   createShoppingItem,
   updateShoppingItem,
   toggleShoppingItem,
@@ -45,16 +41,13 @@ import {
   checkoutShoppingList,
   clearAllCompletedShoppingItems,
 } from "@/services/shoppingService";
-import { getHouseholdMembers } from "@/services/authService";
+import { useHouseholdData } from "@/hooks/useHouseholdData";
 import {
-  Budget,
-  Category,
   NavigationTab,
   RecurringBill,
   SavingsGoal,
   ShoppingItem,
   Transaction,
-  UserProfile,
   Wallet,
 } from "@/types";
 import { BillsView } from "@/components/bills/BillsView";
@@ -73,56 +66,18 @@ export default function HomePage() {
   const [currentMonth, setCurrentMonth] = useState<number>(now.getMonth() + 1); // 1-12
   const [currentYear, setCurrentYear] = useState<number>(now.getFullYear());
 
-  // Data states
-  const [wallets, setWallets] = useState<Wallet[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [budgets, setBudgets] = useState<Budget[]>([]);
-  const [savingsGoals, setSavingsGoals] = useState<SavingsGoal[]>([]);
-  const [recurringBills, setRecurringBills] = useState<RecurringBill[]>([]);
-  const [shoppingItems, setShoppingItems] = useState<ShoppingItem[]>([]);
-  const [householdMembers, setHouseholdMembers] = useState<UserProfile[]>([]);
-  const [dataLoading, setDataLoading] = useState<boolean>(false);
+  const {
+    wallets,
+    categories,
+    transactions,
+    budgets,
+    savingsGoals,
+    recurringBills,
+    shoppingItems,
+    householdMembers,
+  } = useHouseholdData(household?.id, household?.memberUids, currentMonth, currentYear);
 
-  const loadAllData = useCallback(async () => {
-    if (!household) return;
-    setDataLoading(true);
-    try {
-      const [w, c, txs, b, g, bills, shop] = await Promise.all([
-        getWallets(household.id),
-        getCategories(household.id),
-        getMonthTransactions(household.id, currentYear, currentMonth),
-        getBudgets(household.id, currentMonth, currentYear),
-        getSavingsGoals(household.id),
-        getRecurringBills(household.id),
-        getShoppingItems(household.id),
-      ]);
-      setWallets(w);
-      setCategories(c);
-      setTransactions(txs);
-      setBudgets(b);
-      setSavingsGoals(g);
-      setRecurringBills(bills);
-      setShoppingItems(shop);
-
-      if (household.memberUids && household.memberUids.length > 0) {
-        const members = await getHouseholdMembers(household.memberUids);
-        setHouseholdMembers(members);
-      }
-    } catch (err) {
-      console.error("Error loading household data:", err);
-    } finally {
-      setDataLoading(false);
-    }
-  }, [household, currentYear, currentMonth]);
-
-  useEffect(() => {
-    if (household) {
-      loadAllData();
-    }
-  }, [household, loadAllData]);
-
-  if (authLoading || (dataLoading && !household)) {
+  if (authLoading) {
     return (
       <div className="min-h-screen bg-slate-50 dark:bg-[#090D16] flex flex-col items-center justify-center p-4">
         <div className="w-16 h-16 rounded-3xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-emerald-500/20 p-2.5 flex items-center justify-center mb-3 shadow-xl shadow-slate-200/50 dark:shadow-none animate-bounce">
@@ -153,7 +108,6 @@ export default function HomePage() {
     if (!household) return;
     try {
       await deleteTransaction(household.id, tx);
-      await loadAllData();
     } catch (err) {
       console.error(err);
       alert("Gagal menghapus transaksi");
@@ -163,53 +117,42 @@ export default function HomePage() {
   const handleSaveBudget = async (categoryId: string, limitAmount: number) => {
     if (!household) return;
     await setBudget(household.id, categoryId, currentMonth, currentYear, limitAmount);
-    await loadAllData();
   };
 
   const handleDeleteBudget = async (categoryId: string) => {
     if (!household) return;
     await deleteBudget(household.id, categoryId, currentMonth, currentYear);
-    await loadAllData();
   };
 
   const handleCopyPreviousMonthBudgets = async (): Promise<number> => {
     if (!household) return 0;
-    const count = await copyPreviousMonthBudgets(household.id, currentMonth, currentYear);
-    if (count > 0) {
-      await loadAllData();
-    }
-    return count;
+    return copyPreviousMonthBudgets(household.id, currentMonth, currentYear);
   };
 
   const handleCreateWallet = async (data: Omit<Wallet, "id" | "updatedAt">) => {
     if (!household) return;
     await createWallet(household.id, data);
-    await loadAllData();
   };
 
   const handleUpdateWallet = async (id: string, data: Partial<Wallet>) => {
     if (!household) return;
     await updateWallet(household.id, id, data);
-    await loadAllData();
   };
 
   // Savings Goals Handlers
   const handleCreateSavingsGoal = async (data: Omit<SavingsGoal, "id" | "createdAt" | "updatedAt">) => {
     if (!household) return;
     await createSavingsGoal(household.id, data);
-    await loadAllData();
   };
 
   const handleUpdateSavingsGoal = async (id: string, data: Partial<SavingsGoal>) => {
     if (!household) return;
     await updateSavingsGoal(household.id, id, data);
-    await loadAllData();
   };
 
   const handleDeleteSavingsGoal = async (id: string) => {
     if (!household) return;
     await deleteSavingsGoal(household.id, id);
-    await loadAllData();
   };
 
   const handleDepositSavingsGoal = async (goalId: string, amount: number, walletId?: string) => {
@@ -222,26 +165,22 @@ export default function HomePage() {
       user.uid,
       userProfile?.displayName || user.email?.split("@")[0]
     );
-    await loadAllData();
   };
 
   // Recurring Bills Handlers
   const handleCreateBill = async (data: Omit<RecurringBill, "id" | "createdAt" | "updatedAt">) => {
     if (!household) return;
     await createRecurringBill(household.id, data);
-    await loadAllData();
   };
 
   const handleUpdateBill = async (id: string, data: Partial<RecurringBill>) => {
     if (!household) return;
     await updateRecurringBill(household.id, id, data);
-    await loadAllData();
   };
 
   const handleDeleteBill = async (id: string) => {
     if (!household) return;
     await deleteRecurringBill(household.id, id);
-    await loadAllData();
   };
 
   const handlePayBill = async (billId: string, walletId: string, amount: number) => {
@@ -256,38 +195,32 @@ export default function HomePage() {
       user.uid,
       userProfile?.displayName || user.email?.split("@")[0]
     );
-    await loadAllData();
   };
 
   const handleUnpayBill = async (billId: string, year: number, month: number) => {
     if (!household) return;
     await unpayRecurringBill(household.id, billId, year, month);
-    await loadAllData();
   };
 
   // Shopping List Handlers
   const handleCreateShoppingItem = async (data: Omit<ShoppingItem, "id" | "createdAt" | "updatedAt">) => {
     if (!household) return;
     await createShoppingItem(household.id, data);
-    await loadAllData();
   };
 
   const handleUpdateShoppingItem = async (id: string, data: Partial<ShoppingItem>) => {
     if (!household) return;
     await updateShoppingItem(household.id, id, data);
-    await loadAllData();
   };
 
   const handleToggleShoppingItem = async (itemId: string, isCompleted: boolean) => {
     if (!household) return;
     await toggleShoppingItem(household.id, itemId, isCompleted);
-    await loadAllData();
   };
 
   const handleDeleteShoppingItem = async (id: string) => {
     if (!household) return;
     await deleteShoppingItem(household.id, id);
-    await loadAllData();
   };
 
   const handleCheckoutShopping = async (
@@ -308,13 +241,11 @@ export default function HomePage() {
       user.uid,
       userProfile?.displayName || user.email?.split("@")[0]
     );
-    await loadAllData();
   };
 
   const handleClearCompletedShopping = async () => {
     if (!household) return;
     await clearAllCompletedShoppingItems(household.id, shoppingItems);
-    await loadAllData();
   };
 
   const currentMonthKey = `${currentYear}-${String(currentMonth).padStart(2, "0")}`;
@@ -459,7 +390,6 @@ export default function HomePage() {
           {activeTab === "settings" && (
             <SettingsView
               categories={categories}
-              onRefreshCategories={loadAllData}
             />
           )}
         </main>
@@ -481,7 +411,6 @@ export default function HomePage() {
         onClose={() => setQuickModalOpen(false)}
         wallets={wallets}
         categories={categories}
-        onSuccess={loadAllData}
       />
 
       {/* Monthly Printable Report Modal */}

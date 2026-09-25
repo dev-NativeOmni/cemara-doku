@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { RecurringBill, Category, Wallet } from "@/types";
 import { DynamicIcon } from "../ui/DynamicIcon";
 import { X, Check, Calendar, AlertCircle } from "lucide-react";
@@ -33,57 +33,39 @@ const BILL_COLORS = [
   "#10B981", "#059669", "#0D9488", "#2563EB", "#8B5CF6", "#EC4899", "#F59E0B", "#EF4444"
 ];
 
-export function BillModal({
-  isOpen,
+// Content is mounted fresh on every open, so form state initializes from props
+// without effects (and live data updates never reset what the user is typing).
+export function BillModal(props: BillModalProps) {
+  if (!props.isOpen) return null;
+  return <BillModalContent key={props.bill?.id ?? "new"} {...props} />;
+}
+
+function BillModalContent({
   onClose,
   bill,
   categories,
   wallets,
   onSave,
 }: BillModalProps) {
-  const [title, setTitle] = useState("");
-  const [amountStr, setAmountStr] = useState("");
-  const [dueDay, setDueDay] = useState<number>(1);
-  const [frequency, setFrequency] = useState<"monthly" | "yearly">("monthly");
-  const [categoryId, setCategoryId] = useState("");
-  const [walletId, setWalletId] = useState("");
-  const [icon, setIcon] = useState("Zap");
-  const [color, setColor] = useState("#10B981");
-  const [notes, setNotes] = useState("");
-  const [loading, setLoading] = useState(false);
-
   const expenseCategories = useMemo(
     () => categories.filter((c) => c.type === "expense"),
     [categories]
   );
 
-  useEffect(() => {
-    if (isOpen) {
-      if (bill) {
-        setTitle(bill.title);
-        setAmountStr(bill.amount ? bill.amount.toLocaleString("id-ID") : "");
-        setDueDay(bill.dueDay || 1);
-        setFrequency(bill.frequency || "monthly");
-        setCategoryId(bill.categoryId || expenseCategories[0]?.id || "");
-        setWalletId(bill.walletId || wallets[0]?.id || "");
-        setIcon(bill.icon || "Zap");
-        setColor(bill.color || "#10B981");
-        setNotes(bill.notes || "");
-      } else {
-        setTitle("");
-        setAmountStr("");
-        setDueDay(1);
-        setFrequency("monthly");
-        setCategoryId(expenseCategories[0]?.id || "");
-        setWalletId(wallets[0]?.id || "");
-        setIcon("Zap");
-        setColor("#10B981");
-        setNotes("");
-      }
-    }
-  }, [isOpen, bill, expenseCategories, wallets]);
-
-  if (!isOpen) return null;
+  const [title, setTitle] = useState(bill?.title || "");
+  const [amountStr, setAmountStr] = useState(() =>
+    bill?.amount ? bill.amount.toLocaleString("id-ID") : ""
+  );
+  const [dueDay, setDueDay] = useState<number>(bill?.dueDay || 1);
+  const [frequency, setFrequency] = useState<"monthly" | "yearly">(bill?.frequency || "monthly");
+  const [categoryId, setCategoryId] = useState(
+    () => bill?.categoryId || expenseCategories[0]?.id || ""
+  );
+  const [walletId, setWalletId] = useState(() => bill?.walletId || wallets[0]?.id || "");
+  const [icon, setIcon] = useState(bill?.icon || "Zap");
+  const [color, setColor] = useState(bill?.color || "#10B981");
+  const [notes, setNotes] = useState(bill?.notes || "");
+  const [loading, setLoading] = useState(false);
 
   const numericAmount = parseInt(amountStr.replace(/\D/g, "") || "0", 10);
 

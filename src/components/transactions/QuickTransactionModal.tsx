@@ -16,7 +16,7 @@ interface QuickTransactionModalProps {
   onClose: () => void;
   wallets: Wallet[];
   categories: Category[];
-  onSuccess: () => void;
+  onSuccess?: () => void;
 }
 
 export function QuickTransactionModal({
@@ -176,7 +176,7 @@ export function QuickTransactionModal({
         creatorName: userProfile?.displayName || user?.email || "Anggota",
       });
 
-      onSuccess();
+      onSuccess?.();
       onClose();
     } catch (err: any) {
       console.error(err);
